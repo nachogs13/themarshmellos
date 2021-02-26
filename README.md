@@ -1,6 +1,6 @@
 # The Marshmellos
 
-Nuestro grupo está formado por los siguientes miembros, con sus respectivos roles y funciones:
+En nuestro grupo vamos a desarrollar la aplicación **FasterWho**. El equipo de desarrollo está formado por los siguientes miembros, con sus respectivos roles y funciones dentro de la aplicación:
   - **Ignacio García Sánchez (CEO)**
     - Autenticación
     - Realidad Aumentada
