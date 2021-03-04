@@ -1,0 +1,5 @@
+Es una aplicación de Samsung (aunque no es necesario un terminal de esta marca), se empareja con reloj Samsung mediante Bluetooth.
+Las rutas quedan registradas, seleccionamos cual deseamos ver y veremos total km, ruta en mapa indicando velocidades por tramos, estadísticas, etc.
+Con una leyenda separa estadísticas en velocidad, altura y frecuencia cardíaca.
+Se pueden adjuntar fotos o notas, pero no da la opción de compartir la ruta de ninguna forma, únicamente exportar.
+También hay una pestaña de logros, donde hay unos logros fijados que puedes ir consiguiendo.

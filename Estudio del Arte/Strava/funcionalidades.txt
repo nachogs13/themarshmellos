@@ -1,0 +1,3 @@
+Strava es una app móvil dedicada al running, ciclismo, natación y actividades deportivas similares. Esta app tiene un gran componente social debido a que podremos participar en distintos retos de la comunidad, seguir a otros deportistas, unirnos a distintos clubes, guardar y compartir nuestros resultados en publicaciones e incluso crear rutas nosotros mismos.
+
+Conforme al propio seguimiento de las actividades, tenemos un mapa que nos muestra el recorrido a la par que diferentes estadísticas. Al finalizar podremos guardar la actividad y sus resultados. 
