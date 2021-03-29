@@ -1,0 +1,185 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".ProfileActivity">
+
+    <include
+        android:id="@+id/toolbar"
+        layout="@layout/toolbar"
+        tools:layout_editor_absoluteX="0dp"
+        tools:layout_editor_absoluteY="27dp" />
+
+    <ImageButton
+        android:id="@+id/imageButton3"
+        android:layout_width="133dp"
+        android:layout_height="135dp"
+        app:layout_constraintBottom_toBottomOf="@id/userName"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toTopOf="@id/toolbar"
+        app:layout_constraintVertical_bias="0.669"
+        tools:srcCompat="@tools:sample/avatars" />
+
+    <TextView
+        android:id="@+id/userName"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="250dp"
+        android:backgroundTint="@color/black"
+        android:text="Nombre de usuario"
+        android:textSize="20dp"
+        app:layout_constraintHorizontal_bias="0.498"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toTopOf="@id/toolbar"/>
+
+    <TextView
+        android:id="@+id/userInformation"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="5dp"
+        android:textSize="12dp"
+        android:backgroundTint="@color/black"
+        android:text="Información del usuario"
+        app:layout_constraintBottom_toBottomOf="@id/userInformationSex"
+        app:layout_constraintHorizontal_bias="0.498"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toTopOf="@id/userName"
+        app:layout_constraintVertical_bias="0.304" />
+
+    <TextView
+        android:id="@+id/userInformationSex"
+        android:layout_width="315dp"
+        android:layout_height="48dp"
+        android:layout_marginTop="50dp"
+        android:ems="10"
+        android:textSize="15dp"
+        android:text="Sexo: H"
+        app:layout_constraintHorizontal_bias="0.497"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toTopOf="@id/userName" />
+
+    <TextView
+        android:id="@+id/userInformationDate"
+        android:layout_width="315dp"
+        android:layout_height="48dp"
+        android:layout_marginTop="25dp"
+        android:ems="10"
+        android:textSize="15dp"
+        android:text="Fecha de nacimiento: 05/06/1998"
+        app:layout_constraintHorizontal_bias="0.497"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toTopOf="@id/userInformationSex" />
+
+    <TextView
+        android:id="@+id/userInformationWeight"
+        android:layout_width="315dp"
+        android:layout_height="48dp"
+        android:layout_marginTop="25dp"
+        android:ems="10"
+        android:textSize="15dp"
+        android:text="Peso: 70 kg"
+        app:layout_constraintHorizontal_bias="0.497"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toTopOf="@id/userInformationDate" />
+
+    <TextView
+        android:id="@+id/userInformationHeight"
+        android:layout_width="315dp"
+        android:layout_height="48dp"
+        android:layout_marginTop="25dp"
+        android:ems="10"
+        android:textSize="15dp"
+        android:text="Estatura: 170 cm"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toTopOf="@id/userInformationWeight" />
+
+    <TextView
+        android:id="@+id/userStatistics"
+        android:layout_width="315dp"
+        android:layout_height="48dp"
+        android:layout_marginTop="50dp"
+        android:ems="10"
+        android:gravity="center"
+        android:textSize="20dp"
+        android:text="Últimas estadísticas"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toTopOf="@id/userInformationHeight" />
+
+    <TextView
+        android:id="@+id/userStatisticsDistance"
+        android:layout_width="315dp"
+        android:layout_height="48dp"
+        android:layout_marginTop="80dp"
+        android:gravity="bottom|right"
+        android:ems="10"
+        android:text="Distancia"
+        android:textSize="15dp"
+        android:drawableLeft="@drawable/ic_baseline_directions_run_24"
+        android:drawableTint="@color/blue_800"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toTopOf="@id/userStatistics" />
+
+    <TextView
+        android:id="@+id/userStatisticsDistanceData"
+        android:layout_width="305dp"
+        android:layout_height="27dp"
+        android:ems="10"
+        android:gravity="top|right"
+        android:hint="12,5 km"
+        android:textSize="15dp"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toTopOf="@id/userStatisticsDistance" />
+
+    <TextView
+        android:id="@+id/userStatisticsActivityLevel"
+        android:layout_width="315dp"
+        android:layout_height="48dp"
+        android:layout_marginTop="80dp"
+        android:gravity="bottom|right"
+        android:ems="10"
+        android:textSize="15dp"
+        android:text="Nivel de actividad"
+        android:drawableLeft="@drawable/ic_bar_chart"
+        android:drawableTint="@color/blue_800"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toTopOf="@id/userStatisticsDistance" />
+
+    <TextView
+        android:id="@+id/userStatisticsActivityLevelData"
+        android:layout_width="305dp"
+        android:layout_height="27dp"
+        android:ems="10"
+        android:textSize="15dp"
+        android:gravity="top|right"
+        android:hint="Activo"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toTopOf="@id/userStatisticsActivityLevel" />
+
+    <ImageButton
+        android:id="@+id/imageButtonEdit"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="248dp"
+        android:backgroundTint="@color/white"
+        app:layout_constraintHorizontal_bias="0.802"
+        app:layout_constraintLeft_toLeftOf="@id/userName"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:srcCompat="@drawable/ic_baseline_edit_24" />
+
+
+</androidx.constraintlayout.widget.ConstraintLayout>

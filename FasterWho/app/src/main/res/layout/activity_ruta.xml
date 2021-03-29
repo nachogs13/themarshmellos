@@ -1,0 +1,155 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:layout_gravity="center_vertical"
+    tools:context=".RankingActivity" >
+
+    <androidx.cardview.widget.CardView
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:layout_gravity="top">
+        <TextView
+            android:id="@+id/result_text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal|top"
+            android:textSize="30sp"
+            android:text="Ruta 1"
+            android:textStyle="bold"
+            android:textColor="@color/black"/>
+    </androidx.cardview.widget.CardView>
+
+    <androidx.cardview.widget.CardView
+        android:layout_width="match_parent"
+        android:layout_height="150dp">
+
+        <ImageView
+            android:id="@+id/ImagenLeyenda"
+            android:layout_width="match_parent"
+            android:layout_height="241dp"
+            android:layout_gravity="center_horizontal"
+            android:scaleType="centerCrop"
+            android:src="@drawable/ruta"
+            tools:src="@drawable/ruta" />
+    </androidx.cardview.widget.CardView>
+
+    <androidx.cardview.widget.CardView
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:layout_gravity="top">
+        <TextView
+            android:id="@+id/result_text2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="start"
+            android:textSize="20sp"
+            android:text="Dificultad"
+            android:textColor="#4d5656"/>
+
+        <TextView
+            android:id="@+id/result_text3"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="start|bottom"
+            android:textSize="20sp"
+            android:text="Distancia total 5km"
+            android:textColor="#4d5656 "/>
+
+        <RatingBar
+            android:id="@+id/ratingBar2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="end"/>
+    </androidx.cardview.widget.CardView>
+
+    <androidx.cardview.widget.CardView
+        android:layout_width="match_parent"
+        android:layout_height="100dp">
+
+        <ImageView
+            android:id="@+id/qR"
+            android:layout_width="100dp"
+            android:layout_height="100dp"
+            android:layout_gravity="start|center_horizontal"
+            android:scaleType="centerCrop"
+            android:src="@drawable/qr"
+            tools:src="@drawable/qr" />
+
+        <Button
+            android:id="@+id/buttonEmpezar"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="end"
+            android:padding="10dp"
+            android:text="Empezar Ruta" />
+    </androidx.cardview.widget.CardView>
+
+    <androidx.cardview.widget.CardView
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:layout_gravity="top">
+        <TextView
+            android:id="@+id/estadisticas"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal|top"
+            android:textSize="20sp"
+            android:text="Estadísticas últimos usuarios"
+            android:textStyle="bold"
+            android:textColor="#4d5656"/>
+    </androidx.cardview.widget.CardView>
+
+    <androidx.cardview.widget.CardView
+        android:layout_width="match_parent"
+        android:layout_height="100dp">
+
+        <ImageView
+            android:id="@+id/avatar1"
+            android:layout_width="80dp"
+            android:layout_height="80dp"
+            android:layout_gravity="start|center_horizontal"
+            android:scaleType="centerCrop"
+            android:src="@drawable/avatar"
+            tools:src="@drawable/avatar" />
+
+        <TextView
+            android:id="@+id/maria"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:textSize="20sp"
+            android:text="María              Duración: 1H"
+
+            android:textColor="#4d5656"/>
+    </androidx.cardview.widget.CardView>
+
+    <androidx.cardview.widget.CardView
+        android:layout_width="match_parent"
+        android:layout_height="100dp">
+
+        <ImageView
+            android:id="@+id/avatar2"
+            android:layout_width="80dp"
+            android:layout_height="80dp"
+            android:layout_gravity="start|center_horizontal"
+            android:scaleType="centerCrop"
+            android:src="@drawable/avatar"
+            tools:src="@drawable/avatar" />
+
+        <TextView
+            android:id="@+id/elena"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:textSize="20sp"
+            android:text="Elena                 Duración: 1H"
+
+            android:textColor="#4d5656"/>
+    </androidx.cardview.widget.CardView>
+
+</LinearLayout>

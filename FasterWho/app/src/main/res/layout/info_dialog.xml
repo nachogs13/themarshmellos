@@ -1,0 +1,254 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+    <TextView
+        android:id="@+id/textNivelDificultad"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="36dp"
+        android:drawableRight="@drawable/ic_outline_info_24"
+        android:drawableTint="@color/blue_800"
+        android:drawablePadding="5dp"
+        android:text="Nivel de dificultad"
+        android:textColor="@color/black"
+        android:textSize="20dp"
+        app:layout_constraintHorizontal_bias="0.498"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/textBajaMediaDesc"
+        android:layout_width="300dp"
+        android:layout_height="51dp"
+        android:layout_marginTop="12dp"
+        android:text="Distancia: entre 3 y 5km \nDesnivel acumulado: suaves pendientes"
+        app:layout_constraintHorizontal_bias="0.587"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/textBajaMedia" />
+
+    <TextView
+        android:id="@+id/textBajo"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="20dp"
+        android:drawableRight="@drawable/ic_outline_emoji_events_24"
+        android:foregroundGravity="center"
+        android:text="Bajo"
+        android:textColor="@color/black"
+        app:layout_constraintHorizontal_bias="0.178"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/textNivelDificultad" />
+
+    <ImageView
+        android:id="@+id/imageView4"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="28dp"
+        app:layout_constraintHorizontal_bias="0.003"
+        app:layout_constraintLeft_toRightOf="@id/textMedia"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/textBajaMediaDesc"
+        app:srcCompat="@drawable/ic_outline_emoji_events_24" />
+
+    <TextView
+        android:id="@+id/textMuyAltaDesc"
+        android:layout_width="300dp"
+        android:layout_height="51dp"
+        android:layout_marginTop="12dp"
+        android:paddingBottom="36dp"
+        android:text="Distancia: > 15km \nDesnivel acumulado:"
+        app:layout_constraintHorizontal_bias="0.587"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/textMuyAlta" />
+
+    <ImageView
+        android:id="@+id/imageView12"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="8dp"
+        android:layout_marginTop="24dp"
+        app:layout_constraintLeft_toRightOf="@id/imageView11"
+        app:layout_constraintTop_toBottomOf="@id/textAltaDesc"
+        app:srcCompat="@drawable/ic_outline_emoji_events_24" />
+
+    <TextView
+        android:id="@+id/textMuyAlta"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="24dp"
+        android:drawableRight="@drawable/ic_outline_emoji_events_24"
+        android:drawablePadding="5dp"
+        android:text="Muy alto"
+        android:textColor="@color/black"
+        app:layout_constraintHorizontal_bias="0.195"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/textAltaDesc" />
+
+    <ImageView
+        android:id="@+id/imageView10"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="8dp"
+        android:layout_marginTop="24dp"
+        app:layout_constraintLeft_toRightOf="@id/imageView9"
+        app:layout_constraintTop_toBottomOf="@id/textAltaDesc"
+        app:srcCompat="@drawable/ic_outline_emoji_events_24" />
+
+    <ImageView
+        android:id="@+id/imageView3"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintLeft_toRightOf="@id/textBajaMedia"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/textBajoDesc"
+        app:srcCompat="@drawable/ic_outline_emoji_events_24" />
+
+    <TextView
+        android:id="@+id/textAlta"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="28dp"
+        android:drawableRight="@drawable/ic_outline_emoji_events_24"
+        android:drawablePadding="5dp"
+        android:text="Alto"
+        android:textColor="@color/black"
+        app:layout_constraintHorizontal_bias="0.179"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/textMediaDesc" />
+
+    <ImageView
+        android:id="@+id/imageView6"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="4dp"
+        android:layout_marginTop="28dp"
+        app:layout_constraintLeft_toRightOf="@id/textAlta"
+        app:layout_constraintTop_toBottomOf="@id/textMediaDesc"
+        app:srcCompat="@drawable/ic_outline_emoji_events_24" />
+
+    <TextView
+        android:id="@+id/textMediaDesc"
+        android:layout_width="300dp"
+        android:layout_height="51dp"
+        android:layout_marginTop="12dp"
+        android:text="Distancia: entre 5 y 10km \nDesnivel acumulado: pendientes moderadas"
+        app:layout_constraintHorizontal_bias="0.587"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/textMedia" />
+
+    <TextView
+        android:id="@+id/textBajoDesc"
+        android:layout_width="300dp"
+        android:layout_height="51dp"
+        android:layout_marginTop="12dp"
+        android:text="Distancia: \uFE64 3km \nDesnivel acumulado: rutas llanas"
+        app:layout_constraintHorizontal_bias="0.587"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/textBajo" />
+
+    <ImageView
+        android:id="@+id/imageView7"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="8dp"
+        android:layout_marginTop="28dp"
+        app:layout_constraintLeft_toRightOf="@id/imageView6"
+        app:layout_constraintTop_toBottomOf="@id/textMediaDesc"
+        app:srcCompat="@drawable/ic_outline_emoji_events_24" />
+
+    <TextView
+        android:id="@+id/textBajaMedia"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:drawableRight="@drawable/ic_outline_emoji_events_24"
+        android:drawablePadding="5dp"
+        android:text="Bajo-Medio"
+        android:textColor="@color/black"
+        app:layout_constraintHorizontal_bias="0.205"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/textBajoDesc" />
+
+    <TextView
+        android:id="@+id/textAltaDesc"
+        android:layout_width="300dp"
+        android:layout_height="51dp"
+        android:layout_marginTop="8dp"
+        android:text="Distancia: entre 10 y 15km \nDesnivel acumulado: "
+        app:layout_constraintHorizontal_bias="0.587"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/textAlta" />
+
+    <ImageView
+        android:id="@+id/imageView5"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="28dp"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintLeft_toRightOf="@id/imageView4"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/textBajaMediaDesc"
+        app:srcCompat="@drawable/ic_outline_emoji_events_24" />
+
+    <ImageView
+        android:id="@+id/imageView8"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="8dp"
+        android:layout_marginTop="28dp"
+        app:layout_constraintLeft_toRightOf="@id/imageView7"
+        app:layout_constraintTop_toBottomOf="@id/textMediaDesc"
+        app:srcCompat="@drawable/ic_outline_emoji_events_24" />
+
+    <ImageView
+        android:id="@+id/imageView11"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="8dp"
+        android:layout_marginTop="24dp"
+        app:layout_constraintLeft_toRightOf="@id/imageView10"
+        app:layout_constraintTop_toBottomOf="@id/textAltaDesc"
+        app:srcCompat="@drawable/ic_outline_emoji_events_24" />
+
+    <ImageView
+        android:id="@+id/imageView9"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="4dp"
+        android:layout_marginTop="24dp"
+        app:layout_constraintLeft_toRightOf="@id/textMuyAlta"
+        app:layout_constraintTop_toBottomOf="@id/textAltaDesc"
+        app:srcCompat="@drawable/ic_outline_emoji_events_24" />
+
+    <TextView
+        android:id="@+id/textMedia"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="28dp"
+        android:drawableRight="@drawable/ic_outline_emoji_events_24"
+        android:drawablePadding="5dp"
+        android:text="Medio"
+        android:textColor="@color/black"
+        app:layout_constraintHorizontal_bias="0.192"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/textBajaMediaDesc" />
+
+
+</androidx.constraintlayout.widget.ConstraintLayout>
