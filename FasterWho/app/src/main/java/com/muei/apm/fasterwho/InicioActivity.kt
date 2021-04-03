@@ -11,6 +11,10 @@ class InicioActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_inicio)
+        /*val navigation = Intent(this, NavigationActivity::class.java)
+        startActivity(navigation)*/
+        val navigation = Intent(this, NavigationActivity::class.java)
+        startActivity(navigation)
 
         val btnFiltros : TextView = findViewById(R.id.textViewFiltros)
         btnFiltros.setOnClickListener{
