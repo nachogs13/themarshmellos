@@ -22,7 +22,7 @@
         app:srcCompat="@drawable/ic_baseline_filter_alt_24" />-->
 
     <fragment
-        android:id="@+id/fragment"
+        android:id="@+id/nav_home"
         android:name="com.muei.apm.fasterwho.InicioItemFragment"
         android:layout_width="384dp"
         android:layout_height="660dp"
