@@ -4,6 +4,8 @@ import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.widget.Button
+import android.widget.ImageView
+import android.widget.Toast
 
 class EstadisticasActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -15,5 +17,12 @@ class EstadisticasActivity : AppCompatActivity() {
             val intent = Intent(this, RankingActivity::class.java)
             startActivity(intent)
         })
+
+        val btnMapa : ImageView = findViewById(R.id.ImagenLeyenda2)
+        btnMapa.setOnClickListener({
+            Toast.makeText(this, "Viendo la ruta en el mapa", Toast.LENGTH_SHORT).show()
+        })
+
+
     }
 }
