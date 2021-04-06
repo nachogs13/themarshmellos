@@ -1,5 +1,6 @@
 package com.muei.apm.fasterwho
 
+import android.content.Intent
 import androidx.recyclerview.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.View
@@ -34,8 +35,16 @@ class MyMiRutaRecyclerViewAdapter(
 
     override fun getItemCount(): Int = values.size
 
-    inner class ViewHolder(view: View) : RecyclerView.ViewHolder(view) {
+    inner class ViewHolder(view: View) : RecyclerView.ViewHolder(view), View.OnClickListener {
         val nombreView: TextView = view.findViewById(R.id.mi_ruta_nombre)
         val direccionView: TextView = view.findViewById(R.id.mi_ruta_direccion)
+
+        init {
+            view.setOnClickListener(this)
+        }
+
+        override fun onClick(v: View) {
+            v.context.startActivity(Intent(v.context, RutaActivity::class.java))
+        }
     }
 }

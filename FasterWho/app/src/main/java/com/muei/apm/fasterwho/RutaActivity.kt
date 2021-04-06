@@ -15,7 +15,7 @@ class RutaActivity : AppCompatActivity() {
 
         val btnEmpezar : Button = findViewById(R.id.buttonEmpezar)
         btnEmpezar.setOnClickListener({
-            val intent = Intent(this, EstadisticasActivity::class.java)
+            val intent = Intent(this, IniciarRutaActivity::class.java)
             startActivity(intent)
         })
 
