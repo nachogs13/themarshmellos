@@ -14,6 +14,7 @@ class EstadisticasActivity : AppCompatActivity() {
 
         val btnFinalizar : Button = findViewById(R.id.buttonEstFinalizar)
         btnFinalizar.setOnClickListener({
+            Toast.makeText(this, "Se finaliza de ver el resumen ruta", Toast.LENGTH_SHORT).show()
             val intent = Intent(this, RankingActivity::class.java)
             startActivity(intent)
         })

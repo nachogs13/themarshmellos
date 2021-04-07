@@ -3,10 +3,7 @@ package com.muei.apm.fasterwho
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.widget.Button
-import android.widget.ImageView
-import android.widget.TextView
-import android.widget.Toast
+import android.widget.*
 
 class RutaActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -35,6 +32,16 @@ class RutaActivity : AppCompatActivity() {
         val btnAvatarElena : ImageView = findViewById(R.id.avatar2)
         btnAvatarElena.setOnClickListener {
             Toast.makeText(this, "Viendo usuario Elena", Toast.LENGTH_SHORT).show()
+        }
+
+        val btnMapa : ImageView = findViewById(R.id.imagenMapa)
+        btnMapa.setOnClickListener {
+            Toast.makeText(this, "Viendo Mapa Completo", Toast.LENGTH_SHORT).show()
+        }
+
+        val btnRating : RatingBar = findViewById(R.id.ratingBar2)
+        btnRating.setOnClickListener {
+            Toast.makeText(this, "Poniendo estrellas dificultad", Toast.LENGTH_SHORT).show()
         }
     }
 }

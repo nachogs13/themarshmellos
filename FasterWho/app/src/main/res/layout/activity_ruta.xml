@@ -29,7 +29,7 @@
         android:layout_height="150dp">
 
         <ImageView
-            android:id="@+id/ImagenLeyenda"
+            android:id="@+id/imagenMapa"
             android:layout_width="match_parent"
             android:layout_height="241dp"
             android:layout_gravity="center_horizontal"

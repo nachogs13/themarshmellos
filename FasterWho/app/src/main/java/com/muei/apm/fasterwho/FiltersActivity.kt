@@ -30,5 +30,12 @@ class FiltersActivity : AppCompatActivity() {
             val intent = Intent(this, InicioActivity::class.java)
             startActivity(intent)
         }
+
+        val btnAplicar : Button = findViewById(R.id.buttonAplicar)
+        btnAplicar.setOnClickListener {
+            Toast.makeText(this, "Se aplican los filtros para las rutas", Toast.LENGTH_SHORT).show()
+            val intent = Intent(this, InicioActivity::class.java)
+            startActivity(intent)
+        }
     }
 }

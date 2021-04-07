@@ -24,6 +24,11 @@ class InicioActivity : AppCompatActivity() {
             startActivity(intent)
         }
 
+        val btnScan : Button = findViewById(R.id.buttonScanQr)
+        btnScan.setOnClickListener{
+            Toast.makeText(this, "Se busca ruta mediante código QR", Toast.LENGTH_SHORT).show()
+        }
+
         val btnAnadirRuta : com.google.android.material.floatingactionbutton.FloatingActionButton = findViewById(R.id.floatingActionButton)
         btnAnadirRuta.setOnClickListener({
             Toast.makeText(this, "Iniciar Ruta", Toast.LENGTH_SHORT).show()

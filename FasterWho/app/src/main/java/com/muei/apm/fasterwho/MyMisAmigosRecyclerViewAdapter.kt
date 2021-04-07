@@ -1,10 +1,12 @@
 package com.muei.apm.fasterwho
 
+import android.content.Intent
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
+import android.widget.Toast
 import androidx.recyclerview.widget.RecyclerView
 import com.muei.apm.fasterwho.dummy.DummyContent.DummyItem
 
@@ -35,9 +37,17 @@ class MyMisAmigosRecyclerViewAdapter(
 
     override fun getItemCount(): Int = values.size
 
-    inner class ViewHolder(view: View) : RecyclerView.ViewHolder(view) {
+    inner class ViewHolder(view: View) : RecyclerView.ViewHolder(view), View.OnClickListener {
         val friendView: TextView = view.findViewById(R.id.friend_rank)
         val friendName: TextView = view.findViewById(R.id.friend_name)
         val imageView: ImageView = view.findViewById(R.id.friend_image)
+
+        init {
+            view.setOnClickListener(this)
+        }
+
+        override fun onClick(v: View) {
+            Toast.makeText(v.context, "Viendo el perfil del usuario"+v.id.toString(), Toast.LENGTH_SHORT).show()
+        }
     }
 }
