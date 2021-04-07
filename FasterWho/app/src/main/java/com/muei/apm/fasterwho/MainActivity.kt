@@ -4,6 +4,7 @@ import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.widget.Button
+import android.widget.Toast
 
 class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -14,18 +15,19 @@ class MainActivity : AppCompatActivity() {
         btnRegistrarse.setOnClickListener {
             val intent = Intent(this, RegisterActivity::class.java)
             startActivity(intent)
+            Toast.makeText(this, "Registrarse en la app", Toast.LENGTH_SHORT).show()
         }
 
         val btnEntrar : Button = findViewById(R.id.buttonEntrar)
         btnEntrar.setOnClickListener{
             val intent = Intent(this, InicioActivity::class.java)
             startActivity(intent)
+            Toast.makeText(this, "Entrando en la aplicación", Toast.LENGTH_SHORT).show()
         }
 
-        val btnEntrarConGoogle : Button = findViewById(R.id.buttonEntrarGoogle)
+        /*val btnEntrarConGoogle : Button = findViewById(R.id.buttonEntrarGoogle)
         btnEntrarConGoogle.setOnClickListener{
-            val intent = Intent(this, ProfileActivity::class.java)
-            startActivity(intent)
-        }
+
+        }*/
     }
 }

@@ -68,11 +68,26 @@ class NavigationActivity : AppCompatActivity(), NavigationView.OnNavigationItemS
         val intentAmigos = Intent(this, MisAmigos::class.java)
 
         when (item.itemId) {
-            R.id.nav_home -> startActivity(intentInicio)//Toast.makeText(this, "Clicked item one", Toast.LENGTH_SHORT).show()
-            R.id.nav_profile -> startActivity(intentProfile)//Toast.makeText(this, "Clicked item two", Toast.LENGTH_SHORT).show()
-            R.id.nav_rankings -> startActivity(intentRankings)//Toast.makeText(this, "Clicked item three", Toast.LENGTH_SHORT).show()
-            R.id.nav_routes -> startActivity(intentRutas)//Toast.makeText(this, "Clicked item four", Toast.LENGTH_SHORT).show()
-            R.id.nav_amigos -> startActivity(intentAmigos)//Toast.makeText(this, "Clicked item five", Toast.LENGTH_SHORT).show()
+            R.id.nav_home -> {
+                startActivity(intentInicio)
+                Toast.makeText(this, "Clicked item one", Toast.LENGTH_SHORT).show()
+            }
+            R.id.nav_profile -> {
+                startActivity(intentProfile)
+                Toast.makeText(this, "Clicked item two", Toast.LENGTH_SHORT).show()
+            }
+            R.id.nav_rankings -> {
+                startActivity(intentRankings)
+                Toast.makeText(this, "Clicked item three", Toast.LENGTH_SHORT).show()
+            }
+            R.id.nav_routes -> {
+                startActivity(intentRutas)
+                Toast.makeText(this, "Clicked item four", Toast.LENGTH_SHORT).show()
+            }
+            R.id.nav_amigos -> {
+                startActivity(intentAmigos)
+                Toast.makeText(this, "Clicked item five", Toast.LENGTH_SHORT).show()
+            }
         }
         return true
     }

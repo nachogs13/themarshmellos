@@ -6,6 +6,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.widget.Button
 import android.widget.ImageButton
+import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 
 class FiltersActivity : AppCompatActivity() {
@@ -21,6 +22,7 @@ class FiltersActivity : AppCompatActivity() {
                     .setView(dialogView)
             //show dialog
             builder.show()
+            Toast.makeText(this, "Información de los niveles de dificultad", Toast.LENGTH_SHORT).show()
         }
 
         val btnCancelar : Button = findViewById(R.id.buttonCancelar)
