@@ -14,14 +14,16 @@
 
     <ImageView
         android:id="@+id/imageView"
-        android:layout_width="81dp"
-        android:layout_height="83dp"
+        android:layout_width="110dp"
+        android:layout_height="110dp"
+        android:layout_gravity="center"
         android:contentDescription="@string/todo"
         app:srcCompat="@drawable/ic_baseline_account_circle_24" />
 
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_gravity="center"
         android:paddingTop="@dimen/nav_header_vertical_spacing"
         android:text="@string/nombre_usuario"
         android:textAppearance="@style/TextAppearance.AppCompat.Body1" />

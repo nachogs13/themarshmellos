@@ -5,29 +5,33 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".MisRutas">
-
+    <!--<include
+        android:id="@+id/toolbar_include"
+        layout="@layout/toolbar"
+        tools:layout_editor_absoluteX="0dp"
+        tools:layout_editor_absoluteY="27dp" />-->
     <ImageButton
         android:id="@+id/imageButton4"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="80dp"
         android:layout_marginLeft="80dp"
-        android:layout_marginTop="16dp"
+        android:layout_marginTop="65dp"
         android:background="#FFFFFF"
         android:contentDescription="@string/filter"
         android:tint="#020202"
-        app:layout_constraintStart_toEndOf="@+id/editTextTextPersonName"
+        app:layout_constraintStart_toEndOf="@+id/filterText"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:srcCompat="@drawable/ic_baseline_filter_alt_24" />
 
     <TextView
-        android:id="@+id/editTextTextPersonName"
+        android:id="@+id/filterText"
         android:layout_width="60dp"
         android:layout_height="27dp"
         android:layout_marginStart="20dp"
         android:layout_marginLeft="20dp"
-        android:layout_marginTop="16dp"
+        android:layout_marginTop="65dp"
         android:ems="10"
         android:text="@string/filter"
         android:textColor="#000000"
@@ -35,16 +39,14 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
-    <fragment
+    <androidx.fragment.app.FragmentContainerView
         android:id="@+id/fragment2"
         android:name="com.muei.apm.fasterwho.MiRutaFragment"
-        android:layout_width="376dp"
-        android:layout_height="663dp"
-        android:layout_marginStart="20dp"
-        android:layout_marginLeft="20dp"
-        android:layout_marginTop="50dp"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginTop="100dp"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintTop_toTopOf="@id/filterText"
         tools:layout="@layout/fragment_mis_rutas_list" />
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton

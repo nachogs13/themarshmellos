@@ -7,15 +7,21 @@ import android.widget.Button
 import android.widget.RatingBar
 import android.widget.Toast
 
-class MisAmigos : AppCompatActivity() {
+class MisAmigos : Toolbar() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_mis_amigos)
+        //setContentView(R.layout.activity_mis_amigos)
+        layoutInflater.inflate(R.layout.activity_mis_amigos,frameLayout)
 
         val btnAmigos : Button = findViewById(R.id.button)
         btnAmigos.setOnClickListener({
             Toast.makeText(this, "Se añade un nuevo amigo", Toast.LENGTH_SHORT).show()
         })
+    }
+
+    override fun onResume() {
+        super.onResume()
+        navView.menu.getItem(4).setChecked(true)
     }
 
 

@@ -5,10 +5,11 @@ import android.os.Bundle
 import android.widget.TextView
 import android.widget.Toast
 
-class RankingActivity : AppCompatActivity() {
+class RankingActivity : Toolbar() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_ranking)
+        //setContentView(R.layout.activity_ranking)
+        layoutInflater.inflate(R.layout.activity_ranking,frameLayout)
         Toast.makeText(this, "Listado de Rankings", Toast.LENGTH_SHORT).show()
 
         val btnRanking1 : TextView = findViewById(R.id.ranking1)
@@ -25,5 +26,9 @@ class RankingActivity : AppCompatActivity() {
         btnRanking3.setOnClickListener {
             Toast.makeText(this, "Viendo el Ranking3", Toast.LENGTH_SHORT).show()
         }
+    }
+    override fun onResume() {
+        super.onResume()
+        navView.menu.getItem(2).setChecked(true)
     }
 }

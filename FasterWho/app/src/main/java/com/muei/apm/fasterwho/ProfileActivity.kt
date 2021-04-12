@@ -7,13 +7,12 @@ import android.widget.Button
 import android.widget.ImageButton
 import android.widget.Toast
 
-class ProfileActivity : AppCompatActivity() {
+class ProfileActivity : Toolbar() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_profile)
+        //setContentView(R.layout.activity_profile)
+        layoutInflater.inflate(R.layout.activity_profile,frameLayout)
 
-        //val navigation = Intent(this, NavigationActivity::class.java)
-        //startActivity(navigation)
 
         val btnImagen : ImageButton = findViewById(R.id.imageButton3)
         btnImagen.setOnClickListener({
@@ -24,5 +23,10 @@ class ProfileActivity : AppCompatActivity() {
         btnNombre.setOnClickListener({
             Toast.makeText(this, "Se cambia el nombre de usuario", Toast.LENGTH_SHORT).show()
         })
+    }
+
+    override fun onResume() {
+        super.onResume()
+        navView.menu.getItem(1).setChecked(true)
     }
 }

@@ -7,7 +7,7 @@
     tools:context=".ProfileActivity">
 
     <!--<include
-        android:id="@+id/toolbar"
+        android:id="@+id/toolbar_include"
         layout="@layout/toolbar"
         tools:layout_editor_absoluteX="0dp"
         tools:layout_editor_absoluteY="27dp" />-->

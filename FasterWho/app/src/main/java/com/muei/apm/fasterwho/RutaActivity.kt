@@ -5,11 +5,11 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.widget.*
 
-class RutaActivity : AppCompatActivity() {
+class RutaActivity : Toolbar() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_ruta)
-
+        //setContentView(R.layout.activity_ruta)
+        layoutInflater.inflate(R.layout.activity_ruta,frameLayout)
         val btnEmpezar : Button = findViewById(R.id.buttonEmpezar)
         btnEmpezar.setOnClickListener({
             val intent = Intent(this, IniciarRutaActivity::class.java)

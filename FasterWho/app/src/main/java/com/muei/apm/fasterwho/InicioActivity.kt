@@ -1,22 +1,29 @@
 package com.muei.apm.fasterwho
 
+import android.app.Activity
 import android.content.Intent
 import android.graphics.Color
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.view.Menu
+import android.view.MenuItem
 import android.widget.Button
 import android.widget.TextView
 import android.widget.Toast
+import androidx.appcompat.app.ActionBarDrawerToggle
+import androidx.appcompat.widget.Toolbar
+import androidx.core.view.GravityCompat
+import androidx.drawerlayout.widget.DrawerLayout
 import com.google.android.material.floatingactionbutton.FloatingActionButton
+import com.google.android.material.navigation.NavigationView
 
-class InicioActivity : AppCompatActivity() {
+class InicioActivity : com.muei.apm.fasterwho.Toolbar(), NavigationView.OnNavigationItemSelectedListener {
+    //private lateinit var drawerLayout: DrawerLayout
+    //private lateinit var navView : NavigationView
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_inicio)
-        /*val navigation = Intent(this, NavigationActivity::class.java)
-        startActivity(navigation)*/
-        val navigation = Intent(this, NavigationActivity::class.java)
-        startActivity(navigation)
+        //setContentView(R.layout.activity_profile)
+        layoutInflater.inflate(R.layout.activity_inicio,frameLayout)
 
         val btnFiltros : TextView = findViewById(R.id.textViewFiltros)
         btnFiltros.setOnClickListener{
@@ -35,6 +42,11 @@ class InicioActivity : AppCompatActivity() {
             val intent = Intent(this, IniciarRutaActivity::class.java)
             startActivity(intent)
         })
-
     }
+
+    override fun onResume() {
+        super.onResume()
+        navView.menu.getItem(0).setChecked(true)
+    }
+
 }
