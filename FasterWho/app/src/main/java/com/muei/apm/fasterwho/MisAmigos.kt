@@ -12,6 +12,8 @@ class MisAmigos : Toolbar() {
         super.onCreate(savedInstanceState)
         //setContentView(R.layout.activity_mis_amigos)
         layoutInflater.inflate(R.layout.activity_mis_amigos,frameLayout)
+        val toolbar: androidx.appcompat.widget.Toolbar = findViewById(R.id.toolbar2)
+        toolbar.setTitle("Mis amigos")
 
         val btnAmigos : Button = findViewById(R.id.button)
         btnAmigos.setOnClickListener({

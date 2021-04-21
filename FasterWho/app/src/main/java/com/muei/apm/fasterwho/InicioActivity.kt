@@ -24,6 +24,8 @@ class InicioActivity : com.muei.apm.fasterwho.Toolbar(), NavigationView.OnNaviga
         super.onCreate(savedInstanceState)
         //setContentView(R.layout.activity_profile)
         layoutInflater.inflate(R.layout.activity_inicio,frameLayout)
+        val toolbar: Toolbar = findViewById(R.id.toolbar2)
+        toolbar.setTitle("Inicio")
 
         val btnFiltros : TextView = findViewById(R.id.textViewFiltros)
         btnFiltros.setOnClickListener{

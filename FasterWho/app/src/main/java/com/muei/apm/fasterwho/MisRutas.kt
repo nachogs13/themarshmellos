@@ -7,6 +7,9 @@ class MisRutas : Toolbar() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         layoutInflater.inflate(R.layout.activity_mis_rutas,frameLayout)
+
+        val toolbar: androidx.appcompat.widget.Toolbar = findViewById(R.id.toolbar2)
+        toolbar.setTitle("Mis Rutas")
         //setContentView(R.layout.activity_mis_rutas)
         /*     setSupportActionBar(findViewById(R.id.toolbar))
 

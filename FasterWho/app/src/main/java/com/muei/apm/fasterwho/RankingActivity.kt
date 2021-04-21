@@ -17,6 +17,8 @@ class RankingActivity : Toolbar(), AdapterView.OnItemClickListener{
         super.onCreate(savedInstanceState)
         //setContentView(R.layout.activity_ranking)
         layoutInflater.inflate(R.layout.activity_ranking,frameLayout)
+        val toolbar: androidx.appcompat.widget.Toolbar = findViewById(R.id.toolbar2)
+        toolbar.setTitle("Ranking")
 
         listView = findViewById(R.id.cardview_list_view)
         arrayList = ArrayList()

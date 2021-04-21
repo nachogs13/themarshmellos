@@ -12,7 +12,8 @@ class ProfileActivity : Toolbar() {
         super.onCreate(savedInstanceState)
         //setContentView(R.layout.activity_profile)
         layoutInflater.inflate(R.layout.activity_profile,frameLayout)
-
+        val toolbar: androidx.appcompat.widget.Toolbar = findViewById(R.id.toolbar2)
+        toolbar.setTitle("Perfil")
 
         val btnImagen : ImageButton = findViewById(R.id.imageButton3)
         btnImagen.setOnClickListener({

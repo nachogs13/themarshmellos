@@ -17,12 +17,12 @@
         android:name="com.muei.apm.fasterwho.MisAmigosFragment"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_marginTop="100dp"
+        android:layout_marginTop="65dp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         tools:layout="@layout/fragment_mis_amigos_list" />
 
-    <TextView
+    <!--<TextView
         android:id="@+id/amigosTitle"
         android:layout_width="151dp"
         android:layout_height="35dp"
@@ -35,7 +35,7 @@
         android:textSize="24sp"
         android:textStyle="bold"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent" />-->
 
     <Button
         android:id="@+id/button"
