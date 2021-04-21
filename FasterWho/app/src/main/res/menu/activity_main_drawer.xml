@@ -1,24 +1,31 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto">
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
     <group android:checkableBehavior="single">
         <item
             android:id="@+id/nav_home"
+            android:icon="@drawable/ic_home"
             android:title="Inicio" />
         <item
             android:id="@+id/nav_profile"
+            android:icon="@drawable/ic_profile"
             android:title="Perfil" />
         <item
             android:id="@+id/nav_rankings"
+            android:icon="@drawable/ic_ranking"
             android:title="Rankings" />
         <item
             android:id="@+id/nav_routes"
+            android:icon="@drawable/ic_mis_rutas"
             android:title="Mis rutas" />
         <item
             android:id="@+id/nav_amigos"
+            android:icon="@drawable/ic_mis_amigos"
             android:title="Mis amigos" />
         <item
             android:id="@+id/nav_logout"
+            android:icon="@drawable/ic_logout_black_24dp"
             android:title="Cerrar sesión"/>
 
     </group>

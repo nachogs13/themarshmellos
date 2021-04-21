@@ -10,6 +10,9 @@ class RutaActivity : Toolbar() {
         super.onCreate(savedInstanceState)
         //setContentView(R.layout.activity_ruta)
         layoutInflater.inflate(R.layout.activity_ruta,frameLayout)
+        val toolbar: androidx.appcompat.widget.Toolbar = findViewById(R.id.toolbar2)
+        toolbar.setTitle("Ruta concreta")
+
         val btnEmpezar : Button = findViewById(R.id.buttonEmpezar)
         btnEmpezar.setOnClickListener({
             val intent = Intent(this, IniciarRutaActivity::class.java)
