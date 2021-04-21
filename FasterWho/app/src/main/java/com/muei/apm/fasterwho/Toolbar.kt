@@ -65,23 +65,26 @@ open class Toolbar : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         when (item.itemId) {
             R.id.nav_home -> {
                 startActivity(intentInicio.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION))
-                Toast.makeText(this, "Clicked item one", Toast.LENGTH_SHORT).show()
+                Toast.makeText(this, "Inicio", Toast.LENGTH_SHORT).show()
             }
             R.id.nav_profile -> {
                 startActivity(intentProfile.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION))
-                Toast.makeText(this, "Clicked item two", Toast.LENGTH_SHORT).show()
+                Toast.makeText(this, "Perfil", Toast.LENGTH_SHORT).show()
             }
             R.id.nav_rankings -> {
                 startActivity(intentRankings.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION))
-                Toast.makeText(this, "Clicked item three", Toast.LENGTH_SHORT).show()
+                Toast.makeText(this, "Rankings", Toast.LENGTH_SHORT).show()
             }
             R.id.nav_routes -> {
                 startActivity(intentRutas.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION))
-                Toast.makeText(this, "Clicked item four", Toast.LENGTH_SHORT).show()
+                Toast.makeText(this, "Mis rutas", Toast.LENGTH_SHORT).show()
             }
             R.id.nav_amigos -> {
                 startActivity(intentAmigos.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION))
-                Toast.makeText(this, "Clicked item five", Toast.LENGTH_SHORT).show()
+                Toast.makeText(this, "Mis amigos", Toast.LENGTH_SHORT).show()
+            }
+            R.id.nav_logout -> {
+                Toast.makeText(this, "Logout", Toast.LENGTH_SHORT).show()
             }
         }
 

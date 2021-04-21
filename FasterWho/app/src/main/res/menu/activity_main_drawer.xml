@@ -17,9 +17,9 @@
         <item
             android:id="@+id/nav_amigos"
             android:title="Mis amigos" />
-        <!--<item
+        <item
             android:id="@+id/nav_logout"
-            android:title="Cerrar sesión"/>-->
+            android:title="Cerrar sesión"/>
 
     </group>
 
