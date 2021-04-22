@@ -7,7 +7,7 @@
     android:layout_height="match_parent"
     tools:context=".SeguimientoActivity">
 
-    <com.google.android.gms.maps.MapView
+    <!--<com.google.android.gms.maps.MapView
         android:id="@+id/mapa_ruta"
         android:layout_width="0dp"
         android:layout_height="0dp"
@@ -17,7 +17,19 @@
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="1.0" />
+        app:layout_constraintVertical_bias="1.0" /> -->
+
+    <androidx.fragment.app.FragmentContainerView
+        android:id="@+id/map"
+        android:name="com.google.android.gms.maps.SupportMapFragment"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginBottom="128dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"/>
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/centrar_button"
@@ -32,7 +44,7 @@
         app:backgroundTint="@color/white"
         app:backgroundTintMode="add"
         app:fabSize="auto"
-        app:layout_constraintBottom_toBottomOf="@+id/mapa_ruta"
+        app:layout_constraintBottom_toBottomOf="@+id/map"
         app:layout_constraintEnd_toEndOf="parent"
         app:rippleColor="#FFFFFF"
         app:srcCompat="@android:drawable/ic_menu_mylocation" />
@@ -60,7 +72,7 @@
         android:textSize="24sp"
         android:textStyle="bold"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/mapa_ruta" />
+        app:layout_constraintTop_toBottomOf="@+id/map" />
 
     <TextView
         android:id="@+id/meters_count"
