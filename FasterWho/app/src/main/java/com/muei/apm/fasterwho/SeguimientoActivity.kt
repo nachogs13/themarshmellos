@@ -24,11 +24,15 @@ class SeguimientoActivity : AppCompatActivity(), OnMapReadyCallback {
             .findFragmentById(R.id.map) as SupportMapFragment
         mapFragment.getMapAsync(this)
 
+        fun launchPopUp() {
+            val popUpFragment = SaveRouteDialogFragment()
+            popUpFragment.show(supportFragmentManager, "Save Route")
+        }
+
         val btnFinalizarRuta : Button = findViewById(R.id.finalizar_ruta_button)
         btnFinalizarRuta.setOnClickListener {
             Toast.makeText(this, "Se finaliza el seguimiento", Toast.LENGTH_SHORT).show()
-            val intent = Intent(this, PopUpSaveRoute::class.java)
-            startActivity(intent)
+            launchPopUp()
         }
     }
 
