@@ -23,11 +23,15 @@
             android:id="@+id/nav_amigos"
             android:icon="@drawable/ic_mis_amigos"
             android:title="Mis amigos" />
+    </group>
+
+    <group
+        android:id="@+id/logout"
+        android:checkableBehavior="single">
         <item
             android:id="@+id/nav_logout"
             android:icon="@drawable/ic_logout_black_24dp"
             android:title="Cerrar sesión"/>
-
     </group>
 
 </menu>

@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "862220823157",
+    "project_id": "fasterwho-434ed",
+    "storage_bucket": "fasterwho-434ed.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:862220823157:android:23d5e46e4783e98dc2a63c",
+        "android_client_info": {
+          "package_name": "com.muei.apm.fasterwho"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "862220823157-rt7mbghqt7186cg590i9r3nh24ov6td0.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyD17gk0Sn6roJLe7hMtMjuhBQ1kI0IDReY"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "862220823157-rt7mbghqt7186cg590i9r3nh24ov6td0.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

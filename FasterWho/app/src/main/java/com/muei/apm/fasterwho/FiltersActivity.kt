@@ -16,12 +16,7 @@ class FiltersActivity : AppCompatActivity() {
 
         val dialogDifLevelButton : ImageButton = findViewById(R.id.imageButtonInfo)
         dialogDifLevelButton.setOnClickListener {
-            val dialogView = LayoutInflater.from(this).inflate(R.layout.info_dialog, null)
-
-            val builder = AlertDialog.Builder(this)
-                    .setView(dialogView)
-            //show dialog
-            builder.show()
+            InfoFiltrosDialogFragment().show(supportFragmentManager,"Info Filtros")
             Toast.makeText(this, "Información de los niveles de dificultad", Toast.LENGTH_SHORT).show()
         }
 

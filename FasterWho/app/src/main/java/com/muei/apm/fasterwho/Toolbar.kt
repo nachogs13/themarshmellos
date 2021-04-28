@@ -40,10 +40,10 @@ open class Toolbar : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         supportActionBar?.setHomeAsUpIndicator(R.drawable.ic_baseline_menu_24)
     }
 
-    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
+    /*override fun onCreateOptionsMenu(menu: Menu?): Boolean {
         menuInflater.inflate(R.menu.activity_main_drawer,menu)
         return true
-    }
+    }*/
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {

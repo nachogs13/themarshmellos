@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:orientation="vertical"
+    android:layout_margin="10dp"
+    android:padding="10dp"
+    android:layout_gravity="center"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    tools:context=".InfoFiltrosDialogFragment">
+
+    <TextView
+        android:id="@+id/textNd"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:drawableRight="@drawable/ic_outline_info_24"
+        android:drawableTint="@color/blue_800"
+        android:text="Nivel de dificultad"
+        android:textColor="@color/black"
+        android:textSize="20dp"
+        android:textAlignment="center"/>
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:drawableRight="@drawable/ic_outline_emoji_events_24"
+        android:text="Bajo"
+        android:layout_marginTop="28dp"
+        android:textColor="@color/black"/>
+    <TextView
+        android:id="@+id/textBajoDesc"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="12dp"
+        android:text="Distancia: \uFE64 3km \nDesnivel acumulado: rutas llanas" />
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="28dp"
+        android:drawableRight="@drawable/ic_outline_emoji_events_24"
+        android:text="Bajo-Medio"
+        android:textColor="@color/black"/>
+    <TextView
+        android:id="@+id/textBajaMediaDesc"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="12dp"
+        android:text="Distancia: entre 3 y 5km \nDesnivel acumulado: suaves pendientes" />
+    <TextView
+        android:id="@+id/textMedia"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="28dp"
+        android:drawableRight="@drawable/ic_outline_emoji_events_24"
+        android:drawablePadding="5dp"
+        android:text="Medio"
+        android:textColor="@color/black" />
+    <TextView
+        android:id="@+id/textMediaDesc"
+        android:layout_width="300dp"
+        android:layout_height="51dp"
+        android:layout_marginTop="12dp"
+        android:text="Distancia: entre 5 y 10km \nDesnivel acumulado: pendientes moderadas" />
+    <TextView
+        android:id="@+id/textAlta"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="28dp"
+        android:drawableRight="@drawable/ic_outline_emoji_events_24"
+        android:drawablePadding="5dp"
+        android:text="Alto"
+        android:textColor="@color/black" />
+
+    <TextView
+        android:id="@+id/textAltaDesc"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="12dp"
+        android:text="Distancia: entre 10 y 15km \nDesnivel acumulado: " />
+
+    <TextView
+        android:id="@+id/textMuyAlta"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="28dp"
+        android:drawableRight="@drawable/ic_outline_emoji_events_24"
+        android:drawablePadding="5dp"
+        android:text="Muy Alto"
+        android:textColor="@color/black" />
+
+    <TextView
+        android:id="@+id/textMuyAltaDesc"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="12dp"
+        android:text="Distancia: > 15km \nDesnivel acumulado:" />
+
+</LinearLayout>
