@@ -1,224 +1,69 @@
 <?xml version="1.0" encoding="utf-8"?>
-
-<LinearLayout
+<androidx.constraintlayout.widget.ConstraintLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/activity_ruta"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:orientation="vertical"
-    android:layout_gravity="center_vertical"
-    tools:context=".RankingActivity" >
+    android:layout_height="match_parent"
+    tools:context=".EstadisticasActivity">
+
+    <TextView
+        android:id="@+id/result_text"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:textSize="30sp"
+        android:text="¡Actividad Completada!"
+        android:textStyle="bold"
+        android:textColor="@color/black"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:ignore="MissingConstraints" />
+
+
+    <androidx.fragment.app.FragmentContainerView
+        android:id="@+id/map2"
+        android:name="com.google.android.gms.maps.SupportMapFragment"
+        android:layout_width="match_parent"
+        android:layout_height="200dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintTop_toBottomOf="@+id/result_text"
+        app:layout_constraintBottom_toTopOf="@+id/fragmentEstadisticas">
+    </androidx.fragment.app.FragmentContainerView>
+
+    <TextView
+        android:id="@+id/result_textEstadisticas"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:textSize="25sp"
+        android:layout_marginTop="5dp"
+        android:layout_marginBottom="5dp"
+        android:text="Estadísticas"
+        android:textStyle="bold"
+        android:textColor="@color/black"
+        app:layout_constraintTop_toBottomOf="@+id/map2"
+        app:layout_constraintBottom_toTopOf="@+id/fragmentEstadisticas"
+        tools:ignore="MissingConstraints" />
+
+    <androidx.fragment.app.FragmentContainerView
+        android:id="@+id/fragmentEstadisticas"
+        android:name="com.muei.apm.fasterwho.EstadisticasFragment"
+        android:layout_width="match_parent"
+        tools:layout="@layout/fragment_estadisticas_list"
+        app:layout_constrainedHeight="true"
+        app:layout_constraintTop_toBottomOf="@+id/result_textEstadisticas"
+        app:layout_constraintBottom_toTopOf="@+id/cardViewFinalizar"
+        tools:ignore="MissingConstraints"
+        android:layout_height="match_parent" />
 
     <androidx.cardview.widget.CardView
+        android:id="@+id/cardViewFinalizar"
         android:layout_width="match_parent"
-        android:layout_height="50dp"
-        android:layout_gravity="top">
-        <TextView
-            android:id="@+id/result_text"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center_horizontal|top"
-            android:textSize="30sp"
-            android:text="¡Actividad Completada!"
-            android:textStyle="bold"
-            android:textColor="@color/black"/>
-
-    </androidx.cardview.widget.CardView>
-
-
-    <androidx.cardview.widget.CardView
-        android:layout_width="match_parent"
-        android:layout_height="150dp">
-
-        <ImageView
-            android:id="@+id/ImagenLeyenda2"
-            android:layout_width="match_parent"
-            android:layout_height="241dp"
-            android:layout_gravity="center_horizontal"
-            android:scaleType="centerCrop"
-            android:src="@drawable/ruta"
-            tools:src="@drawable/ruta" />
-    </androidx.cardview.widget.CardView>
-
-    <androidx.cardview.widget.CardView
-        android:layout_width="match_parent"
-        android:layout_height="30dp"
-        android:layout_gravity="top">
-
-
-        <TextView
-            android:id="@+id/result_text3"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="start|bottom"
-            android:textSize="20sp"
-            android:text="Distancia total 5km"
-            android:textColor="#4d5656 "/>
-
-    </androidx.cardview.widget.CardView>
-
-    <androidx.cardview.widget.CardView
-        android:layout_width="match_parent"
-        android:layout_height="30dp"
-        android:layout_gravity="top">
-
-
-        <TextView
-            android:id="@+id/result_text7"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="start|bottom"
-            android:textSize="20sp"
-            android:text="Duración  00:40:59"
-            android:textColor="#4d5656 "/>
-
-    </androidx.cardview.widget.CardView>
-
-    <androidx.cardview.widget.CardView
-        android:layout_width="match_parent"
-        android:layout_height="30dp"
-        android:layout_gravity="top">
-
-
-        <TextView
-            android:id="@+id/result_text39"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="start|bottom"
-            android:textSize="20sp"
-            android:text="Calorías  250"
-            android:textColor="#4d5656 "/>
-
-    </androidx.cardview.widget.CardView>
-
-    <androidx.cardview.widget.CardView
-        android:layout_width="match_parent"
-        android:layout_height="50dp">
-
-        <ImageView
-            android:id="@+id/avatar9"
-            android:layout_width="50dp"
-            android:layout_height="50dp"
-            android:layout_gravity="start|center_horizontal"
-            android:scaleType="centerCrop"
-            android:src="@drawable/velocidad"
-            tools:src="@drawable/velocidad" />
-
-        <TextView
-            android:id="@+id/velocidad"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:textSize="20sp"
-            android:text="Vel. media    04:30 min/km"
-
-            android:textColor="#4d5656"/>
-
-    </androidx.cardview.widget.CardView>
-
-    <androidx.cardview.widget.CardView
-        android:layout_width="match_parent"
-        android:layout_height="50dp">
-
-        <ImageView
-            android:id="@+id/avatar10"
-            android:layout_width="50dp"
-            android:layout_height="50dp"
-            android:layout_gravity="start|center_horizontal"
-            android:scaleType="centerCrop"
-            android:src="@drawable/velocidad"
-            tools:src="@drawable/velocidad" />
-
-        <TextView
-            android:id="@+id/velocidad2"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:textSize="20sp"
-            android:text="Vel. máx    40 km/h"
-
-            android:textColor="#4d5656"/>
-
-    </androidx.cardview.widget.CardView>
-
-    <androidx.cardview.widget.CardView
-        android:layout_width="match_parent"
-        android:layout_height="50dp">
-
-        <ImageView
-            android:id="@+id/ele"
-            android:layout_width="50dp"
-            android:layout_height="50dp"
-            android:layout_gravity="start|center_horizontal"
-            android:scaleType="centerCrop"
-            android:src="@drawable/elevacion"
-            tools:src="@drawable/elevacion" />
-
-        <TextView
-            android:id="@+id/elevacion"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:textSize="20sp"
-            android:text="Elev. gan. 113m"
-
-            android:textColor="#4d5656"/>
-
-    </androidx.cardview.widget.CardView>
-
-    <androidx.cardview.widget.CardView
-        android:layout_width="match_parent"
-        android:layout_height="50dp">
-
-        <ImageView
-            android:id="@+id/ele2"
-            android:layout_width="50dp"
-            android:layout_height="50dp"
-            android:layout_gravity="start|center_horizontal"
-            android:scaleType="centerCrop"
-            android:src="@drawable/elevacion"
-            tools:src="@drawable/elevacion" />
-
-        <TextView
-            android:id="@+id/elevacion2"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:textSize="20sp"
-            android:text="Elev. perd. 110m"
-
-            android:textColor="#4d5656"/>
-
-    </androidx.cardview.widget.CardView>
-
-    <androidx.cardview.widget.CardView
-        android:layout_width="match_parent"
-        android:layout_height="50dp">
-
-        <ImageView
-            android:id="@+id/inicio"
-            android:layout_width="50dp"
-            android:layout_height="50dp"
-            android:layout_gravity="start|center_horizontal"
-            android:scaleType="centerCrop"
-            android:src="@drawable/reloj"
-            tools:src="@drawable/reloj" />
-
-        <TextView
-            android:id="@+id/ini"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:textSize="20sp"
-            android:text="Hora de inicio   20:36"
-
-            android:textColor="#4d5656"/>
-
-    </androidx.cardview.widget.CardView>
-
-    <androidx.cardview.widget.CardView
-        android:layout_width="match_parent"
-        android:layout_height="100dp">
+        android:layout_height="100dp"
+        tools:ignore="MissingConstraints"
+        app:layout_constraintBottom_toBottomOf="parent">
 
         <Button
             android:id="@+id/buttonEstFinalizar"
@@ -228,4 +73,4 @@
             android:padding="10dp"
             android:text="Finalizar" />
     </androidx.cardview.widget.CardView>
-</LinearLayout>
+</androidx.constraintlayout.widget.ConstraintLayout>

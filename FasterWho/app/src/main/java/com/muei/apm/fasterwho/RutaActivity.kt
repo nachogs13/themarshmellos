@@ -4,8 +4,16 @@ import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.widget.*
+import com.google.android.gms.maps.CameraUpdateFactory
+import com.google.android.gms.maps.GoogleMap
+import com.google.android.gms.maps.OnMapReadyCallback
+import com.google.android.gms.maps.model.LatLng
+import com.google.android.gms.maps.model.MarkerOptions
 
-class RutaActivity : Toolbar() {
+class RutaActivity : Toolbar(), OnMapReadyCallback {
+
+    private lateinit var mMap: GoogleMap
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         //setContentView(R.layout.activity_ruta)
@@ -19,7 +27,7 @@ class RutaActivity : Toolbar() {
             startActivity(intent)
         })
 
-        val btnMaria : TextView = findViewById(R.id.maria)
+        /*val btnMaria : TextView = findViewById(R.id.maria)
         btnMaria.setOnClickListener {
             Toast.makeText(this, "Viendo usuario María", Toast.LENGTH_SHORT).show()
         }
@@ -35,16 +43,26 @@ class RutaActivity : Toolbar() {
         val btnAvatarElena : ImageView = findViewById(R.id.avatar2)
         btnAvatarElena.setOnClickListener {
             Toast.makeText(this, "Viendo usuario Elena", Toast.LENGTH_SHORT).show()
-        }
+        }*/
 
-        val btnMapa : ImageView = findViewById(R.id.imagenMapa)
+        /*val btnMapa : ImageView = findViewById(R.id.imagenMapa)
         btnMapa.setOnClickListener {
             Toast.makeText(this, "Viendo Mapa Completo", Toast.LENGTH_SHORT).show()
-        }
+        }*/
 
         val btnRating : RatingBar = findViewById(R.id.ratingBar2)
         btnRating.setOnClickListener {
             Toast.makeText(this, "Poniendo estrellas dificultad", Toast.LENGTH_SHORT).show()
         }
+
+
+    }
+    override fun onMapReady(googleMap: GoogleMap) {
+        mMap = googleMap
+
+        // Add a marker in Sydney and move the camera
+        val sydney = LatLng(-34.0, 151.0)
+        mMap.addMarker(MarkerOptions().position(sydney).title("Marker in Sydney"))
+        mMap.moveCamera(CameraUpdateFactory.newLatLng(sydney))
     }
 }
