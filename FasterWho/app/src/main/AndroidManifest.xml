@@ -46,6 +46,7 @@
         <activity android:name=".ProfileActivity" />
         <activity android:name=".FiltersActivity" />
         <activity android:name=".RegisterActivity" />
+        <activity android:name=".GoogleSignInActivity"/>
         <activity android:name=".MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -60,13 +61,13 @@
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
         </activity>
-        <activity android:name=".PopUpSaveRoute">
+        <!--<activity android:name=".PopUpSaveRoute">
             <intent-filter>
                 <action android:name="android.intent.action.VIEW" />
 
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
-        </activity>
+        </activity>-->
     </application>
 
 </manifest>

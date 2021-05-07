@@ -15,10 +15,14 @@ import androidx.appcompat.app.ActionBarDrawerToggle
 import androidx.appcompat.widget.Toolbar
 import androidx.core.view.GravityCompat
 import androidx.drawerlayout.widget.DrawerLayout
+import com.google.android.gms.auth.api.signin.GoogleSignIn
+import com.google.android.gms.auth.api.signin.GoogleSignInClient
+import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import com.google.android.material.navigation.NavigationView
 
 open class Toolbar : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListener  {
     private lateinit var drawerLayout: DrawerLayout
+    lateinit var mGoogleSignInClient: GoogleSignInClient
     lateinit var navView : NavigationView
     lateinit var frameLayout: FrameLayout
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -84,7 +88,20 @@ open class Toolbar : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
                 Toast.makeText(this, "Mis amigos", Toast.LENGTH_SHORT).show()
             }
             R.id.nav_logout -> {
-                Toast.makeText(this, "Logout", Toast.LENGTH_SHORT).show()
+                //mGoogleSignInClient.signOut()
+                val gso = GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
+                    .requestIdToken(getString(R.string.default_web_client_id))
+                    .requestEmail()
+                    .build()
+
+                mGoogleSignInClient = GoogleSignIn.getClient(this, gso)
+                mGoogleSignInClient.signOut().addOnCompleteListener(this){
+                    val intent = Intent(this, MainActivity::class.java)
+                    //Toast.makeText(this, "Saliendo de la app", Toast.LENGTH_SHORT).show()
+                    startActivity(intent)
+                    Toast.makeText(this, "Logout", Toast.LENGTH_SHORT).show()
+                }
+
             }
         }
 

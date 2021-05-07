@@ -1,33 +1,33 @@
 {
   "project_info": {
-    "project_number": "862220823157",
-    "project_id": "fasterwho-434ed",
-    "storage_bucket": "fasterwho-434ed.appspot.com"
+    "project_number": "246650974592",
+    "project_id": "fasterwho-75ffe",
+    "storage_bucket": "fasterwho-75ffe.appspot.com"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:862220823157:android:23d5e46e4783e98dc2a63c",
+        "mobilesdk_app_id": "1:246650974592:android:5f5b4b71591c26031c1165",
         "android_client_info": {
           "package_name": "com.muei.apm.fasterwho"
         }
       },
       "oauth_client": [
         {
-          "client_id": "862220823157-rt7mbghqt7186cg590i9r3nh24ov6td0.apps.googleusercontent.com",
+          "client_id": "246650974592-t85odcbdtk4hhhocf9hjh21q1ssu49kt.apps.googleusercontent.com",
           "client_type": 3
         }
       ],
       "api_key": [
         {
-          "current_key": "AIzaSyD17gk0Sn6roJLe7hMtMjuhBQ1kI0IDReY"
+          "current_key": "AIzaSyBk5upw5Yw-2hPqfCkPVcCwgSy6P0Aet6g"
         }
       ],
       "services": {
         "appinvite_service": {
           "other_platform_oauth_client": [
             {
-              "client_id": "862220823157-rt7mbghqt7186cg590i9r3nh24ov6td0.apps.googleusercontent.com",
+              "client_id": "246650974592-t85odcbdtk4hhhocf9hjh21q1ssu49kt.apps.googleusercontent.com",
               "client_type": 3
             }
           ]
