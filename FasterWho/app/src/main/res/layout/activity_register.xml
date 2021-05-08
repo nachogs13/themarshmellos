@@ -7,7 +7,7 @@
     tools:context=".RegisterActivity">
 
     <EditText
-        android:id="@+id/textEmailAddress1"
+        android:id="@+id/emailEditText"
         android:layout_width="321dp"
         android:layout_height="48dp"
         android:layout_marginTop="150dp"
@@ -16,13 +16,13 @@
         android:hint="Dirección de correo"
         android:inputType="textEmailAddress"
         app:layout_constraintHorizontal_bias="0.498"
-        app:layout_constraintBottom_toBottomOf="@id/editTextTextPersonName1"
+        app:layout_constraintBottom_toBottomOf="@id/usernameEditText"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
     <EditText
-        android:id="@+id/editTextTextPersonName1"
+        android:id="@+id/usernameEditText"
         android:layout_width="321dp"
         android:layout_height="48dp"
         android:layout_marginTop="82dp"
@@ -33,10 +33,10 @@
         app:layout_constraintHorizontal_bias="0.498"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toTopOf="@id/textEmailAddress1" />
+        app:layout_constraintTop_toTopOf="@id/emailEditText" />
 
     <EditText
-        android:id="@+id/editTextTextPassword1"
+        android:id="@+id/passwdEditText"
         android:layout_width="321dp"
         android:layout_height="48dp"
         android:layout_marginTop="82dp"
@@ -47,10 +47,10 @@
         app:layout_constraintHorizontal_bias="0.498"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toTopOf="@id/editTextTextPersonName1" />
+        app:layout_constraintTop_toTopOf="@id/usernameEditText" />
 
     <EditText
-        android:id="@+id/editTextTextPassword2"
+        android:id="@+id/repeatPasswdEditText"
         android:layout_width="321dp"
         android:layout_height="48dp"
         android:layout_marginTop="82dp"
@@ -60,7 +60,7 @@
         app:layout_constraintHorizontal_bias="0.498"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toTopOf="@id/editTextTextPassword1" />
+        app:layout_constraintTop_toTopOf="@id/passwdEditText" />
 
     <Button
         android:id="@+id/buttonAceptar"
@@ -71,7 +71,7 @@
         android:text="@string/button_aceptar"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toTopOf="@id/editTextTextPassword2"
+        app:layout_constraintTop_toTopOf="@id/repeatPasswdEditText"
         app:layout_constraintVertical_bias="0.478" />
 
     <Button
@@ -85,7 +85,7 @@
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="@id/buttonAceptar"
-        app:layout_constraintTop_toTopOf="@id/editTextTextPassword2"
+        app:layout_constraintTop_toTopOf="@id/repeatPasswdEditText"
         app:layout_constraintVertical_bias="0.478" />
 
     <ImageView
@@ -96,7 +96,7 @@
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintBottom_toBottomOf="@id/textEmailAddress1"
+        app:layout_constraintBottom_toBottomOf="@id/emailEditText"
         tools:layout_editor_absoluteX="138dp"
         tools:layout_editor_absoluteY="81dp" />
 

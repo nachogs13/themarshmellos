@@ -4,6 +4,7 @@ import android.app.Notification
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.util.Log
 import android.view.Menu
 import android.view.MenuInflater
 import android.view.MenuItem
@@ -19,6 +20,8 @@ import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInClient
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import com.google.android.material.navigation.NavigationView
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.ktx.Firebase
 
 open class Toolbar : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListener  {
     private lateinit var drawerLayout: DrawerLayout
@@ -89,18 +92,20 @@ open class Toolbar : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
             }
             R.id.nav_logout -> {
                 //mGoogleSignInClient.signOut()
+                FirebaseAuth.getInstance().signOut()
                 val gso = GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
                     .requestIdToken(getString(R.string.default_web_client_id))
                     .requestEmail()
                     .build()
-
                 mGoogleSignInClient = GoogleSignIn.getClient(this, gso)
+
                 mGoogleSignInClient.signOut().addOnCompleteListener(this){
                     val intent = Intent(this, MainActivity::class.java)
                     //Toast.makeText(this, "Saliendo de la app", Toast.LENGTH_SHORT).show()
                     startActivity(intent)
                     Toast.makeText(this, "Logout", Toast.LENGTH_SHORT).show()
                 }
+
 
             }
         }
