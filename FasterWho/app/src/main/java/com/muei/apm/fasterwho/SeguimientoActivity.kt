@@ -64,20 +64,9 @@ class SeguimientoActivity : AppCompatActivity(), OnMapReadyCallback,GoogleMap.On
         }
     }
 
-    /*override fun onMapReady(googleMap: GoogleMap) {
-        mMap = googleMap
-
-        // Add a marker in Sydney and move the camera
-        val sydney = LatLng(-34.0, 151.0)
-        mMap.addMarker(sydney?.let { MarkerOptions().position(it).title("Aquí estás tú MAQUINA!") })
-        mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(sydney,18f), 4000,null)
-        mMap.setOnMyLocationButtonClickListener(this)
-
-        enableMyLocation()
-    }*/
-
     override fun onMapReady(googleMap: GoogleMap) {
         mMap = googleMap
+        // Comprobamos los permisos
         if (!checkPermissions()) {
             requestPermissions()
         } else {
@@ -98,26 +87,30 @@ class SeguimientoActivity : AppCompatActivity(), OnMapReadyCallback,GoogleMap.On
                 // for ActivityCompat#requestPermissions for more details.
                 return
             }
+
+            // Obtenemos la posición actual y ponemos una marca en el mapa
             fusedLocationClient.lastLocation
                 .addOnCompleteListener { taskLocation ->
                     if (taskLocation.isSuccessful && taskLocation.result != null) {
 
                         val location = taskLocation.result
 
+                        // Obtenemos la latitud y longitud
                         var longitude2 = location?.longitude
                         var latitude2 = location?.latitude
 
                         // Add a marker in Sydney and move the camera
-                        val sydney = latitude2?.let { longitude2?.let { it1 -> LatLng(it, it1) } }
-                        mMap.addMarker(sydney?.let { MarkerOptions().position(it).title("Empiezas aquí") })
-                        mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(sydney,18f), 4000,null)
+                        val posicion = latitude2?.let { longitude2?.let { it1 -> LatLng(it, it1) } }
+                        mMap.addMarker(posicion?.let { MarkerOptions().position(it).title("Empiezaste aquí") })
+                        mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(posicion,16f), 2500,null)
                     } else {
                         Log.w(TAG, "getLastLocation:exception", taskLocation.exception)
                         showSnackbar("No se detectado la localización. Asegúrese de que el GPS está activado")
                     }
                 }
-            mMap.setOnMyLocationButtonClickListener(this)
 
+            // Vamos actualizando la posición actual en tiempo real
+            mMap.setOnMyLocationButtonClickListener(this)
             enableMyLocation()
         }
     }
@@ -153,7 +146,7 @@ class SeguimientoActivity : AppCompatActivity(), OnMapReadyCallback,GoogleMap.On
                     latitude = location?.latitude
                 } else {
                     Log.w(TAG, "getLastLocation:exception", taskLocation.exception)
-                    showSnackbar("No se detectado la localización. Asegúrese de que el GPS está activado")
+                    showSnackbar("No se ha detectado la localización. Asegúrese de que el GPS está activado")
                 }
             }
     }
@@ -263,6 +256,9 @@ class SeguimientoActivity : AppCompatActivity(), OnMapReadyCallback,GoogleMap.On
         Manifest.permission.ACCESS_FINE_LOCATION
     ) == PackageManager.PERMISSION_GRANTED
 
+    /**
+     * Método para activar el seguimiento en tiempo real
+     */
     @SuppressLint("MissingPermission")
     private fun enableMyLocation() {
         if (!::mMap.isInitialized) return
@@ -285,26 +281,13 @@ class SeguimientoActivity : AppCompatActivity(), OnMapReadyCallback,GoogleMap.On
     }
 
     override fun onMyLocationButtonClick(): Boolean {
-        Toast.makeText(this, "Boton pulsado", Toast.LENGTH_SHORT).show()
+        Toast.makeText(this, "Centrando el mapa", Toast.LENGTH_SHORT).show()
         return false
     }
 
-    /*@SuppressLint("MissingPermission")
-    override fun onRequestPermissionsResult(
-        requestCode: Int,
-        permissions: Array<out String>,
-        grantResults: IntArray
-    ) {
-        when(requestCode){
-            IniciarRutaActivity.REQUEST_CODE_LOCATION -> if(grantResults.isNotEmpty() && grantResults[0]==PackageManager.PERMISSION_GRANTED){
-                mMap.isMyLocationEnabled = true
-            }else{
-                Toast.makeText(this, "Para activar la localización ve a ajustes y acepta los permisos", Toast.LENGTH_SHORT).show()
-            }
-            else -> {}
-        }
-    }*/
-
+    /**
+     * Método que comprueba si se tienen los permisos cuando se sale de la app y se vuelve a abrir
+     */
     @SuppressLint("MissingPermission")
     override fun onResumeFragments() {
         super.onResumeFragments()

@@ -39,10 +39,6 @@ class IniciarRutaActivity : AppCompatActivity(), OnMapReadyCallback {
      */
     private lateinit var fusedLocationClient: FusedLocationProviderClient
 
-    companion object {
-        const val REQUEST_CODE_LOCATION = 0
-    }
-
     private lateinit var mMap: GoogleMap
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -205,32 +201,6 @@ class IniciarRutaActivity : AppCompatActivity(), OnMapReadyCallback {
         }
     }
 
-   /* @SuppressLint("MissingPermission")
-    override fun onRequestPermissionsResult(
-        requestCode: Int,
-        permissions: Array<out String>,
-        grantResults: IntArray
-    ) {
-        when(requestCode){
-            REQUEST_CODE_LOCATION -> if(grantResults.isNotEmpty() && grantResults[0]==PackageManager.PERMISSION_GRANTED){
-                mMap.isMyLocationEnabled = true
-            }else{
-                Toast.makeText(this, "Para activar la localización ve a ajustes y acepta los permisos", Toast.LENGTH_SHORT).show()
-            }
-            else -> {}
-        }
-    }*/
-
-    @SuppressLint("MissingPermission")
-    override fun onResumeFragments() {
-        super.onResumeFragments()
-        if (!::mMap.isInitialized) return
-        if(!isPermissionsGranted()){
-            mMap.isMyLocationEnabled = false
-            Toast.makeText(this, "Para activar la localización ve a ajustes y acepta los permisos", Toast.LENGTH_SHORT).show()
-        }
-    }
-
     override fun onMapReady(googleMap: GoogleMap) {
         mMap = googleMap
         if (!checkPermissions()) {
@@ -263,9 +233,9 @@ class IniciarRutaActivity : AppCompatActivity(), OnMapReadyCallback {
                         var latitude2 = location?.latitude
 
                         // Add a marker in Sydney and move the camera
-                        val sydney = latitude2?.let { longitude2?.let { it1 -> LatLng(it, it1) } }
-                        mMap.addMarker(sydney?.let { MarkerOptions().position(it).title("Aquí estás tú MAQUINA!") })
-                        mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(sydney,18f), 4000,null)
+                        val posicion = latitude2?.let { longitude2?.let { it1 -> LatLng(it, it1) } }
+                        mMap.addMarker(posicion?.let { MarkerOptions().position(it).title("Aquí estás tú MAQUINA!") })
+                        mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(posicion,16f), 2500,null)
                     } else {
                         Log.w(TAG, "getLastLocation:exception", taskLocation.exception)
                         showSnackbar("No se detectado la localización. Asegúrese de que el GPS está activado")
@@ -274,29 +244,4 @@ class IniciarRutaActivity : AppCompatActivity(), OnMapReadyCallback {
         }
     }
 
-    private fun isPermissionsGranted() = ContextCompat.checkSelfPermission(
-        this,
-        Manifest.permission.ACCESS_FINE_LOCATION
-    ) == PackageManager.PERMISSION_GRANTED
-
-    @SuppressLint("MissingPermission")
-    private fun enableMyLocation() {
-        if (!::mMap.isInitialized) return
-        if (isPermissionsGranted()) {
-            mMap.isMyLocationEnabled = true
-        } else {
-            requestLocationPermission()
-        }
-    }
-
-    private fun requestLocationPermission() {
-        if (ActivityCompat.shouldShowRequestPermissionRationale(this,
-                Manifest.permission.ACCESS_FINE_LOCATION)) {
-            Toast.makeText(this, "Ve a ajustes y acepta los permisos", Toast.LENGTH_SHORT).show()
-        } else {
-            ActivityCompat.requestPermissions(this,
-                arrayOf(Manifest.permission.ACCESS_FINE_LOCATION),
-                REQUEST_PERMISSIONS_REQUEST_CODE)
-        }
-    }
 }
