@@ -17,6 +17,7 @@ import com.google.android.gms.common.api.ApiException
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.auth.GoogleAuthProvider
+import kotlin.properties.Delegates
 
 
 class MainActivity : AppCompatActivity() {
@@ -28,11 +29,16 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
+        fun launchPopUp() {
+            val popUpFragment = EulaDialogFragment()
+            popUpFragment.show(supportFragmentManager, "Accept EULA")
+        }
+
         val btnRegistrarse : Button = findViewById(R.id.buttonRegistrarse)
         btnRegistrarse.setOnClickListener {
-            val intent = Intent(this, RegisterActivity::class.java)
-            startActivity(intent)
-            Toast.makeText(this, "Registrarse en la app", Toast.LENGTH_SHORT).show()
+            launchPopUp()
+            //val intent = Intent(this, RegisterActivity::class.java)
+            //startActivity(intent)
         }
 
         val btnEntrar : Button = findViewById(R.id.buttonEntrar)
@@ -48,6 +54,7 @@ class MainActivity : AppCompatActivity() {
             startActivity(intent)
             Toast.makeText(this, "SignIn", Toast.LENGTH_SHORT).show()
         }
+
     }
     private fun validateInputs():Boolean {
         if(email.text.toString().isEmpty()){
