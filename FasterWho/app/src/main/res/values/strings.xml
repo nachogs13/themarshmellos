@@ -65,5 +65,6 @@
     <string name="nombre_usuario">Nombre usuario</string>
     <string name="todo">TODO</string>
     <string name="title_activity_maps">Map</string>
+    <string name="settings">Settings</string>
     <!--<string name="default_web_client_id">246650974592-4qiuqa1hn9nrqs38u0n9opgid0rf9ngj.apps.googleusercontent.com</string>-->
 </resources>
