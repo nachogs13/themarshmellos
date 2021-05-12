@@ -37,9 +37,9 @@ class MainActivity : AppCompatActivity() {
 
         val btnEntrar : Button = findViewById(R.id.buttonEntrar)
         btnEntrar.setOnClickListener{
-            val intent = Intent(this, InicioActivity::class.java)
-            startActivity(intent)
-            //logIn()
+            //val intent = Intent(this, InicioActivity::class.java)
+            //startActivity(intent)
+            logIn()
         }
 
         val btnEntrarConGoogle : Button = findViewById(R.id.buttonEntrarGoogle)
