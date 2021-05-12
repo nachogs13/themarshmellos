@@ -1,5 +1,8 @@
 package com.muei.apm.fasterwho.dummy
 
+import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.firestore.GeoPoint
+import com.muei.apm.fasterwho.ItemRuta
 import java.util.ArrayList
 import java.util.HashMap
 
@@ -55,4 +58,3 @@ object DummyContent {
         override fun toString(): String = content
     }
 }
-

@@ -9,7 +9,7 @@
     tools:context=".RutaActivity">
 
     <androidx.fragment.app.FragmentContainerView
-        android:id="@+id/map"
+        android:id="@+id/mapRutaConcreta"
         android:name="com.google.android.gms.maps.SupportMapFragment"
         android:layout_width="match_parent"
         android:layout_height="200dp"
@@ -26,7 +26,7 @@
         android:layout_gravity="top"
         android:layout_margin="6dp"
         tools:ignore="MissingConstraints"
-        app:layout_constraintTop_toBottomOf="@+id/map" >
+        app:layout_constraintTop_toBottomOf="@+id/mapRutaConcreta" >
 
         <TextView
             android:id="@+id/result_text2"
