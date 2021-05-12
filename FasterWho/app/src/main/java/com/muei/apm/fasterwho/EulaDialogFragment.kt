@@ -13,6 +13,8 @@ class EulaDialogFragment : DialogFragment() {
 
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
         return activity?.let {
+            val mArgs = arguments
+            val type = mArgs!!.getString("type")
             // Use the Builder class for convenient dialog construction
             val builder = AlertDialog.Builder(it)
             builder.setMessage("Este acuerdo de licencia de usuario final o \"End-User License Agreement\" (\"EULA\") es un acuerdo legal entre usted y Marshmellos (Miriam Breijo Fachal, Ignacio García Sánchez, Christian Manuel Varela Álvarez y María Ocampo Quintáns).\n" +
@@ -55,7 +57,12 @@ class EulaDialogFragment : DialogFragment() {
                     .setPositiveButton(R.string.accept_button,
                             DialogInterface.OnClickListener { dialog, id ->
                                 Toast.makeText( activity, "Se acepta el EULA y se procede al registro", Toast.LENGTH_SHORT).show()
-                                val intent = Intent(activity, RegisterActivity::class.java)
+                                var intent: Intent? = null
+                                if (type.equals("Register")) {
+                                    intent = Intent(activity, RegisterActivity::class.java)
+                                } else if (type.equals("Google")) {
+                                    intent = Intent(activity, GoogleSignInActivity::class.java)
+                                }
                                 startActivity(intent)
                             })
                     .setNegativeButton(R.string.cancel_button,
