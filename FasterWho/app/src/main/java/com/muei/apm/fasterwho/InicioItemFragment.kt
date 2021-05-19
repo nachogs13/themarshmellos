@@ -10,10 +10,10 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import com.google.android.gms.tasks.Task
-import com.google.firebase.firestore.DocumentReference
-import com.google.firebase.firestore.FirebaseFirestore
-import com.google.firebase.firestore.GeoPoint
-import com.google.firebase.firestore.QuerySnapshot
+import com.google.firebase.firestore.*
+import com.google.firebase.ktx.Firebase
+import com.google.firebase.storage.FirebaseStorage
+import com.google.firebase.storage.StorageReference
 import kotlinx.coroutines.*
 import java.lang.ref.Reference
 
@@ -46,6 +46,7 @@ class InicioItemFragment : Fragment() {
                               savedInstanceState: Bundle?): View? {
 
         val view = inflater.inflate(R.layout.fragment_inicio_item_list, container, false)
+        var storage = FirebaseStorage.getInstance()
 
         // Set the adapter
         if (view is RecyclerView) {
@@ -63,9 +64,9 @@ class InicioItemFragment : Fragment() {
                         coordenadasFin = document.data.get("coordenadas_fin") as GeoPoint
                         coordenadasInicio = document.data.get("coordenadas_inicio") as GeoPoint
                         file = document.data.get("kmlfile") as DocumentReference
-                        Log.d("file", document.data.get("kmlfile").toString())
+                        var img = document.data.get("imgInicio") as DocumentReference
 
-                        listItem.add(ItemRuta(nombreRuta,direccionRuta,coordenadasInicio,coordenadasFin,rating,file))
+                        listItem.add(ItemRuta(nombreRuta,direccionRuta,coordenadasInicio,coordenadasFin,rating,file,img))
 
                     }
                     adapter = MyInicioItemRecyclerViewAdapter(listItem)
