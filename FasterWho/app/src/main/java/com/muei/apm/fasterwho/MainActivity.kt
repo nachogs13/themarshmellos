@@ -2,6 +2,7 @@ package com.muei.apm.fasterwho
 
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import android.widget.Button
 import android.widget.EditText
 import android.widget.Toast
@@ -56,7 +57,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun logIn(){
-
+        val firebaseAuth = FirebaseAuth.getInstance()
         passwd = findViewById(R.id.EditTextContraseña)
         email = findViewById(R.id.editTextUserName)
 
@@ -64,13 +65,20 @@ class MainActivity : AppCompatActivity() {
             FirebaseAuth.getInstance()
                     .signInWithEmailAndPassword(email.text.toString(),
                             passwd.text.toString()).addOnCompleteListener(){
-                        if(it.isSuccessful){
-                            val intent = Intent(this, InicioActivity::class.java)
-                            startActivity(intent)
-                            Toast.makeText(this, "Entrando en la aplicación", Toast.LENGTH_SHORT).show()
-                        }else{
-                            showAlert()
-                        }
+                            if(it.isSuccessful){
+                                if(FirebaseAuth.getInstance().currentUser.isEmailVerified){
+                                    val intent = Intent(this, InicioActivity::class.java)
+                                    startActivity(intent)
+                                    Toast.makeText(this, "Entrando en la aplicación", Toast.LENGTH_SHORT).show()
+                                }else{
+                                    showErrorEmailNotVerified()
+                                }
+                            }else{
+                                Log.d("task", it.exception.toString())
+                                showAlert()
+                            }
+
+
                     }
         }
 
@@ -80,6 +88,15 @@ class MainActivity : AppCompatActivity() {
         val builder = AlertDialog.Builder(this)
         builder.setTitle("Error")
         builder.setMessage("Email o contraseña incorrectos")
+        builder.setPositiveButton("Aceptar", null)
+        val dialog: AlertDialog = builder.create()
+        dialog.show()
+    }
+
+    private fun showErrorEmailNotVerified(){
+        val builder = AlertDialog.Builder(this)
+        builder.setTitle("Error")
+        builder.setMessage("Email no verificado, compruebe su correo")
         builder.setPositiveButton("Aceptar", null)
         val dialog: AlertDialog = builder.create()
         dialog.show()

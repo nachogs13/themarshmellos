@@ -1,8 +1,10 @@
 package com.muei.apm.fasterwho
 
+import android.content.DialogInterface
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.util.Log
 import android.util.Patterns
 import android.view.View
 import android.widget.Button
@@ -10,12 +12,14 @@ import android.widget.EditText
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.ktx.Firebase
 
 class RegisterActivity : AppCompatActivity() {
     lateinit var email: EditText
     lateinit var passwd: EditText
     lateinit var repeatPasswd: EditText
     lateinit var username: EditText
+    private val firebaseAuth = FirebaseAuth.getInstance()
     val MIN_PASSWD_LENGTH = 8
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -81,23 +85,57 @@ class RegisterActivity : AppCompatActivity() {
             val contraseña = passwd.text.toString()
             val repetirContraseña = repeatPasswd.text.toString()
 
-            FirebaseAuth.getInstance()
-                    .createUserWithEmailAndPassword(dirEmail,contraseña).addOnCompleteListener(){
+            /*user!!.sendEmailVerification()
+        .addOnCompleteListener { task ->
+            if (task.isSuccessful) {
+                Log.d(TAG, "Email sent.")
+            }
+        }*/
+            firebaseAuth
+                    .createUserWithEmailAndPassword(dirEmail,contraseña).addOnCompleteListener{
                         if(it.isSuccessful){
-                            Toast.makeText(this, "Success",Toast.LENGTH_SHORT)
+                            //val firebaseUser = this.firebaseAuth.currentUser!!
+                            //Toast.makeText(this, "Success",Toast.LENGTH_SHORT)
+                            //Log.d("log", firebaseUser.toString())
+                            FirebaseAuth.getInstance().currentUser.sendEmailVerification()
+                                    .addOnCompleteListener{
+                                        Log.d("Send email", "Email")
+                                    }
+                            showSuccesAlert()
                         }else {
-                            showAlert()
+                            val exception = it.exception.toString()
+                            when(exception){
+                                "ERROR_EMAIL_ALREADY_IN_USE" -> showAlert("ERROR_EMAIL_ALREADY_IN_USE")
+                                else -> {
+                                    showAlert(exception)
+                                }
+                            }
                         }
                     }
             Toast.makeText(this, "Login success", Toast.LENGTH_SHORT)
         }
     }
 
-    private fun showAlert(){
+    private fun showAlert(message : String){
         val builder = AlertDialog.Builder(this)
         builder.setTitle("Error")
-        builder.setMessage("Se ha producido un error autenticando al usuario")
+        if(message!="ERROR_EMAIL_ALREADY_IN_USE"){
+            builder.setMessage("Email ya en uso")
+        }else{
+            builder.setMessage(message)
+        }
         builder.setPositiveButton("Aceptar", null)
+        val dialog: AlertDialog = builder.create()
+        dialog.show()
+    }
+
+    private fun showSuccesAlert(){
+        val builder = AlertDialog.Builder(this)
+        builder.setTitle("¡Bienvenido!")
+        builder.setMessage("Se ha registrado con éxito. Compruebe el correo para verificar su email")
+        builder.setPositiveButton("Aceptar", DialogInterface.OnClickListener { builder, which ->
+            startActivity(Intent(this, MainActivity::class.java))
+        })
         val dialog: AlertDialog = builder.create()
         dialog.show()
     }
