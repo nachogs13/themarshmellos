@@ -1,6 +1,7 @@
 {
   "project_info": {
     "project_number": "246650974592",
+    "firebase_url": "https://fasterwho-75ffe-default-rtdb.firebaseio.com",
     "project_id": "fasterwho-75ffe",
     "storage_bucket": "fasterwho-75ffe.appspot.com"
   },
@@ -13,6 +14,22 @@
         }
       },
       "oauth_client": [
+        {
+          "client_id": "246650974592-4p0h5bjterff5cmqo6qrb73f618hf96s.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.muei.apm.fasterwho",
+            "certificate_hash": "3168a8e9041aebe93c0580942278b9b0f590e749"
+          }
+        },
+        {
+          "client_id": "246650974592-4qiuqa1hn9nrqs38u0n9opgid0rf9ngj.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.muei.apm.fasterwho",
+            "certificate_hash": "1a8a786b6c6a24906fbe11a37c049c99f14ed749"
+          }
+        },
         {
           "client_id": "246650974592-t85odcbdtk4hhhocf9hjh21q1ssu49kt.apps.googleusercontent.com",
           "client_type": 3
