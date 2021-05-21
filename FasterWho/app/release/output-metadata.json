@@ -5,7 +5,7 @@
     "kind": "Directory"
   },
   "applicationId": "com.muei.apm.fasterwho",
-  "variantName": "release",
+  "variantName": "processReleaseResources",
   "elements": [
     {
       "type": "SINGLE",

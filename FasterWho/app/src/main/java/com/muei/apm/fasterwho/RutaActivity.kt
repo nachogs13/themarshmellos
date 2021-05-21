@@ -19,6 +19,7 @@ import com.google.maps.android.data.kml.KmlPlacemark
 import com.google.maps.android.data.kml.KmlPolygon
 import com.google.maps.android.geometry.Point
 import com.google.maps.android.ktx.utils.kml.kmlLayer
+import org.w3c.dom.Text
 import java.io.File
 import java.io.InputStream
 
@@ -67,6 +68,10 @@ class RutaActivity : Toolbar(), OnMapReadyCallback {
         btnMapa.setOnClickListener {
             Toast.makeText(this, "Viendo Mapa Completo", Toast.LENGTH_SHORT).show()
         }*/
+        val textView: TextView = findViewById(R.id.distanciaTotal)
+        textView.text = "Distancia total ${intent.getDoubleExtra("distancia",0.0)} km"
+        val textViewNombreRuta: TextView = findViewById(R.id.textNombreRuta)
+        textViewNombreRuta.text = "${intent.getStringExtra("nombre")}"
 
         val btnRating : RatingBar = findViewById(R.id.ratingBar2)
         btnRating.setOnClickListener {
@@ -86,7 +91,7 @@ class RutaActivity : Toolbar(), OnMapReadyCallback {
         mMap = googleMap
         /*val double = 42.880444
         val double2 = -8.545669*/
-        mMap.setMapType(GoogleMap.MAP_TYPE_SATELLITE)
+        //mMap.setMapType(GoogleMap.MAP_TYPE_SATELLITE)
         val cameraPosition: CameraPosition = CameraPosition.Builder().
         target(LatLng(latitud_ini, longitud_ini))
                 .zoom(13.5f)
@@ -104,5 +109,4 @@ class RutaActivity : Toolbar(), OnMapReadyCallback {
                 .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.
                 HUE_ORANGE)).title("Fin"))
     }
-
 }

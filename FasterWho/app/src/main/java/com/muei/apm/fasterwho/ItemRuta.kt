@@ -16,6 +16,8 @@ class ItemRuta {
     var rating: Number ? = null
     var file: DocumentReference ? = null
     var img: DocumentReference ? = null
+    var distancia: Number ? = null
+    var desnivel: Number ? = null
 
     constructor(
         nombreRuta: String?,
@@ -24,7 +26,9 @@ class ItemRuta {
         coordenadasFinRuta: GeoPoint?,
         rating: Number?,
         file: DocumentReference?,
-        img: DocumentReference?
+        img: DocumentReference?,
+        distancia: Number,
+        desnivel: Number
     ) {
         this.nombreRuta = nombreRuta
         this.direccionRuta = direccionRuta
@@ -33,12 +37,8 @@ class ItemRuta {
         this.rating = rating
         this.file = file
         this.img = img
-    }
-
-    constructor(nombreRuta: String?, direccionRuta: String?, rating: Number?) {
-        this.nombreRuta = nombreRuta
-        this.direccionRuta = direccionRuta
-        this.rating = rating
+        this.distancia = distancia
+        this.desnivel = desnivel
     }
 
 

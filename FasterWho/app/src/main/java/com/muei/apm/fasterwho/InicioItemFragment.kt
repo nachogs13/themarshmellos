@@ -64,9 +64,12 @@ class InicioItemFragment : Fragment() {
                         coordenadasFin = document.data.get("coordenadas_fin") as GeoPoint
                         coordenadasInicio = document.data.get("coordenadas_inicio") as GeoPoint
                         file = document.data.get("kmlfile") as DocumentReference
+                        val distancia = document.data.get("distancia") as Number
+                        val desnivel = document.data.get("desnivel") as Number
                         var img = document.data.get("imgInicio") as DocumentReference
 
-                        listItem.add(ItemRuta(nombreRuta,direccionRuta,coordenadasInicio,coordenadasFin,rating,file,img))
+                        listItem.add(ItemRuta(nombreRuta,direccionRuta,coordenadasInicio,
+                                coordenadasFin,rating,file,img, distancia, desnivel))
 
                     }
                     adapter = MyInicioItemRecyclerViewAdapter(listItem)
@@ -93,42 +96,5 @@ class InicioItemFragment : Fragment() {
                 }
             }
     }
-    /*private suspend fun setDataItem() : ArrayList<ItemRuta> {
-        /*val job = launch {
-            // aquí irían as peticións de datos a Firebase
-            println("Datos listos!")
-        }
-        println("Agardando por datos de Firebase...")
-        job.join() // agardamos aquí ata que a corrutina finalice
 
-        //aquí xa continuaría a listItem.add...*/
-
-        val job = GlobalScope.launch(Dispatchers.Main) {
-            rutas = db.collection("rutas").get()
-            db.collection("rutas").get().addOnSuccessListener {
-
-                for (document in it) {
-                    Log.d("FIREBASE", "${document.id} => ${document.data} ${it}")
-                    direccionRuta = document.data.get("direccion").toString()
-                    nombreRuta = document.data.get("nombre") as String
-                    rating = document.data.get("rating") as Number
-                    coordenadasFin = document.data.get("coordenadas_fin") as GeoPoint
-                    coordenadasInicio = document.data.get("coordenadas_inicio") as GeoPoint
-
-                    listItem.add(ItemRuta(nombreRuta,direccionRuta,coordenadasInicio,coordenadasFin,rating))
-                    println("Lista"+listItem)
-                }
-            }
-            Log.d("Waiting","DATOS LISTOS!!")
-
-        }
-
-        Log.d("Waiting","Agardando por datos de Firebase...")
-        job.join()
-
-        listItem.add(ItemRuta("nombreRuta","direccionRuta",5))
-        listItem.add(ItemRuta("nombreRuta","direccionRuta",5))
-
-        return listItem
-    }*/
 }

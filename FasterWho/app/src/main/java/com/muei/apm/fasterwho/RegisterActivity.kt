@@ -12,6 +12,8 @@ import android.widget.EditText
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.database.FirebaseDatabase
+import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.ktx.Firebase
 
 class RegisterActivity : AppCompatActivity() {
@@ -20,6 +22,7 @@ class RegisterActivity : AppCompatActivity() {
     lateinit var repeatPasswd: EditText
     lateinit var username: EditText
     private val firebaseAuth = FirebaseAuth.getInstance()
+    private val db = FirebaseFirestore.getInstance()
     val MIN_PASSWD_LENGTH = 8
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -85,23 +88,17 @@ class RegisterActivity : AppCompatActivity() {
             val contraseña = passwd.text.toString()
             val repetirContraseña = repeatPasswd.text.toString()
 
-            /*user!!.sendEmailVerification()
-        .addOnCompleteListener { task ->
-            if (task.isSuccessful) {
-                Log.d(TAG, "Email sent.")
-            }
-        }*/
+
             firebaseAuth
                     .createUserWithEmailAndPassword(dirEmail,contraseña).addOnCompleteListener{
                         if(it.isSuccessful){
-                            //val firebaseUser = this.firebaseAuth.currentUser!!
-                            //Toast.makeText(this, "Success",Toast.LENGTH_SHORT)
-                            //Log.d("log", firebaseUser.toString())
                             FirebaseAuth.getInstance().currentUser.sendEmailVerification()
                                     .addOnCompleteListener{
                                         Log.d("Send email", "Email")
                                     }
                             showSuccesAlert()
+                            db.collection("usuarios").document(FirebaseAuth.getInstance().currentUser.email)
+                                    .set(hashMapOf("username" to nombreUsuario))
                         }else {
                             val exception = it.exception.toString()
                             when(exception){

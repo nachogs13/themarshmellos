@@ -31,12 +31,12 @@
         app:layout_constraintTop_toTopOf="@id/textFiltros" />
 
     <RatingBar
-        android:id="@+id/ratingBar"
+        android:id="@+id/ratingBarFiltros"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:rating="4"
         android:layout_marginTop="28dp"
         android:progressTint="@color/ambar_500"
+        android:backgroundTint="@color/white"
         app:layout_constraintHorizontal_bias="0.549"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
@@ -53,7 +53,18 @@
         app:layout_constraintHorizontal_bias="0.131"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/ratingBar" />
+        app:layout_constraintTop_toBottomOf="@id/ratingBarFiltros" />
+
+    <TextView
+        android:id="@+id/textSeekBar"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="40dp"
+        android:layout_marginBottom="6.5dp"
+        app:layout_constraintBottom_toTopOf="@id/seekBar"
+        app:layout_constraintHorizontal_bias="0.056"
+        app:layout_constraintLeft_toRightOf="@id/textDistancia"
+        app:layout_constraintRight_toLeftOf="parent" />
 
     <SeekBar
         android:id="@+id/seekBar"
@@ -62,7 +73,6 @@
         android:layout_height="64dp"
         android:max="60"
         android:progressTint="@color/blue_800"
-        android:progress="30"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toBottomOf="@id/textDistancia"
@@ -70,12 +80,12 @@
         tools:layout_editor_absoluteY="274dp" />
 
     <TextView
-        android:id="@+id/text1km"
+        android:id="@+id/text0km"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginLeft="16dp"
         android:layout_marginTop="44dp"
-        android:text="1km"
+        android:text="0km"
         app:layout_constraintHorizontal_bias="0.115"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toLeftOf="@id/text30km"
@@ -87,7 +97,7 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="44dp"
         android:text="30km"
-        app:layout_constraintLeft_toLeftOf="@id/text1km"
+        app:layout_constraintLeft_toLeftOf="@id/text0km"
         app:layout_constraintRight_toRightOf="@id/text60km"
         app:layout_constraintTop_toTopOf="@id/seekBar" />
 

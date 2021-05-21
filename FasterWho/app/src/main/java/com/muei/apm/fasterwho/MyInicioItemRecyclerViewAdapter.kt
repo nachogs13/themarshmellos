@@ -72,13 +72,18 @@ class MyInicioItemRecyclerViewAdapter(
             val coords_fin_longitud = values[pos].coordenadasFinRuta?.longitude
             val coords_ini_latitud = values[pos].coordenadasInicioRuta?.latitude
             val coords_ini_longitud = values[pos].coordenadasInicioRuta?.longitude
+            val distancia = values[pos].distancia
+            val desnivel = values[pos].desnivel
             val file = values[pos].file
 
+            intent.putExtra("distancia", distancia)
+            intent.putExtra("desnivel", desnivel)
             intent.putExtra("latitud_fin", coords_fin_latitud)
             intent.putExtra("longitud_fin", coords_fin_longitud)
             intent.putExtra("latitud_ini", coords_ini_latitud)
             intent.putExtra("longitud_ini", coords_ini_longitud)
             intent.putExtra("file", file?.id)
+            intent.putExtra("nombre", values[pos].nombreRuta)
             v.context.startActivity(intent)
         }
     }

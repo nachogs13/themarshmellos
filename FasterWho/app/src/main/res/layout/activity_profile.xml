@@ -15,13 +15,15 @@
     <ImageButton
         android:id="@+id/imageButton3"
         android:layout_width="133dp"
-        android:layout_height="135dp"
+        android:layout_height="133dp"
+        android:src="@drawable/avatar"
+        android:adjustViewBounds="true"
+        android:scaleType="fitCenter"
         app:layout_constraintBottom_toBottomOf="@id/userName"
-        app:layout_constraintHorizontal_bias="0.492"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.471"
+        app:layout_constraintVertical_bias="0.708"
         tools:srcCompat="@tools:sample/avatars" />
 
     <TextView
@@ -59,24 +61,11 @@
         android:layout_marginTop="50dp"
         android:ems="10"
         android:textSize="18dp"
-        android:text="Sexo: H"
+        android:text="Sexo:"
         app:layout_constraintHorizontal_bias="0.497"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toTopOf="@id/userName" />
-
-    <TextView
-        android:id="@+id/userInformationDate"
-        android:layout_width="315dp"
-        android:layout_height="48dp"
-        android:layout_marginTop="25dp"
-        android:ems="10"
-        android:textSize="18dp"
-        android:text="Fecha de nacimiento: 05/06/1998"
-        app:layout_constraintHorizontal_bias="0.497"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toTopOf="@id/userInformationSex" />
 
     <TextView
         android:id="@+id/userInformationWeight"
@@ -85,11 +74,11 @@
         android:layout_marginTop="25dp"
         android:ems="10"
         android:textSize="18dp"
-        android:text="Peso: 70 kg"
+        android:text="Peso:"
         app:layout_constraintHorizontal_bias="0.497"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toTopOf="@id/userInformationDate" />
+        app:layout_constraintTop_toTopOf="@id/userInformationSex" />
 
     <TextView
         android:id="@+id/userInformationHeight"
@@ -98,16 +87,29 @@
         android:layout_marginTop="25dp"
         android:ems="10"
         android:textSize="18dp"
-        android:text="Estatura: 170 cm"
+        android:text="Estatura:"
+        app:layout_constraintHorizontal_bias="0.497"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toTopOf="@id/userInformationWeight" />
 
     <TextView
+        android:id="@+id/userInformationDate"
+        android:layout_width="315dp"
+        android:layout_height="48dp"
+        android:layout_marginTop="25dp"
+        android:ems="10"
+        android:textSize="18dp"
+        android:text="Fecha de nacimiento:"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toTopOf="@id/userInformationHeight" />
+
+    <TextView
         android:id="@+id/userStatistics"
         android:layout_width="315dp"
         android:layout_height="48dp"
-        android:layout_marginTop="50dp"
+        android:layout_marginTop="70dp"
         android:ems="10"
         android:gravity="center"
         android:textSize="20dp"
@@ -170,17 +172,20 @@
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toTopOf="@id/userStatisticsActivityLevel" />
 
-    <ImageButton
-        android:id="@+id/imageButtonEdit"
+    <Button
+        android:id="@+id/editarPerfilButton"
+        style="@style/Widget.MaterialComponents.Button.OutlinedButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="248dp"
+        android:layout_marginTop="296dp"
         android:backgroundTint="@color/white"
-        app:layout_constraintHorizontal_bias="0.802"
+        android:text="Editar perfil"
+        android:textColor="@color/blue_800"
+        android:textSize="10dp"
+        app:layout_constraintHorizontal_bias="0.736"
         app:layout_constraintLeft_toLeftOf="@id/userName"
         app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:srcCompat="@drawable/ic_baseline_edit_24" />
+        app:layout_constraintTop_toTopOf="parent" />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

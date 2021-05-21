@@ -28,22 +28,20 @@
         app:layout_constraintTop_toBottomOf="@+id/mapRutaConcreta" >
 
         <TextView
-            android:id="@+id/result_text2"
+            android:id="@+id/textNombreRuta"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="start"
-            android:text="Dificultad"
             android:textColor="#4d5656"
             android:textSize="20sp"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
         <TextView
-            android:id="@+id/result_text3"
+            android:id="@+id/distanciaTotal"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="start|bottom"
-            android:text="Distancia total 5km"
             android:textColor="#4d5656 "
             android:textSize="20sp"
             app:layout_constraintStart_toStartOf="parent"
@@ -54,6 +52,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="end"
+            style="?android:attr/ratingBarStyleSmall"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
     </androidx.cardview.widget.CardView>
