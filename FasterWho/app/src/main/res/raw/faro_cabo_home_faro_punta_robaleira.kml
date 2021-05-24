@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <kml xmlns="http://earth.google.com/kml/2.0"> <Document>
- <name>Faro cabo home y faro de punta robaleira</name>
+ <name>Faro cabo home y faro punta robaleira</name>
  <Style id="colorLine">
  <LineStyle>
  <color>F03399FF</color>
@@ -10,8 +10,8 @@
  <color>ff235523</color>
  </PolyStyle>
  </Style> <Placemark>
- <name>Faro cabo home y faro de punta robaleira</name>
- <description>Cangas, Pontevedra</description>
+ <name>Faro cabo home y faro punta robaleira</name>
+ <description>Cangas,Pontevedra</description>
  <styleUrl>#colorLine</styleUrl>
  <LineString>
  <extrude>1</extrude>
