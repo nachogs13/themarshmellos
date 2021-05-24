@@ -1,22 +1,13 @@
 package com.muei.apm.fasterwho
 
-import android.content.Context
 import android.content.Intent
-import android.icu.number.NumberFormatter.with
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.ImageView
-import android.widget.RatingBar
-import android.widget.TextView
+import android.widget.*
 import androidx.recyclerview.widget.RecyclerView
-import com.bumptech.glide.Glide
-import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.storage.FirebaseStorage
-import com.google.firebase.storage.StorageReference
 import com.muei.apm.fasterwho.dummy.DummyContent.DummyItem
-import com.bumptech.glide.Glide.with as with
 
 
 /**
@@ -31,12 +22,7 @@ class MyInicioItemRecyclerViewAdapter(
     private val values: List<ItemRuta>)
     : RecyclerView.Adapter<MyInicioItemRecyclerViewAdapter.ViewHolder>() {
 
-    private val db = FirebaseFirestore.getInstance()
-
-    private var listItem : ArrayList<ItemRuta> = ArrayList()
-
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
-        Log.d("VALUES",values.toString())
         val view = LayoutInflater.from(parent.context)
             .inflate(R.layout.fragment_inicio_item, parent, false)
         return ViewHolder(view)
@@ -46,11 +32,13 @@ class MyInicioItemRecyclerViewAdapter(
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         val storage = FirebaseStorage.getInstance()
         val item = values[position]
+
         holder.mainNombreView.text = item.nombreRuta
         holder.mainDirView.text = item.direccionRuta
         holder.mainRatingView.rating = item.rating!!.toFloat()
         var img = storage.getReference(item.img?.path.toString())
         GlideApp.with(holder.itemView.context).load(img).into(holder.mainImgRuta)
+
     }
 
     override fun getItemCount(): Int = values.size
@@ -87,4 +75,5 @@ class MyInicioItemRecyclerViewAdapter(
             v.context.startActivity(intent)
         }
     }
+
 }

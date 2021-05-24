@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:layout_width="wrap_content"
+    android:layout_width="match_parent"
     android:layout_height="wrap_content"
     xmlns:tools="http://schemas.android.com/tools"
     android:orientation="horizontal">
@@ -26,24 +26,53 @@
             android:id="@+id/mi_ruta_nombre"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_margin="@dimen/text_margin"
+            android:layout_marginTop="@dimen/text_margin"
+            android:layout_marginBottom="5dp"
+            android:layout_marginLeft="@dimen/text_margin"
             android:textAppearance="?attr/textAppearanceListItem" />
 
         <TextView
             android:id="@+id/mi_ruta_direccion"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_margin="@dimen/text_margin"
+            android:layout_marginBottom="10dp"
+            android:layout_marginLeft="@dimen/text_margin"
             android:textAppearance="?attr/textAppearanceListItem" />
+        <RatingBar
+            android:id="@+id/mi_ruta_score"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:gravity="center_vertical"
+            android:layout_marginLeft="16dp"
+            android:layout_marginTop="2dp"
+            android:progressTint="@color/ambar_500"
+            android:numStars="5"
+            android:max="100"
+            android:rating="0.0"
+            android:stepSize="0.0"
+            style="?android:attr/ratingBarStyleSmall"
+            android:layout_weight="1" />
     </LinearLayout>
 
-    <ImageView
-        android:id="@+id/image_lock"
+    <ImageButton
+        android:id="@+id/image_lock_ruta"
         android:layout_width="60dp"
         android:layout_height="60dp"
-        android:contentDescription="@string/app_name"
         android:padding="18dp"
+        android:background="@null"
+        android:visibility="gone"
+        android:layout_gravity="end|bottom"
         android:scaleType="centerCrop"
         app:srcCompat="@drawable/ic_baseline_lock_24" />
+    <ImageButton
+        android:id="@+id/image_unlock_ruta"
+        android:layout_width="60dp"
+        android:layout_height="60dp"
+        android:padding="18dp"
+        android:background="@null"
+        android:visibility="gone"
+        android:layout_gravity="end|bottom"
+        android:scaleType="centerCrop"
+        app:srcCompat="@drawable/ic_lock_open_black_24dp" />
 
 </LinearLayout>

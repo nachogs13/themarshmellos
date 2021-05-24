@@ -1,6 +1,7 @@
 package com.muei.apm.fasterwho
 
 import android.os.Bundle
+import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
@@ -8,6 +9,10 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.firestore.DocumentReference
+import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.firestore.GeoPoint
 import com.muei.apm.fasterwho.dummy.DummyContent
 
 // TODO: Rename parameter arguments, choose names that match
@@ -21,6 +26,18 @@ private const val ARG_PARAM2 = "param2"
 class MiRutaFragment : Fragment() {
 
     private var columnCount = 1
+    private val db = FirebaseFirestore.getInstance()
+    private lateinit var direccionRuta : String
+    private lateinit var nombreRuta : String
+    private lateinit var coordenadasInicio : GeoPoint
+    private lateinit var coordenadasFin : GeoPoint
+    private lateinit var rating : Number
+    private lateinit var file : DocumentReference
+    private var listItem : ArrayList<ItemRuta> = ArrayList()
+    private var filteredList : ArrayList<ItemRuta> = ArrayList()
+    private var puntuacion : Float = 0F
+    private var dificultad : Float = 0F
+    private var distancia : Int = 0
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -43,7 +60,30 @@ class MiRutaFragment : Fragment() {
                     columnCount <= 1 -> LinearLayoutManager(context)
                     else -> GridLayoutManager(context, columnCount)
                 }
-                adapter = MyMiRutaRecyclerViewAdapter(DummyContent.ITEMS)
+                Log.d("currentUser", FirebaseAuth.getInstance().currentUser.email.toString())
+                db.collection("rutas")
+                        .whereEqualTo("propietario",FirebaseAuth.getInstance().currentUser.email.toString())
+                        .get().addOnSuccessListener {
+
+                    for (document in it) {
+                        direccionRuta = document.data.get("direccion").toString()
+                        nombreRuta = document.data.get("nombre") as String
+                        rating = document.data.get("rating") as Number
+                        coordenadasFin = document.data.get("coordenadas_fin") as GeoPoint
+                        coordenadasInicio = document.data.get("coordenadas_inicio") as GeoPoint
+                        val public = document.data.get("public") as Boolean
+                        file = document.data.get("kmlfile") as DocumentReference
+                        val dist = document.data.get("distancia") as Number
+                        val desnivel = document.data.get("desnivel") as Number
+                        var img = document.data.get("imgInicio") as DocumentReference
+                        val id = document.id as String
+
+                        listItem.add(ItemRuta(nombreRuta,direccionRuta,coordenadasInicio,
+                                coordenadasFin,rating,file,img, dist, desnivel, public,id))
+                    }
+                        adapter = MyMiRutaRecyclerViewAdapter(listItem)
+
+                }
             }
         }
         return view
@@ -63,4 +103,5 @@ class MiRutaFragment : Fragment() {
                 }
             }
     }
+
 }

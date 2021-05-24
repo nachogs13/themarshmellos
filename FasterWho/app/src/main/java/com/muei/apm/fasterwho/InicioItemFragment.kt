@@ -38,12 +38,9 @@ class InicioItemFragment : Fragment() {
     private lateinit var file : DocumentReference
     private var listItem : ArrayList<ItemRuta> = ArrayList()
     private var filteredList : ArrayList<ItemRuta> = ArrayList()
-    private lateinit var rutas : Task<QuerySnapshot>
-    private lateinit var docs : QuerySnapshot
     private var puntuacion : Float = 0F
     private var dificultad : Float = 0F
     private var distancia : Int = 0
-    private lateinit var contentView: View
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -55,7 +52,6 @@ class InicioItemFragment : Fragment() {
         val preferences = this.activity?.getSharedPreferences(getString(
                 R.string.preference_filtersActivity_key), Context.MODE_PRIVATE) ?: return
         puntuacion = preferences.getFloat(getString(R.string.puntuacion),0F)
-        Log.d("puntuacion", puntuacion.toString())
         dificultad = preferences.getFloat(getString(R.string.nivel_de_dificultad),0F)
         distancia = preferences.getInt(getString(R.string.distancia),0)
     }
@@ -64,9 +60,7 @@ class InicioItemFragment : Fragment() {
                               savedInstanceState: Bundle?): View? {
 
         val view = inflater.inflate(R.layout.fragment_inicio_item_list, container, false)
-        var storage = FirebaseStorage.getInstance()
         var filteredList = ArrayList<ItemRuta>()
-
 
         // Set the adapter
         if (view is RecyclerView) {
@@ -75,7 +69,7 @@ class InicioItemFragment : Fragment() {
                     columnCount <= 1 -> LinearLayoutManager(context)
                     else -> GridLayoutManager(context, columnCount)
                 }
-                db.collection("rutas").get().addOnSuccessListener {
+                db.collection("rutas").whereEqualTo("public",true).get().addOnSuccessListener {
 
                     for (document in it) {
                         direccionRuta = document.data.get("direccion").toString()
@@ -85,29 +79,24 @@ class InicioItemFragment : Fragment() {
                         coordenadasInicio = document.data.get("coordenadas_inicio") as GeoPoint
                         file = document.data.get("kmlfile") as DocumentReference
                         val dist = document.data.get("distancia") as Number
+                        val public = document.data.get("public") as Boolean
                         val desnivel = document.data.get("desnivel") as Number
                         var img = document.data.get("imgInicio") as DocumentReference
 
                         listItem.add(ItemRuta(nombreRuta,direccionRuta,coordenadasInicio,
-                                coordenadasFin,rating,file,img, dist, desnivel))
+                                coordenadasFin,rating,file,img, dist, desnivel,public))
                     }
                     if (puntuacion!=0F || distancia!=0 || dificultad!=0F){
-
                         filteredList = filtrarLista()
 
-                        Log.d("isEmpty", filteredList.isEmpty().toString())
                         if (!filteredList.isEmpty()){
 
                             adapter = MyInicioItemRecyclerViewAdapter(filteredList)
-                        }else {
-                            Log.d("filteredList", filteredList.toString())
                         }
 
                     }else {
                         adapter = MyInicioItemRecyclerViewAdapter(listItem)
                     }
-                    Log.d("preferences, punt", puntuacion.toString())
-
 
                 }
 
@@ -147,7 +136,6 @@ class InicioItemFragment : Fragment() {
                         it.distancia?.toFloat()!! < distancia.toFloat() + 1F
             }
             Log.d("match", match.toString())
-            //filteredList.addAll(match)
             filteredList = match as ArrayList<ItemRuta>
         }
         if (dificultad!=0F){
