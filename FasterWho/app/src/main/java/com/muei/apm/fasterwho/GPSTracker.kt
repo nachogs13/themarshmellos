@@ -171,6 +171,7 @@ class GPSTracker(contexto: Activity, registrador: RegistradorKML) : AppCompatAct
 
         //Mostramos la nueva ubicación recibida
         updateUI(location)
+        
     }
 
 }

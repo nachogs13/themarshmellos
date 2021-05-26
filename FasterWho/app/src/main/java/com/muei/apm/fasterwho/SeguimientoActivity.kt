@@ -4,14 +4,15 @@ import android.Manifest
 import android.annotation.SuppressLint
 import android.content.Intent
 import android.content.pm.PackageManager
+import android.graphics.Color
 import android.net.Uri
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.provider.Settings
 import android.util.Log
 import android.view.View
 import android.widget.Button
 import android.widget.Toast
+import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import com.google.android.gms.location.FusedLocationProviderClient
@@ -22,9 +23,15 @@ import com.google.android.gms.maps.OnMapReadyCallback
 import com.google.android.gms.maps.SupportMapFragment
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.MarkerOptions
+import com.google.android.gms.maps.model.Polyline
+import com.google.android.gms.maps.model.PolylineOptions
 import com.google.android.material.snackbar.Snackbar
 
 class SeguimientoActivity : AppCompatActivity(), OnMapReadyCallback,GoogleMap.OnMyLocationButtonClickListener {
+    private lateinit var gps: GPSTracker
+    private lateinit var registro: RegistradorKML
+    private lateinit var ultimaPosicion: LatLng
+    private lateinit var ruta: Polyline
 
     private lateinit var mMap: GoogleMap
     private val TAG = "SeguimientoActivity"
@@ -45,12 +52,19 @@ class SeguimientoActivity : AppCompatActivity(), OnMapReadyCallback,GoogleMap.On
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_seguimiento)
 
+
         // Añado esto para la integracion de la geolocalizacion
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(this)
 
         val mapFragment = supportFragmentManager
             .findFragmentById(R.id.map) as SupportMapFragment
         mapFragment.getMapAsync(this)
+
+        registro = RegistradorKML(this)
+        gps = GPSTracker(this, registro)
+        // Abrimos el fichero KML (sobreescribe) y comienza los updates
+        registro.abrirFichero()
+        gps.toggleLocationUpdates(true)
 
         fun launchPopUp() {
             val popUpFragment = SaveRouteDialogFragment()
@@ -60,6 +74,8 @@ class SeguimientoActivity : AppCompatActivity(), OnMapReadyCallback,GoogleMap.On
         val btnFinalizarRuta : Button = findViewById(R.id.finalizar_ruta_button)
         btnFinalizarRuta.setOnClickListener {
             Toast.makeText(this, "Se finaliza el seguimiento", Toast.LENGTH_SHORT).show()
+            gps.toggleLocationUpdates(false)
+            registro.cerrarFichero()
             launchPopUp()
         }
     }
@@ -109,9 +125,14 @@ class SeguimientoActivity : AppCompatActivity(), OnMapReadyCallback,GoogleMap.On
                     }
                 }
 
+            // Añado esto para pintar la linea de la ruta
+            var opcionesPolyLine = PolylineOptions().color(Color.CYAN).width(4F)
+            ruta = mMap.addPolyline(opcionesPolyLine)
+
             // Vamos actualizando la posición actual en tiempo real
             mMap.setOnMyLocationButtonClickListener(this)
             enableMyLocation()
+
         }
     }
 
