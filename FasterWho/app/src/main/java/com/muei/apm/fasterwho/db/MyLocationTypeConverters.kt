@@ -1,6 +1,7 @@
 package com.muei.apm.fasterwho.db
 
 import androidx.room.TypeConverter
+import com.google.android.gms.maps.model.LatLng
 import java.util.*
 
 /**
@@ -28,5 +29,22 @@ class MyLocationTypeConverters {
     @TypeConverter
     fun toUUID(uuid: String?): UUID? {
         return UUID.fromString(uuid)
+    }
+
+    @TypeConverter
+    fun fromLatLng(position: LatLng?): String? {
+        if (position != null) {
+            return position.latitude.toString() + "|" + position.longitude.toString()
+        }
+        return null
+    }
+
+    @TypeConverter
+    fun toLatLng(position: String?): LatLng? {
+        if (position != null) {
+            val l =position.split("|")
+            return LatLng(l[0].toDouble(),l[1].toDouble())
+        }
+        return null
     }
 }

@@ -2,9 +2,12 @@ package com.muei.apm.fasterwho
 
 import android.Manifest
 import android.annotation.SuppressLint
+import android.content.BroadcastReceiver
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.graphics.Color
+import android.location.Location
+import android.location.LocationListener
 import android.net.Uri
 import android.os.Bundle
 import android.provider.Settings
@@ -15,6 +18,10 @@ import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
+import androidx.fragment.app.FragmentActivity
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.ViewModelProviders
+import com.google.android.gms.location.FusedLocationProviderApi
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
 import com.google.android.gms.maps.CameraUpdateFactory
@@ -26,8 +33,11 @@ import com.google.android.gms.maps.model.MarkerOptions
 import com.google.android.gms.maps.model.Polyline
 import com.google.android.gms.maps.model.PolylineOptions
 import com.google.android.material.snackbar.Snackbar
+import com.muei.apm.fasterwho.db.MyLocationAccessor
+import java.lang.StringBuilder
+import java.util.concurrent.Executors
 
-class SeguimientoActivity : AppCompatActivity(), OnMapReadyCallback,GoogleMap.OnMyLocationButtonClickListener {
+class SeguimientoActivity : AppCompatActivity()/*,com.google.android.gms.location.LocationListener*/, OnMapReadyCallback,GoogleMap.OnMyLocationButtonClickListener{
     private lateinit var gps: GPSTracker
     private lateinit var registro: RegistradorKML
     private lateinit var ultimaPosicion: LatLng
@@ -48,6 +58,12 @@ class SeguimientoActivity : AppCompatActivity(), OnMapReadyCallback,GoogleMap.On
      */
     private lateinit var fusedLocationClient: FusedLocationProviderClient
 
+    //private var locationRepository = MyLocationAccessor
+    private lateinit var locationRepository: LocationUpdateViewModel
+    /*private val locationUpdateViewModel by lazy {
+        ViewModelProviders.of(this).get(LocationUpdateViewModel::class.java)
+    }*/
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_seguimiento)
@@ -55,16 +71,23 @@ class SeguimientoActivity : AppCompatActivity(), OnMapReadyCallback,GoogleMap.On
 
         // Añado esto para la integracion de la geolocalizacion
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(this)
-
         val mapFragment = supportFragmentManager
             .findFragmentById(R.id.map) as SupportMapFragment
         mapFragment.getMapAsync(this)
 
         registro = RegistradorKML(this)
-        gps = GPSTracker(this, registro)
+        //gps = GPSTracker(this, registro)
         // Abrimos el fichero KML (sobreescribe) y comienza los updates
-        registro.abrirFichero()
-        gps.toggleLocationUpdates(true)
+        //registro.abrirFichero()
+        //gps.toggleLocationUpdates(true)
+        /*locationRepository.getInstance(
+            this,
+            Executors.newSingleThreadExecutor()
+        )*/
+        locationRepository = run {
+            ViewModelProviders.of(this).get(LocationUpdateViewModel::class.java)
+        }
+        locationRepository.deleteLocations()
 
         fun launchPopUp() {
             val popUpFragment = SaveRouteDialogFragment()
@@ -74,13 +97,37 @@ class SeguimientoActivity : AppCompatActivity(), OnMapReadyCallback,GoogleMap.On
         val btnFinalizarRuta : Button = findViewById(R.id.finalizar_ruta_button)
         btnFinalizarRuta.setOnClickListener {
             Toast.makeText(this, "Se finaliza el seguimiento", Toast.LENGTH_SHORT).show()
-            gps.toggleLocationUpdates(false)
+            //gps.toggleLocationUpdates(false)
+            registro.abrirFichero()
+            //registro.cerrarFichero()
+            locationRepository.stopLocationUpdates()
+            locationRepository.locationListLiveData.observe(
+                this,
+                androidx.lifecycle.Observer { locations ->
+                    locations?.let {
+                        Log.d(TAG, "Got ${locations.size} locations")
+
+                        if (locations.isEmpty()) {
+                            Toast.makeText(this,"No hay localizaciones",Toast.LENGTH_SHORT).show()
+                        } else {
+                            Toast.makeText(this,"Guardando ${locations.size} localizaciones en un fichero",Toast.LENGTH_SHORT).show()
+                            val outputStringBuilder = StringBuilder("")
+                            for (location in locations) {
+                                registro.anhadirPunto(location.latitude,location.longitude,0.0)
+                            }
+
+                            //Toast.makeText(this,"Se acaban",Toast.LENGTH_SHORT).show()
+                        }
+                    }
+                }
+            )
             registro.cerrarFichero()
             launchPopUp()
         }
     }
 
     override fun onMapReady(googleMap: GoogleMap) {
+
         mMap = googleMap
         // Comprobamos los permisos
         if (!checkPermissions()) {
@@ -103,6 +150,10 @@ class SeguimientoActivity : AppCompatActivity(), OnMapReadyCallback,GoogleMap.On
                 // for ActivityCompat#requestPermissions for more details.
                 return
             }
+            // Añado esto para pintar la linea de la ruta
+            var opcionesPolyLine = PolylineOptions().color(Color.CYAN).width(4F)
+            ruta = mMap.addPolyline(opcionesPolyLine)
+
 
             // Obtenemos la posición actual y ponemos una marca en el mapa
             fusedLocationClient.lastLocation
@@ -119,19 +170,46 @@ class SeguimientoActivity : AppCompatActivity(), OnMapReadyCallback,GoogleMap.On
                         val posicion = latitude2?.let { longitude2?.let { it1 -> LatLng(it, it1) } }
                         mMap.addMarker(posicion?.let { MarkerOptions().position(it).title("Empiezaste aquí") })
                         mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(posicion,16f), 2500,null)
+                        ruta.points = listOf(LatLng(43.313187, -8.860774), posicion)
                     } else {
                         Log.w(TAG, "getLastLocation:exception", taskLocation.exception)
                         showSnackbar("No se detectado la localización. Asegúrese de que el GPS está activado")
                     }
                 }
 
-            // Añado esto para pintar la linea de la ruta
-            var opcionesPolyLine = PolylineOptions().color(Color.CYAN).width(4F)
-            ruta = mMap.addPolyline(opcionesPolyLine)
+
+            ruta.points =
+                listOf(LatLng(-35.016, 143.321),LatLng(-34.747, 145.592))
 
             // Vamos actualizando la posición actual en tiempo real
             mMap.setOnMyLocationButtonClickListener(this)
             enableMyLocation()
+            locationRepository.startLocationUpdates()
+            //locationUpdateViewModel.startLocationUpdates()
+
+            //val locationListLiveData = locationRepository.getLocations()
+            locationRepository.locationListLiveData.observe(
+                this,androidx.lifecycle.Observer { locations ->
+                    locations?.let {
+                        Log.d(TAG, "Se obtienen ${locations.size} localizaciones")
+                        //Toast.makeText(this, "Se obtienen ${locations.size} localizaciones", Toast.LENGTH_SHORT).show()
+                        if (locations.isEmpty()) {
+                            Log.d(TAG, "Error localizaciones")
+                        } else {
+                            //Toast.makeText(this, "Ultima localizacion " + locations.last().latitude + "--" +locations.last().longitude, Toast.LENGTH_SHORT).show()
+                            /*val points = ruta.points
+                            points.add(LatLng(
+                                locations.last().latitude, locations.last().longitude
+                            ))*/
+                            //points.add(LatLng(43.310767, -8.859765))
+                            ruta.points = locations
+                            Toast.makeText(this,"Puntos " + ruta.points.size, Toast.LENGTH_SHORT).show()
+                        }
+                    }
+
+                }
+
+            )
 
         }
     }
@@ -160,7 +238,6 @@ class SeguimientoActivity : AppCompatActivity(), OnMapReadyCallback,GoogleMap.On
         fusedLocationClient.lastLocation
             .addOnCompleteListener { taskLocation ->
                 if (taskLocation.isSuccessful && taskLocation.result != null) {
-
                     val location = taskLocation.result
 
                     longitude = location?.longitude
@@ -277,6 +354,7 @@ class SeguimientoActivity : AppCompatActivity(), OnMapReadyCallback,GoogleMap.On
         Manifest.permission.ACCESS_FINE_LOCATION
     ) == PackageManager.PERMISSION_GRANTED
 
+
     /**
      * Método para activar el seguimiento en tiempo real
      */
@@ -303,6 +381,29 @@ class SeguimientoActivity : AppCompatActivity(), OnMapReadyCallback,GoogleMap.On
 
     override fun onMyLocationButtonClick(): Boolean {
         Toast.makeText(this, "Centrando el mapa", Toast.LENGTH_SHORT).show()
+        //Log.i(TAG, "Localizacion modificada")
+        //Toast.makeText(this, "Localizacion Modificada", Toast.LENGTH_SHORT).show()
+        //val locationListLiveData = locationRepository.getLocations()
+        locationRepository.locationListLiveData.observe(
+            this,androidx.lifecycle.Observer { locations ->
+                locations?.let {
+
+                    if (locations.isEmpty()) {
+                        Log.d(TAG, "Error localizaciones")
+                    } else {
+                        val points = ruta.points
+                        points.add(LatLng(
+                            locations.last().latitude, locations.last().longitude
+                        ))
+
+                        ruta.points = points
+                        Log.d(TAG, "Se obtienen ${locations.size} localizaciones")
+                        Toast.makeText(this, "Se obtienen ${locations.size} localizaciones", Toast.LENGTH_SHORT).show()
+                    }
+                }
+
+            }
+        )
         return false
     }
 
@@ -318,4 +419,65 @@ class SeguimientoActivity : AppCompatActivity(), OnMapReadyCallback,GoogleMap.On
             Toast.makeText(this, "Para activar la localización ve a ajustes y acepta los permisos", Toast.LENGTH_SHORT).show()
         }
     }
+
+    /*override fun onMyLocationChangeListener(p0: Location?) {
+        Log.i(TAG, "Localizacion modificada")
+        Toast.makeText(this, "Localizacion Modificada", Toast.LENGTH_SHORT).show()
+        //val locationListLiveData = locationRepository.getLocations()
+        locationRepository.locationListLiveData.observe(
+            this,androidx.lifecycle.Observer { locations ->
+                locations?.let {
+                    Log.d(TAG, "Se obtienen ${locations.size} localizaciones")
+                    Toast.makeText(this, "Se obtienen cosas", Toast.LENGTH_SHORT).show()
+                    if (locations.isEmpty()) {
+                        Log.d(TAG, "Error localizaciones")
+                    } else {
+                        val points = ruta.points
+                        points.add(LatLng(
+                            locations.last().latitude, locations.last().longitude
+                        ))
+                        ruta.points = points
+                    }
+                }
+
+            }
+        )
+    }*/
+
+    /*override fun onLocationChanged(p0: Location?) {
+        Log.i(TAG, "Localizacion modificada")
+        Toast.makeText(this, "Localizacion Modificada", Toast.LENGTH_SHORT).show()
+        //val locationListLiveData = locationRepository.getLocations()
+        locationRepository.locationListLiveData.observe(
+            this,androidx.lifecycle.Observer { locations ->
+                locations?.let {
+                    Log.d(TAG, "Se obtienen ${locations.size} localizaciones")
+                    Toast.makeText(this, "Se obtienen cosas", Toast.LENGTH_SHORT).show()
+                    if (locations.isEmpty()) {
+                        Log.d(TAG, "Error localizaciones")
+                    } else {
+                        Toast.makeText(this, "Ultima localizacion2 " + locations.last().latitude, Toast.LENGTH_SHORT).show()
+                        val points = ruta.points
+                        points.add(LatLng(
+                            locations.last().latitude, locations.last().longitude
+                        ))
+                        ruta.points = points
+                    }
+                }
+
+            }
+
+        )
+    }*/
+
+
+    /*val receivingLocationUpdates: LiveData<Boolean> = locationRepository.receivingLocationUpdates
+
+
+
+    fun startLocationUpdates() = locationRepository.startLocationUpdates()
+
+    fun stopLocationUpdates() = locationRepository.stopLocationUpdates()*/
+
+
 }

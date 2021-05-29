@@ -4,13 +4,16 @@ import android.Manifest
 import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
+import android.content.pm.PackageManager
 import android.util.Log
 import androidx.annotation.MainThread
+import androidx.core.app.ActivityCompat
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationRequest
 import com.google.android.gms.location.LocationServices
+import com.muei.apm.fasterwho.LocationUpdatesBroadcastReceiver
 import java.util.concurrent.TimeUnit
 
 private const val TAG = "MyLocationManager"
@@ -42,15 +45,15 @@ class MyLocationManager private constructor(private val context: Context) {
         // IMPORTANT NOTE: Apps running on "O" devices (regardless of targetSdkVersion) may
         // receive updates less frequently than this interval when the app is no longer in the
         // foreground.
-        interval = TimeUnit.SECONDS.toMillis(60)
+        interval = TimeUnit.SECONDS.toMillis(5)
 
         // Sets the fastest rate for active location updates. This interval is exact, and your
         // application will never receive updates faster than this value.
-        fastestInterval = TimeUnit.SECONDS.toMillis(30)
+        fastestInterval = TimeUnit.SECONDS.toMillis(5)
 
         // Sets the maximum time when batched location updates are delivered. Updates may be
         // delivered sooner than this interval.
-        maxWaitTime = TimeUnit.MINUTES.toMillis(2)
+        maxWaitTime = TimeUnit.SECONDS.toMillis(5)
 
         priority = LocationRequest.PRIORITY_HIGH_ACCURACY
     }
@@ -77,7 +80,7 @@ class MyLocationManager private constructor(private val context: Context) {
     @Throws(SecurityException::class)
     @MainThread
     fun startLocationUpdates() {
-        Log.d(TAG, "startLocationUpdates()")
+        Log.i(TAG, "startLocationUpdates()--------------------------------------------------------------")
 
         if (!context.hasPermission(Manifest.permission.ACCESS_FINE_LOCATION)) return
 
@@ -86,6 +89,8 @@ class MyLocationManager private constructor(private val context: Context) {
             // If the PendingIntent is the same as the last request (which it always is), this
             // request will replace any requestLocationUpdates() called before.
             fusedLocationClient.requestLocationUpdates(locationRequest, locationUpdatePendingIntent)
+
+            Log.i(TAG,"Recibiendo localizaciones--------------------------")
         } catch (permissionRevoked: SecurityException) {
             _receivingLocationUpdates.value = false
 
@@ -111,5 +116,20 @@ class MyLocationManager private constructor(private val context: Context) {
                 INSTANCE ?: MyLocationManager(context).also { INSTANCE = it }
             }
         }
+    }
+
+    /**
+     * Helper functions to simplify permission checks/requests.
+     */
+    fun Context.hasPermission(permission: String): Boolean {
+
+        // Background permissions didn't exit prior to Q, so it's approved by default.
+        if (permission == Manifest.permission.ACCESS_BACKGROUND_LOCATION &&
+            android.os.Build.VERSION.SDK_INT < android.os.Build.VERSION_CODES.Q) {
+            return true
+        }
+
+        return ActivityCompat.checkSelfPermission(this, permission) ==
+                PackageManager.PERMISSION_GRANTED
     }
 }

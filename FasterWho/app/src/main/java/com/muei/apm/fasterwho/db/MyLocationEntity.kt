@@ -2,15 +2,18 @@ package com.muei.apm.fasterwho.db
 
 import androidx.room.Entity
 import androidx.room.PrimaryKey
+import com.google.android.gms.maps.model.LatLng
+import java.lang.NullPointerException
 import java.text.DateFormat
 import java.util.*
 
-@Entity(tableName = "location-database-fasterwho")
+@Entity(tableName = "my_location_table")
 data class MyLocationEntity (
     @PrimaryKey val id: UUID = UUID.randomUUID(),
     val latitude: Double = 0.0,
     val longitude: Double = 0.0,
     val foreground: Boolean = true,
+    val position:LatLng = LatLng(0.0,0.0),
     val date: Date = Date()
 
 ) {

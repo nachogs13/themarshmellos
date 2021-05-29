@@ -7,7 +7,7 @@ import androidx.room.RoomDatabase
 import androidx.room.TypeConverters
 
 // Nombre de la base de datos
-private const val DATABASE_NAME = "location-database-fasterwho"
+private const val DATABASE_NAME = "my_location_table"
 
 /**
  * Base de datos para almacenar los puntos de geolocalizacion

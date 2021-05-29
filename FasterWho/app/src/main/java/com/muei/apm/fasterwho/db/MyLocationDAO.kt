@@ -5,6 +5,7 @@ import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.Query
 import androidx.room.Update
+import com.google.android.gms.maps.model.LatLng
 import java.util.*
 
 /**
@@ -13,8 +14,8 @@ import java.util.*
 @Dao
 interface MyLocationDAO {
 
-    @Query("SELECT * FROM my_location_table ORDER BY date DESC")
-    fun getLocations(): LiveData<List<MyLocationEntity>>
+    @Query("SELECT position FROM my_location_table ORDER BY date ASC")
+    fun getLocations(): LiveData<List<LatLng>>
 
     @Query("SELECT * FROM my_location_table WHERE id=(:id)")
     fun getLocation(id: UUID): LiveData<MyLocationEntity>

@@ -68,6 +68,13 @@
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
         </activity>-->
+        <receiver
+            android:name=".LocationUpdatesBroadcastReceiver"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="com.muei.apm.fasterwho.LocationUpdatesBroadcastReceiver.ACTION_PROCESS_UPDATES" />
+            </intent-filter>
+        </receiver>
     </application>
 
 </manifest>

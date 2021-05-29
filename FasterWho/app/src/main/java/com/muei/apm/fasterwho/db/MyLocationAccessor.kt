@@ -1,14 +1,16 @@
 package com.muei.apm.fasterwho.db
 
 import android.content.Context
+import android.util.Log
 import androidx.annotation.MainThread
 import androidx.lifecycle.LiveData
+import com.google.android.gms.maps.model.LatLng
 import java.util.concurrent.ExecutorService
 
 /**
  * Clase para acceder a la base de datos y al API de geolocalización
  */
-class MyLocationAccessor private constructor(
+class MyLocationAccessor(
     private val baseDatos: MyLocationDatabase,
     private val locationManager: MyLocationManager,
     private val executor: ExecutorService
@@ -19,7 +21,7 @@ class MyLocationAccessor private constructor(
     /**
      * Obtiene los puntos almacenados de geolocalización
      */
-    fun getLocations(): LiveData<List<MyLocationEntity>> = locationDAO.getLocations()
+    fun getLocations(): LiveData<List<LatLng>> = locationDAO.getLocations()
 
     /**
      * Permite añadir un punto de geolocalización a la BD
@@ -69,6 +71,7 @@ class MyLocationAccessor private constructor(
         @Volatile private var INSTANCE: MyLocationAccessor? = null
 
         fun getInstance(context: Context, executor: ExecutorService): MyLocationAccessor {
+            Log.d("dasd","adsadsa")
             return INSTANCE ?: synchronized(this) {
                 INSTANCE ?: MyLocationAccessor(
                     MyLocationDatabase.getInstance(context),
