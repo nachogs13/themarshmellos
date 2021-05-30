@@ -22,9 +22,12 @@ import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.OnMapReadyCallback
 import com.google.android.gms.maps.SupportMapFragment
+import com.google.android.gms.maps.model.BitmapDescriptorFactory
+import com.google.android.gms.maps.model.CameraPosition
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.MarkerOptions
 import com.google.android.material.snackbar.Snackbar
+import com.google.maps.android.data.kml.KmlLayer
 import com.muei.apm.fasterwho.BuildConfig.APPLICATION_ID
 
 class IniciarRutaActivity : AppCompatActivity(), OnMapReadyCallback {
@@ -55,6 +58,12 @@ class IniciarRutaActivity : AppCompatActivity(), OnMapReadyCallback {
         btnIniciarRuta.setOnClickListener {
             Toast.makeText(this, "Se inicia seguimiento de actividad", Toast.LENGTH_SHORT).show()
             val intent = Intent(this, SeguimientoActivity::class.java)
+            // Le pasamos a SeguimientoActivity el fichero KML para que muestre la ruta
+            intent.putExtra("file", this.intent.getStringExtra("file"))
+            intent.putExtra("latitud_fin", this.intent.getDoubleExtra("latitud_fin", 0.0))
+            intent.putExtra("longitud_fin", this.intent.getDoubleExtra("longitud_fin", 0.0))
+            intent.putExtra("longitud_ini", this.intent.getDoubleExtra("longitud_ini", 0.0))
+            intent.putExtra("latitud_ini", this.intent.getDoubleExtra("latitud_ini", 0.0))
             startActivity(intent)
         }
 
@@ -223,6 +232,40 @@ class IniciarRutaActivity : AppCompatActivity(), OnMapReadyCallback {
                 // for ActivityCompat#requestPermissions for more details.
                 return
             }
+            // Comprobamos si esta activity se llama desde RutaActivity
+            val file_kml = intent.getStringExtra("file")
+            if (file_kml != null) {
+                Log.d(TAG, "En seguimientoActivity se va a mostrar la ruta a seguir")
+
+                val latitud_fin = intent.getDoubleExtra("latitud_fin",0.0)
+                val longitud_fin = intent.getDoubleExtra("longitud_fin", 0.0)
+                val longitud_ini = intent.getDoubleExtra("longitud_ini",0.0)
+                val latitud_ini = intent.getDoubleExtra("latitud_ini",0.0)
+
+                val id = resources.getIdentifier(file_kml,"raw",packageName)
+
+                val layer = KmlLayer(mMap,id,this)
+                layer.addLayerToMap()
+                mMap.addMarker(MarkerOptions().position(LatLng(latitud_ini,longitud_ini))
+                    .icon(
+                        BitmapDescriptorFactory.defaultMarker(
+                            BitmapDescriptorFactory.
+                            HUE_GREEN)).title("Inicio"))
+                mMap.addMarker(MarkerOptions().position(LatLng(latitud_fin,longitud_fin))
+                    .icon(
+                        BitmapDescriptorFactory.defaultMarker(
+                            BitmapDescriptorFactory.
+                            HUE_ORANGE)).title("Fin"))
+
+                val cameraPosition: CameraPosition = CameraPosition.Builder().
+                target(LatLng(latitud_ini, longitud_ini))
+                    .zoom(13.5f)
+                    .bearing(0f)
+                    .tilt(25f)
+                    .build()
+                mMap.moveCamera(CameraUpdateFactory.newCameraPosition(cameraPosition))
+            }
+
             fusedLocationClient.lastLocation
                 .addOnCompleteListener { taskLocation ->
                     if (taskLocation.isSuccessful && taskLocation.result != null) {
@@ -234,8 +277,10 @@ class IniciarRutaActivity : AppCompatActivity(), OnMapReadyCallback {
 
                         // Add a marker in Sydney and move the camera
                         val posicion = latitude2?.let { longitude2?.let { it1 -> LatLng(it, it1) } }
-                        mMap.addMarker(posicion?.let { MarkerOptions().position(it).title("Aquí estás tú MAQUINA!") })
-                        mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(posicion,16f), 2500,null)
+                        mMap.addMarker(posicion?.let { MarkerOptions().position(it).title("Aquí estás tú!") })
+                        if (file_kml == null) {
+                            mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(posicion,16f), 2500,null)
+                        }
                     } else {
                         Log.w(TAG, "getLastLocation:exception", taskLocation.exception)
                         showSnackbar("No se detectado la localización. Asegúrese de que el GPS está activado")
