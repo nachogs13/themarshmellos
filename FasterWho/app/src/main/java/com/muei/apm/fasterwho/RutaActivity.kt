@@ -37,10 +37,18 @@ class RutaActivity : Toolbar(), OnMapReadyCallback {
         toolbar.setTitle("Ruta concreta")
 
         val btnEmpezar : Button = findViewById(R.id.buttonEmpezar)
-        btnEmpezar.setOnClickListener({
-            val intent = Intent(this, SeguimientoActivity::class.java)
+        btnEmpezar.setOnClickListener {
+            //val intent = Intent(this, SeguimientoActivity::class.java)
+            val intent = Intent(this, IniciarRutaActivity::class.java)
+            // Le pasamos a SeguimientoActivity el fichero KML para que muestre la ruta
+            intent.putExtra("file", this.intent.getStringExtra("file"))
+            intent.putExtra("latitud_fin", this.intent.getDoubleExtra("latitud_fin", 0.0))
+            intent.putExtra("longitud_fin", this.intent.getDoubleExtra("longitud_fin", 0.0))
+            intent.putExtra("longitud_ini", this.intent.getDoubleExtra("longitud_ini", 0.0))
+            intent.putExtra("latitud_ini", this.intent.getDoubleExtra("latitud_ini", 0.0))
+
             startActivity(intent)
-        })
+        }
 
         val mapFragment = supportFragmentManager
             .findFragmentById(R.id.mapRutaConcreta) as SupportMapFragment

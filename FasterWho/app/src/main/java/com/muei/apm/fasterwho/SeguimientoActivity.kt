@@ -28,11 +28,9 @@ import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.OnMapReadyCallback
 import com.google.android.gms.maps.SupportMapFragment
-import com.google.android.gms.maps.model.LatLng
-import com.google.android.gms.maps.model.MarkerOptions
-import com.google.android.gms.maps.model.Polyline
-import com.google.android.gms.maps.model.PolylineOptions
+import com.google.android.gms.maps.model.*
 import com.google.android.material.snackbar.Snackbar
+import com.google.maps.android.data.kml.KmlLayer
 import com.muei.apm.fasterwho.db.MyLocationAccessor
 import java.lang.StringBuilder
 import java.util.concurrent.Executors
@@ -45,7 +43,8 @@ class SeguimientoActivity : AppCompatActivity()/*,com.google.android.gms.locatio
 
     private lateinit var mMap: GoogleMap
     private val TAG = "SeguimientoActivity"
-    private val REQUEST_PERMISSIONS_REQUEST_CODE = 34
+    private val REQUEST_FINE_LOCATION_PERMISSIONS_REQUEST_CODE = 34
+    private val REQUEST_BACKGROUND_LOCATION_PERMISSIONS_REQUEST_CODE = 56
     companion object {
         const val REQUEST_CODE_LOCATION = 0
     }
@@ -74,6 +73,9 @@ class SeguimientoActivity : AppCompatActivity()/*,com.google.android.gms.locatio
         val mapFragment = supportFragmentManager
             .findFragmentById(R.id.map) as SupportMapFragment
         mapFragment.getMapAsync(this)
+
+
+
 
         registro = RegistradorKML(this)
         //gps = GPSTracker(this, registro)
@@ -136,9 +138,6 @@ class SeguimientoActivity : AppCompatActivity()/*,com.google.android.gms.locatio
             if (ActivityCompat.checkSelfPermission(
                     this,
                     Manifest.permission.ACCESS_FINE_LOCATION
-                ) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(
-                    this,
-                    Manifest.permission.ACCESS_COARSE_LOCATION
                 ) != PackageManager.PERMISSION_GRANTED
             ) {
                 // TODO: Consider calling
@@ -150,6 +149,41 @@ class SeguimientoActivity : AppCompatActivity()/*,com.google.android.gms.locatio
                 // for ActivityCompat#requestPermissions for more details.
                 return
             }
+            // Comprobamos si esta activity se llama desde RutaActivity
+            val file_kml = intent.getStringExtra("file")
+            if (file_kml != null) {
+                Log.d(TAG, "En seguimientoActivity se va a mostrar la ruta a seguir")
+
+                val latitud_fin = intent.getDoubleExtra("latitud_fin",0.0)
+                val longitud_fin = intent.getDoubleExtra("longitud_fin", 0.0)
+                val longitud_ini = intent.getDoubleExtra("longitud_ini",0.0)
+                val latitud_ini = intent.getDoubleExtra("latitud_ini",0.0)
+
+                val id = resources.getIdentifier(file_kml,"raw",packageName)
+
+                val layer = KmlLayer(mMap,id,this)
+                layer.addLayerToMap()
+                mMap.addMarker(MarkerOptions().position(LatLng(latitud_ini,longitud_ini))
+                    .icon(
+                        BitmapDescriptorFactory.defaultMarker(
+                            BitmapDescriptorFactory.
+                    HUE_GREEN)).title("Inicio"))
+                mMap.addMarker(MarkerOptions().position(LatLng(latitud_fin,longitud_fin))
+                    .icon(
+                        BitmapDescriptorFactory.defaultMarker(
+                            BitmapDescriptorFactory.
+                    HUE_ORANGE)).title("Fin"))
+
+                /* Esto lo comentamos (posible eliminación), para que la camara se centre en la posición actual
+                val cameraPosition: CameraPosition = CameraPosition.Builder().
+                target(LatLng(latitud_ini, longitud_ini))
+                    .zoom(13.5f)
+                    .bearing(0f)
+                    .tilt(25f)
+                    .build()
+                mMap.moveCamera(CameraUpdateFactory.newCameraPosition(cameraPosition))*/
+            }
+
             // Añado esto para pintar la linea de la ruta
             var opcionesPolyLine = PolylineOptions().color(Color.CYAN).width(4F)
             ruta = mMap.addPolyline(opcionesPolyLine)
@@ -169,8 +203,11 @@ class SeguimientoActivity : AppCompatActivity()/*,com.google.android.gms.locatio
                         // Add a marker in Sydney and move the camera
                         val posicion = latitude2?.let { longitude2?.let { it1 -> LatLng(it, it1) } }
                         mMap.addMarker(posicion?.let { MarkerOptions().position(it).title("Empiezaste aquí") })
-                        mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(posicion,16f), 2500,null)
-                        ruta.points = listOf(LatLng(43.313187, -8.860774), posicion)
+                        if (file_kml == null) {
+                            mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(posicion,16f), 2500,null)
+                        }
+
+
                     } else {
                         Log.w(TAG, "getLastLocation:exception", taskLocation.exception)
                         showSnackbar("No se detectado la localización. Asegúrese de que el GPS está activado")
@@ -203,6 +240,8 @@ class SeguimientoActivity : AppCompatActivity()/*,com.google.android.gms.locatio
                             ))*/
                             //points.add(LatLng(43.310767, -8.859765))
                             ruta.points = locations
+                            val posicion = locations.last()
+                            mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(posicion,16f), 2500,null)
                             Toast.makeText(this,"Puntos " + ruta.points.size, Toast.LENGTH_SHORT).show()
                         }
                     }
@@ -274,18 +313,23 @@ class SeguimientoActivity : AppCompatActivity()/*,com.google.android.gms.locatio
      * Return the current state of the permissions needed.
      */
     private fun checkPermissions() =
-        ActivityCompat.checkSelfPermission(this,
+        /*ActivityCompat.checkSelfPermission(this,
             Manifest.permission.ACCESS_COARSE_LOCATION
+        ) == PackageManager.PERMISSION_GRANTED*/
+        ActivityCompat.checkSelfPermission(this,
+            Manifest.permission.ACCESS_BACKGROUND_LOCATION
         ) == PackageManager.PERMISSION_GRANTED
 
     private fun startLocationPermissionRequest() {
-        ActivityCompat.requestPermissions(this, arrayOf(Manifest.permission.ACCESS_COARSE_LOCATION),
-            REQUEST_PERMISSIONS_REQUEST_CODE)
+        /*ActivityCompat.requestPermissions(this, arrayOf(Manifest.permission.ACCESS_COARSE_LOCATION),
+            REQUEST_PERMISSIONS_REQUEST_CODE)*/
+        ActivityCompat.requestPermissions(this, arrayOf(Manifest.permission.ACCESS_BACKGROUND_LOCATION,Manifest.permission.ACCESS_FINE_LOCATION),
+            REQUEST_BACKGROUND_LOCATION_PERMISSIONS_REQUEST_CODE)
     }
 
     private fun requestPermissions() {
         if (ActivityCompat.shouldShowRequestPermissionRationale(this,
-                Manifest.permission.ACCESS_COARSE_LOCATION
+                Manifest.permission.ACCESS_BACKGROUND_LOCATION
             )) {
             // Provide an additional rationale to the user. This would happen if the user denied the
             // request previously, but didn't check the "Don't ask again" checkbox.
@@ -313,7 +357,7 @@ class SeguimientoActivity : AppCompatActivity()/*,com.google.android.gms.locatio
         grantResults: IntArray
     ) {
         Log.i(TAG, "onRequestPermissionResult")
-        if (requestCode == REQUEST_PERMISSIONS_REQUEST_CODE) {
+        if (requestCode == REQUEST_BACKGROUND_LOCATION_PERMISSIONS_REQUEST_CODE) {
             when {
                 // If user interaction was interrupted, the permission request is cancelled and you
                 // receive empty arrays.
@@ -351,7 +395,7 @@ class SeguimientoActivity : AppCompatActivity()/*,com.google.android.gms.locatio
 
     private fun isPermissionsGranted() = ContextCompat.checkSelfPermission(
         this,
-        Manifest.permission.ACCESS_FINE_LOCATION
+        Manifest.permission.ACCESS_BACKGROUND_LOCATION
     ) == PackageManager.PERMISSION_GRANTED
 
 
@@ -370,12 +414,12 @@ class SeguimientoActivity : AppCompatActivity()/*,com.google.android.gms.locatio
 
     private fun requestLocationPermission() {
         if (ActivityCompat.shouldShowRequestPermissionRationale(this,
-                Manifest.permission.ACCESS_FINE_LOCATION)) {
+                Manifest.permission.ACCESS_BACKGROUND_LOCATION)) {
             Toast.makeText(this, "Ve a ajustes y acepta los permisos", Toast.LENGTH_SHORT).show()
         } else {
             ActivityCompat.requestPermissions(this,
-                arrayOf(Manifest.permission.ACCESS_FINE_LOCATION),
-                REQUEST_PERMISSIONS_REQUEST_CODE)
+                arrayOf(Manifest.permission.ACCESS_FINE_LOCATION,Manifest.permission.ACCESS_BACKGROUND_LOCATION),
+                REQUEST_BACKGROUND_LOCATION_PERMISSIONS_REQUEST_CODE)
         }
     }
 
