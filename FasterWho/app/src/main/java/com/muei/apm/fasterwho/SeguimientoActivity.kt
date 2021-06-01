@@ -2,14 +2,15 @@ package com.muei.apm.fasterwho
 
 import android.Manifest
 import android.annotation.SuppressLint
-import android.content.BroadcastReceiver
-import android.content.Intent
+import android.app.PendingIntent
+import android.content.*
 import android.content.pm.PackageManager
 import android.graphics.Color
 import android.location.Location
 import android.location.LocationListener
 import android.net.Uri
 import android.os.Bundle
+import android.os.IBinder
 import android.provider.Settings
 import android.util.Log
 import android.view.View
@@ -45,6 +46,12 @@ class SeguimientoActivity : AppCompatActivity()/*,com.google.android.gms.locatio
     private val TAG = "SeguimientoActivity"
     private val REQUEST_FINE_LOCATION_PERMISSIONS_REQUEST_CODE = 34
     private val REQUEST_BACKGROUND_LOCATION_PERMISSIONS_REQUEST_CODE = 56
+    private lateinit var intentService : Intent
+    private lateinit var foregroundLocationService: ForegroundLocationService
+    private var mBound: Boolean = false
+    //lateinit var pendingIntent : PendingIntent
+
+
     companion object {
         const val REQUEST_CODE_LOCATION = 0
     }
@@ -221,7 +228,31 @@ class SeguimientoActivity : AppCompatActivity()/*,com.google.android.gms.locatio
             // Vamos actualizando la posición actual en tiempo real
             mMap.setOnMyLocationButtonClickListener(this)
             enableMyLocation()
-            locationRepository.startLocationUpdates()
+            var context: Context = this
+            var pendingIntent = locationRepository.startLocationUpdates()
+            //if (pendingIntent != null) {
+                /* añado esto para poder crear el servicio */
+                val connection = object : ServiceConnection {
+                    override fun onServiceConnected(name: ComponentName?, service: IBinder?) {
+                        val binder = service as ForegroundLocationService.BinderLocationService
+                        foregroundLocationService = binder.getService()
+                        mBound = true
+                        foregroundLocationService.pendingIntent = pendingIntent
+                        foregroundLocationService.context = context
+                        startService(intentService)
+                    }
+
+                    override fun onServiceDisconnected(name: ComponentName?) {
+                        mBound = false
+                    }
+                }
+                intentService =Intent(this,ForegroundLocationService::class.java)
+                bindService(intentService, connection, Context.BIND_AUTO_CREATE)
+
+
+            //}
+
+
             //locationUpdateViewModel.startLocationUpdates()
 
             //val locationListLiveData = locationRepository.getLocations()
