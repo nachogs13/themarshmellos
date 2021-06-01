@@ -49,6 +49,7 @@ class SeguimientoActivity : AppCompatActivity()/*,com.google.android.gms.locatio
     private lateinit var intentService : Intent
     private lateinit var foregroundLocationService: ForegroundLocationService
     private var mBound: Boolean = false
+    private lateinit var  connection : ServiceConnection
     //lateinit var pendingIntent : PendingIntent
 
 
@@ -109,6 +110,9 @@ class SeguimientoActivity : AppCompatActivity()/*,com.google.android.gms.locatio
             //gps.toggleLocationUpdates(false)
             registro.abrirFichero()
             //registro.cerrarFichero()
+
+
+            //stopService(intentService)
             locationRepository.stopLocationUpdates()
             locationRepository.locationListLiveData.observe(
                 this,
@@ -131,6 +135,9 @@ class SeguimientoActivity : AppCompatActivity()/*,com.google.android.gms.locatio
                 }
             )
             registro.cerrarFichero()
+            if (mBound)
+                unbindService(connection)
+            stopService(Intent(baseContext, ForegroundLocationService::class.java))
             launchPopUp()
         }
     }
@@ -232,7 +239,7 @@ class SeguimientoActivity : AppCompatActivity()/*,com.google.android.gms.locatio
             var pendingIntent = locationRepository.startLocationUpdates()
             //if (pendingIntent != null) {
                 /* añado esto para poder crear el servicio */
-                val connection = object : ServiceConnection {
+                connection = object : ServiceConnection {
                     override fun onServiceConnected(name: ComponentName?, service: IBinder?) {
                         val binder = service as ForegroundLocationService.BinderLocationService
                         foregroundLocationService = binder.getService()

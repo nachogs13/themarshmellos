@@ -6,6 +6,7 @@ import android.content.Intent
 import android.os.Binder
 import android.os.Build
 import android.os.IBinder
+import android.widget.Toast
 import androidx.core.content.ContextCompat
 
 class ForegroundLocationService(/*context: Context, pendingIntent: PendingIntent*/): Service() {
@@ -83,8 +84,8 @@ class ForegroundLocationService(/*context: Context, pendingIntent: PendingIntent
         return START_NOT_STICKY
     }
 
-    /*init {
-        this.pendingIntent = pendingIntent
-        this.context = context
-    }*/
+    override fun onDestroy() {
+        super.onDestroy()
+        Toast.makeText(this,"Se para el servicio",Toast.LENGTH_LONG).show()
+    }
 }
