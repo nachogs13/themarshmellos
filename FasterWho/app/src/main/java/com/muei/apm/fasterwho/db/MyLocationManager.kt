@@ -1,18 +1,22 @@
 package com.muei.apm.fasterwho.db
 
 import android.Manifest
+import android.app.Notification
 import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
+import android.os.Build
 import android.util.Log
 import androidx.annotation.MainThread
 import androidx.core.app.ActivityCompat
+import androidx.core.content.ContextCompat.startForegroundService
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationRequest
 import com.google.android.gms.location.LocationServices
+import com.muei.apm.fasterwho.ForegroundLocationService
 import com.muei.apm.fasterwho.LocationUpdatesBroadcastReceiver
 import java.util.concurrent.TimeUnit
 
@@ -71,6 +75,17 @@ class MyLocationManager private constructor(private val context: Context) {
     }
 
     /**
+     * Usamos un servicio para poder seguir recibiendo actualizaciones en background, ya que desde
+     * el API 26 estas se reducen a sol un par de actualizaciones por hora para poder ahorras batería
+     */
+    /*private val notification: Notification = Notification.Builder(context)
+        .setContentIntent(locationUpdatePendingIntent)
+        .setContentTitle("FasterWho?")
+        .setContentText("Se está usando la ubicación")
+        .build()*/
+
+
+    /**
      * Uses the FusedLocationProvider to start location updates if the correct fine locations are
      * approved.
      *
@@ -79,10 +94,10 @@ class MyLocationManager private constructor(private val context: Context) {
      */
     @Throws(SecurityException::class)
     @MainThread
-    fun startLocationUpdates() {
+    fun startLocationUpdates() : PendingIntent? {
         Log.i(TAG, "startLocationUpdates()--------------------------------------------------------------")
 
-        if (!context.hasPermission(Manifest.permission.ACCESS_FINE_LOCATION)) return
+        if (!context.hasPermission(Manifest.permission.ACCESS_FINE_LOCATION)) return null
 
         try {
             _receivingLocationUpdates.value = true
@@ -90,7 +105,9 @@ class MyLocationManager private constructor(private val context: Context) {
             // request will replace any requestLocationUpdates() called before.
             fusedLocationClient.requestLocationUpdates(locationRequest, locationUpdatePendingIntent)
 
+            //servicio.startService(context,locationUpdatePendingIntent)
             Log.i(TAG,"Recibiendo localizaciones--------------------------")
+            return locationUpdatePendingIntent
         } catch (permissionRevoked: SecurityException) {
             _receivingLocationUpdates.value = false
 
@@ -105,6 +122,7 @@ class MyLocationManager private constructor(private val context: Context) {
     fun stopLocationUpdates() {
         Log.d(TAG, "stopLocationUpdates()")
         _receivingLocationUpdates.value = false
+        //ForegroundLocationService(locationUpdatePendingIntent).stopService(context)
         fusedLocationClient.removeLocationUpdates(locationUpdatePendingIntent)
     }
 
@@ -132,4 +150,6 @@ class MyLocationManager private constructor(private val context: Context) {
         return ActivityCompat.checkSelfPermission(this, permission) ==
                 PackageManager.PERMISSION_GRANTED
     }
+
+
 }

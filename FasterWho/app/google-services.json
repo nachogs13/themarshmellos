@@ -31,6 +31,14 @@
           }
         },
         {
+          "client_id": "246650974592-5jo03hsj449g8fgmlftnoldr592cdsec.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.muei.apm.fasterwho",
+            "certificate_hash": "f1e12f392f9caa4c84b4ba6e97b41e5e9420f028"
+          }
+        },
+        {
           "client_id": "246650974592-t85odcbdtk4hhhocf9hjh21q1ssu49kt.apps.googleusercontent.com",
           "client_type": 3
         }

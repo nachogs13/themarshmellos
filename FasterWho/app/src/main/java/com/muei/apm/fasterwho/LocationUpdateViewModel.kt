@@ -1,6 +1,7 @@
 package com.muei.apm.fasterwho
 
 import android.app.Application
+import android.app.PendingIntent
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import com.muei.apm.fasterwho.db.MyLocationAccessor
@@ -17,7 +18,7 @@ class LocationUpdateViewModel(application: Application) : AndroidViewModel(appli
 
     val locationListLiveData = locationRepository.getLocations()
 
-    fun startLocationUpdates() = locationRepository.startLocationUpdates()
+    fun startLocationUpdates() : PendingIntent? = locationRepository.startLocationUpdates()
 
     fun stopLocationUpdates() = locationRepository.stopLocationUpdates()
 
