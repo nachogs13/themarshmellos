@@ -14,6 +14,9 @@ import java.util.*
 @Dao
 interface MyLocationDAO {
 
+    @Query("SELECT speed FROM my_location_table ORDER BY speed DESC")
+    fun getSpeeds(): LiveData<List<Float>>
+
     @Query("SELECT position FROM my_location_table ORDER BY date ASC")
     fun getLocations(): LiveData<List<LatLng>>
 

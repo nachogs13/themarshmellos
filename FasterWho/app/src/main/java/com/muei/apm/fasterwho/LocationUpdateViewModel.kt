@@ -23,4 +23,6 @@ class LocationUpdateViewModel(application: Application) : AndroidViewModel(appli
     fun stopLocationUpdates() = locationRepository.stopLocationUpdates()
 
     fun deleteLocations() = locationRepository.deleteLocations()
+
+    val speeds = locationRepository.getSpeeds()
 }

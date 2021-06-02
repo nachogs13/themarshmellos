@@ -28,15 +28,17 @@ class LocationUpdatesBroadcastReceiver : BroadcastReceiver() {
                     Log.i(TAG, "Location services are no longer available!")
                 }
             }
-            Log.i(TAG, "SSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSS")
+
             LocationResult.extractResult(intent)?.let { locationResult ->
                 val locations = locationResult.locations.map { location ->
+                    Log.i(TAG, "Velocidad: " + location.speed)
                     MyLocationEntity(
                         latitude = location.latitude,
                         longitude = location.longitude,
                         foreground = isAppInForeground(context),
                         position = LatLng(location.latitude, location.longitude),
-                        date = Date(location.time)
+                        date = Date(location.time),
+                        speed = location.speed
                     )
                 }
                 if (locations.isNotEmpty()) {
