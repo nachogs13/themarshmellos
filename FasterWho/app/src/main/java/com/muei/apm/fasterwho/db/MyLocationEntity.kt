@@ -14,7 +14,8 @@ data class MyLocationEntity (
     val longitude: Double = 0.0,
     val foreground: Boolean = true,
     val position:LatLng = LatLng(0.0,0.0),
-    val date: Date = Date()
+    val date: Date = Date(),
+    val speed: Float = 0.0F
 
 ) {
     /**

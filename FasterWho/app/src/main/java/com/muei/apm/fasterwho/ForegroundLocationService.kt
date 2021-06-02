@@ -71,6 +71,14 @@ class ForegroundLocationService(/*context: Context, pendingIntent: PendingIntent
 
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            val serviceChannel = NotificationChannel(
+                CHANNEL_ID, "Foreground Service Channel",
+                NotificationManager.IMPORTANCE_DEFAULT
+            )
+            val manager = context?.getSystemService(NotificationManager::class.java)
+            manager!!.createNotificationChannel(serviceChannel)
+        }
         val notification = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             Notification.Builder(this, CHANNEL_ID)
                 .setContentTitle("FasterWho")
@@ -80,7 +88,7 @@ class ForegroundLocationService(/*context: Context, pendingIntent: PendingIntent
         } else {
             TODO("VERSION.SDK_INT < O")
         }
-        startForeground(1, notification)
+        startForeground(2, notification)
         return START_NOT_STICKY
     }
 
