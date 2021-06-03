@@ -9,6 +9,7 @@ import android.graphics.Color
 import android.location.Location
 import android.location.LocationListener
 import android.net.Uri
+import android.os.Build
 import android.os.Bundle
 import android.os.IBinder
 import android.provider.Settings
@@ -35,6 +36,8 @@ import com.google.maps.android.SphericalUtil
 import com.google.maps.android.data.kml.KmlLayer
 import com.muei.apm.fasterwho.db.MyLocationAccessor
 import java.lang.StringBuilder
+import java.time.LocalDateTime
+import java.time.format.DateTimeFormatter
 import java.util.concurrent.Executors
 
 class SeguimientoActivity : AppCompatActivity()/*,com.google.android.gms.location.LocationListener*/, OnMapReadyCallback,GoogleMap.OnMyLocationButtonClickListener{
@@ -51,7 +54,9 @@ class SeguimientoActivity : AppCompatActivity()/*,com.google.android.gms.locatio
     private lateinit var  connection : ServiceConnection
     private var longitude: Double? = null
     private var latitude: Double? = null
-
+    private var distancia = 0.0
+    private var velocidadMaxima: Float?  = null
+    private var horaInicio: String? = null
     /**
      * Provides the entry point to the Fused Location Provider API.
      */
@@ -80,6 +85,13 @@ class SeguimientoActivity : AppCompatActivity()/*,com.google.android.gms.locatio
         // función para lanzar el popup que muestra si se quiere guardar la ruta
         fun launchPopUp() {
             val popUpFragment = SaveRouteDialogFragment()
+
+            // Le pasamos la distancia y la velocidad al pop up
+            var args = Bundle()
+            velocidadMaxima?.let { args.putFloat("velocidad", it) }
+            args.putDouble("distancia", distancia)
+            args.putString("horaInicio", horaInicio)
+            popUpFragment.arguments = args
             popUpFragment.show(supportFragmentManager, "Save Route")
         }
 
@@ -102,13 +114,12 @@ class SeguimientoActivity : AppCompatActivity()/*,com.google.android.gms.locatio
                             Toast.makeText(this,"Guardando ${locations.size} localizaciones en un fichero",Toast.LENGTH_SHORT).show()
 
                             // variables para calcular la distancia recorrida
-                            var distancia = 0.0
+
                             var primeraLocalizacion = true
                             var previousLocation = LatLng(0.0,0.0)
                             var resultado = FloatArray(1)
                             for (location in locations) {
                                 if (!primeraLocalizacion) {
-                                    primeraLocalizacion = false
                                     Location.distanceBetween(
                                         previousLocation.latitude,
                                         previousLocation.longitude,
@@ -151,6 +162,7 @@ class SeguimientoActivity : AppCompatActivity()/*,com.google.android.gms.locatio
                             Toast.makeText(this,"No hay velocidades",Toast.LENGTH_SHORT).show()
                         } else {
                             //Toast.makeText(this,"Guardando ${speeds.size} velocidades",Toast.LENGTH_SHORT).show()
+                                velocidadMaxima = speeds.max()
                             Toast.makeText(this,"Máxima velocidad: " + speeds.max(),Toast.LENGTH_SHORT).show()
                         }
                     }
@@ -181,6 +193,13 @@ class SeguimientoActivity : AppCompatActivity()/*,com.google.android.gms.locatio
                 // for ActivityCompat#requestPermissions for more details.
                 return
             }
+            // Obtenemos la hora en la que se inicia la actividad
+            val horaActual = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                LocalDateTime.now()
+            } else {
+                TODO("VERSION.SDK_INT < O")
+            }
+            horaInicio = horaActual.format(DateTimeFormatter.ofPattern("HH:mm"))
             // Comprobamos si esta activity se llama desde RutaActivity
             val file_kml = intent.getStringExtra("file")
             if (file_kml != null) {
@@ -205,15 +224,6 @@ class SeguimientoActivity : AppCompatActivity()/*,com.google.android.gms.locatio
                         BitmapDescriptorFactory.defaultMarker(
                             BitmapDescriptorFactory.
                     HUE_ORANGE)).title("Fin"))
-
-                /* Esto lo comentamos (posible eliminación), para que la camara se centre en la posición actual
-                val cameraPosition: CameraPosition = CameraPosition.Builder().
-                target(LatLng(latitud_ini, longitud_ini))
-                    .zoom(13.5f)
-                    .bearing(0f)
-                    .tilt(25f)
-                    .build()
-                mMap.moveCamera(CameraUpdateFactory.newCameraPosition(cameraPosition))*/
             }
 
             // Se añade esto para pintar el tramo de la ruta realizado
@@ -233,7 +243,8 @@ class SeguimientoActivity : AppCompatActivity()/*,com.google.android.gms.locatio
                         val posicion = latitude2?.let { longitude2?.let { it1 -> LatLng(it, it1) } }
                         mMap.addMarker(posicion?.let { MarkerOptions().position(it).title("Empiezaste aquí") })
                         if (file_kml == null) {
-                            mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(posicion,16f), 2500,null)
+                            //mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(posicion,16f), 2500,null)
+                            mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(posicion,16f))
                         }
 
                     } else {

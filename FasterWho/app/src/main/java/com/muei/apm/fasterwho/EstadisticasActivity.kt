@@ -5,6 +5,7 @@ import android.os.AsyncTask
 import android.os.Bundle
 import android.widget.Button
 import android.widget.Toast
+import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
@@ -29,9 +30,25 @@ class EstadisticasActivity : AppCompatActivity(),OnMapReadyCallback {
     private var parser: SAXParser? = null
     private var handler: SaxHandler? = null
 
+    private var distancia : Double? = null
+    private var velocidadMaxima : Float? = null
+    private var horaInicio: String? = null
+    private val viewModel: EstadisticasViewModel by viewModels()
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_estadisticas)
+
+
+        // Obtenemos los datos que se le pasan al terminar la ruta
+        distancia = intent.getDoubleExtra("distancia", 0.0)
+        velocidadMaxima = intent.getFloatExtra("velocidad", 0.0F)
+        horaInicio = intent.getStringExtra("horaInicio")
+        // Se le pasan los datos al fragment que los muestra
+        viewModel.setEstadisticas(listOf(ItemEstadistica(R.drawable.ic_directions_run_black_24dp,"Distancia", distancia.toString()),
+            ItemEstadistica(R.drawable.ic_speed_black_24dp,"Vel. Máx.", velocidadMaxima.toString()),
+            ItemEstadistica(R.drawable.ic_clock_24dp,"Hora Inicio", horaInicio)
+        ))
 
         // Obtain the SupportMapFragment and get notified when the map is ready to be used.
         val mapFragment = supportFragmentManager
