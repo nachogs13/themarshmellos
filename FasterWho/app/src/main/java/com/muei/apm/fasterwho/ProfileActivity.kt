@@ -36,6 +36,7 @@ class ProfileActivity : Toolbar() {
 
         val btnNombre : Button = findViewById(R.id.editarPerfilButton)
         btnNombre.setOnClickListener({
+            startActivity(Intent(this, EditarPerfilActivity::class.java))
             Toast.makeText(this, "Se cambia el nombre de usuario", Toast.LENGTH_SHORT).show()
         })
     }
@@ -59,22 +60,29 @@ class ProfileActivity : Toolbar() {
                 .addOnSuccessListener {
                     Log.d("usuario", it.toString())
                     val username = it.get("username").toString()
-                    if(it.get("peso")!=null){
-
-                        val sexo = it.get("sexo").toString()
+                    if(it.get("fecha_nacimiento")!=null){
                         val fecha_nac = it.get("fecha_nacimiento") as String
-                        val peso = it.get("peso") as Number
-                        val estatura = it.get("estatura") as Number
-                        var img = it.get("imgPerfil") as DocumentReference
-
-
-                        GlideApp.with(this).load(storage.getReference(img.path.toString())).into(this.findViewById(R.id.imageButton3))
-                        textViewSexo.text = "Sexo: $sexo"
-                        textViewEstatura.text = "Estatura: ${estatura.toString()} cm"
-
-                        textViewPeso.text = "Peso: ${peso.toString()} kg"
                         textViewFechNac.text = "Fecha de nacimiento: ${fecha_nac.toString()}"
                     }
+                    if(it.get("sexo")!=null){
+                        val sexo = it.get("sexo").toString()
+                        textViewSexo.text = "Sexo: $sexo"
+                    }
+                    if(it.get("estatura")!=null){
+                        val estatura = it.get("estatura") as Number
+                        textViewEstatura.text = "Estatura: ${estatura.toString()} cm"
+                    }
+                    if(it.get("peso")!=null){
+
+                        val peso = it.get("peso") as Number
+                        textViewPeso.text = "Peso: ${peso.toString()} kg"
+
+                    }
+                    if(it.get("imgPerfil")!=null){
+                        var img = it.get("imgPerfil") as DocumentReference
+                        GlideApp.with(this).load(storage.getReference(img.path.toString())).into(this.findViewById(R.id.imageButton3))
+                    }
+
                     textView.text = username
 
                 }
