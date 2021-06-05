@@ -34,6 +34,9 @@ class EstadisticasActivity : AppCompatActivity(),OnMapReadyCallback {
     private var velocidadMaxima : Double? = null
     private var horaInicio: String? = null
     private var duracion: Long? = null
+    private var altitudGanada: Double? = null
+    private var altitudPerdida: Double? = null
+    private var altitudMaxima: Double? = null
     private val viewModel: EstadisticasViewModel by viewModels()
 
 
@@ -42,19 +45,24 @@ class EstadisticasActivity : AppCompatActivity(),OnMapReadyCallback {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_estadisticas)
 
-
         // Obtenemos los datos que se le pasan al terminar la ruta
         distancia = intent.getDoubleExtra("distancia", 0.0)
         velocidadMaxima = intent.getDoubleExtra("velocidad", 0.0)
         horaInicio = intent.getStringExtra("horaInicio")
         duracion = intent.getLongExtra("duracion", 0L)
+        altitudGanada = intent.getDoubleExtra("altitudGanada", 0.0)
+        altitudPerdida = intent.getDoubleExtra("altitudPerdida", 0.0)
+        altitudMaxima = intent.getDoubleExtra("altitudMaxima", 0.0)
 
         // Se le pasan los datos al fragment que los muestra
         viewModel.setEstadisticas(listOf(ItemEstadistica(R.drawable.ic_directions_run_black_24dp,"Distancia", distancia.toString()),
             ItemEstadistica(R.drawable.ic_speed_black_24dp,"Vel. Máx.", velocidadMaxima.toString()),
             ItemEstadistica(R.drawable.ic_clock_24dp,"Hora Inicio", horaInicio),
-            ItemEstadistica(R.drawable.ic_timer_black_24dp,"Duración ", getDate(duracion!!))
-        ))
+            ItemEstadistica(R.drawable.ic_timer_black_24dp,"Duración ", getDate(duracion!!)),
+            ItemEstadistica(R.drawable.ic_elevation_24dp, "Elev. Ganada", altitudGanada.toString()),
+            ItemEstadistica(R.drawable.ic_elevation_24dp, "Elev. Perdida", altitudPerdida.toString()),
+            ItemEstadistica(R.drawable.ic_elevation_24dp, "Elev. Máxima", altitudMaxima.toString()))
+        )
 
         // Obtain the SupportMapFragment and get notified when the map is ready to be used.
         val mapFragment = supportFragmentManager
@@ -67,13 +75,6 @@ class EstadisticasActivity : AppCompatActivity(),OnMapReadyCallback {
             val intent = Intent(this, RankingActivity::class.java)
             startActivity(intent)
         })
-
-        /*val btnMapa : ImageView = findViewById(R.id.ImagenLeyenda2)
-        btnMapa.setOnClickListener({
-            Toast.makeText(this, "Viendo la ruta en el mapa", Toast.LENGTH_SHORT).show()
-        })*/
-
-
     }
 
     /**

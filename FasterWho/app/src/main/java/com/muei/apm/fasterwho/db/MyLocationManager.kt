@@ -95,7 +95,6 @@ class MyLocationManager private constructor(private val context: Context) {
     @Throws(SecurityException::class)
     @MainThread
     fun startLocationUpdates() : PendingIntent? {
-        Log.i(TAG, "startLocationUpdates()--------------------------------------------------------------")
 
         if (!context.hasPermission(Manifest.permission.ACCESS_FINE_LOCATION)) return null
 
@@ -106,7 +105,6 @@ class MyLocationManager private constructor(private val context: Context) {
             fusedLocationClient.requestLocationUpdates(locationRequest, locationUpdatePendingIntent)
 
             //servicio.startService(context,locationUpdatePendingIntent)
-            Log.i(TAG,"Recibiendo localizaciones--------------------------")
             return locationUpdatePendingIntent
         } catch (permissionRevoked: SecurityException) {
             _receivingLocationUpdates.value = false
@@ -122,7 +120,6 @@ class MyLocationManager private constructor(private val context: Context) {
     fun stopLocationUpdates() {
         Log.d(TAG, "stopLocationUpdates()")
         _receivingLocationUpdates.value = false
-        //ForegroundLocationService(locationUpdatePendingIntent).stopService(context)
         fusedLocationClient.removeLocationUpdates(locationUpdatePendingIntent)
     }
 

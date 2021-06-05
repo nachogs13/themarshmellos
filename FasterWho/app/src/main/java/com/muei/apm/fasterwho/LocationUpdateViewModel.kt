@@ -7,6 +7,9 @@ import androidx.lifecycle.LiveData
 import com.muei.apm.fasterwho.db.MyLocationAccessor
 import java.util.concurrent.Executors
 
+/**
+ * Clase necesario para conectarse a la BD desde SeguimientoActivity
+ */
 class LocationUpdateViewModel(application: Application) : AndroidViewModel(application) {
 
     private val locationRepository = MyLocationAccessor.getInstance(
@@ -27,4 +30,6 @@ class LocationUpdateViewModel(application: Application) : AndroidViewModel(appli
     val speeds = locationRepository.getSpeeds()
 
     val speed = locationRepository.getMaxSpeed()
+
+    val altitudes = locationRepository.getAltitudes()
 }

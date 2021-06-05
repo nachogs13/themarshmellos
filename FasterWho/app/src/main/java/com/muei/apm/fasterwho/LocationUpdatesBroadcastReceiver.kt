@@ -15,10 +15,14 @@ import java.util.concurrent.Executors
 
 private val TAG = "BroadcastReceiverLocation"
 
+/**
+ * Clase que hereda de BoadcasReceiver y se encarga de recibir las nuevas actualizaciones de
+ * geolocalización
+ */
 class LocationUpdatesBroadcastReceiver : BroadcastReceiver() {
 
     override fun onReceive(context: Context, intent: Intent) {
-        Log.i(TAG, "onReceive() context:$context, intent:$intent--------------------------------")
+        Log.i(TAG, "onReceive() context:$context, intent:$intent")
 
         if (intent.action == ACTION_PROCESS_UPDATES) {
 
@@ -31,14 +35,15 @@ class LocationUpdatesBroadcastReceiver : BroadcastReceiver() {
 
             LocationResult.extractResult(intent)?.let { locationResult ->
                 val locations = locationResult.locations.map { location ->
-                    Log.i(TAG, "Velocidad: " + location.speed)
+                    Log.i(TAG, "Altitud actual ${location.altitude}")
                     MyLocationEntity(
                         latitude = location.latitude,
                         longitude = location.longitude,
                         foreground = isAppInForeground(context),
                         position = LatLng(location.latitude, location.longitude),
                         date = Date(location.time),
-                        speed = location.speed
+                        speed = location.speed,
+                        altitude = location.altitude
                     )
                 }
                 if (locations.isNotEmpty()) {
@@ -51,7 +56,7 @@ class LocationUpdatesBroadcastReceiver : BroadcastReceiver() {
 
     /**
      * Este método solo se utiliza para saber si las actualizaciones de geolocalización se obtienen
-     * en bacground o foreground
+     * en bacground o foreground. Lo dejamos para debug
      */
     private fun isAppInForeground(context: Context): Boolean {
         val activityManager = context.getSystemService(Context.ACTIVITY_SERVICE) as ActivityManager

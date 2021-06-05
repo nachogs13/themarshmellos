@@ -9,6 +9,9 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.Observer
 
+/**
+ * Fragment para mostrar las estadísticas en tiempo real al hacer la ruta
+ */
 class SeguimientoFragment: Fragment() {
     private val viewModel: SeguimientoViewModel by activityViewModels()
 

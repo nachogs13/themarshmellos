@@ -27,6 +27,9 @@ class SaveRouteDialogFragment : DialogFragment() {
                                 val velocidadMaxima = arguments?.getDouble("velocidad")
                                 val horaInicio = arguments?.getString("horaInicio")
                                 val duracion = arguments?.getLong("duracion")
+                                val altitudGanada = arguments?.getDouble("altitudGanada", 0.0)
+                                val altitudPerdida = arguments?.getDouble("altitudPErdida", 0.0)
+                                val altitudMaxima = arguments?.getDouble("altitudMaxima", 0.0)
                                 val intent = Intent(activity, EstadisticasActivity::class.java)
                                 if (distancia != null) {
                                     intent.putExtra("distancia", String.format("%.2f",distancia/1000))
@@ -40,6 +43,15 @@ class SaveRouteDialogFragment : DialogFragment() {
                                 if (duracion != null) {
                                     intent.putExtra("duracion", duracion)
                                 }
+                                if (altitudGanada != null) {
+                                    intent.putExtra("altitudGanada", altitudGanada)
+                                }
+                                if (altitudPerdida !=null) {
+                                    intent.putExtra("altitudPerdida", altitudPerdida)
+                                }
+                                if (altitudMaxima != null) {
+                                    intent.putExtra("altitudMaxima", altitudMaxima)
+                                }
                                 startActivity(intent)
                             })
                     .setNegativeButton(R.string.cancel_button,
@@ -49,6 +61,9 @@ class SaveRouteDialogFragment : DialogFragment() {
                                 val distancia = arguments?.getDouble("distancia")
                                 val velocidadMaxima = arguments?.getDouble("velocidad")
                                 val duracion = arguments?.getLong("duracion")
+                                val altitudGanada = arguments?.getDouble("altitudGanada", 0.0)
+                                val altitudPerdida = arguments?.getDouble("altitudPErdida", 0.0)
+                                val altitudMaxima = arguments?.getDouble("altitudMaxima", 0.0)
                                 val intent = Intent(activity, EstadisticasActivity::class.java)
                                 if (distancia != null) {
                                     intent.putExtra("distancia", distancia/*String.format("%.2f",distancia/1000)*/)
@@ -62,6 +77,15 @@ class SaveRouteDialogFragment : DialogFragment() {
                                 }
                                 if (duracion != null) {
                                     intent.putExtra("duracion", duracion)
+                                }
+                                if (altitudGanada != null) {
+                                    intent.putExtra("altitudGanada", altitudGanada)
+                                }
+                                if (altitudPerdida !=null) {
+                                    intent.putExtra("altitudPerdida", altitudPerdida)
+                                }
+                                if (altitudMaxima != null) {
+                                    intent.putExtra("altitudMaxima", altitudMaxima)
                                 }
                                 startActivity(intent)
                             })

@@ -4,6 +4,9 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 
+/**
+ * Clase que permite compartir datos entre SeguimientoActivity y su correspondiente fragment
+ */
 class SeguimientoViewModel : ViewModel() {
     private val mutabledDistance = MutableLiveData<Double>()
 

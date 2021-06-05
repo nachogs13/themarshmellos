@@ -12,7 +12,7 @@ private const val DATABASE_NAME = "my_location_table"
 /**
  * Base de datos para almacenar los puntos de geolocalizacion
  */
-@Database(entities = [MyLocationEntity::class], version = 1)
+@Database(entities = [MyLocationEntity::class], version = 2)
 @TypeConverters(MyLocationTypeConverters::class)
 abstract class MyLocationDatabase : RoomDatabase() {
     abstract fun locationDAO(): MyLocationDAO

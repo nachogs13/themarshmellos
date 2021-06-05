@@ -14,6 +14,9 @@ import java.util.*
 @Dao
 interface MyLocationDAO {
 
+    @Query("SELECT altitude FROM my_location_table")
+    fun getAltitudes(): LiveData<List<Double>>
+
     @Query("SELECT speed FROM my_location_table ORDER BY speed DESC")
     fun getSpeeds(): LiveData<List<Float>>
 
@@ -35,7 +38,6 @@ interface MyLocationDAO {
     @Insert
     fun addLocations(myLocationEntities: List<MyLocationEntity>)
 
-    /* Esto lo añadi yo*/
     @Query("DELETE FROM my_location_table")
     fun deleteLocations()
 }

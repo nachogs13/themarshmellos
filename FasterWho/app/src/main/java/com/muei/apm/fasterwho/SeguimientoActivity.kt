@@ -64,6 +64,9 @@ class SeguimientoActivity : AppCompatActivity()/*,com.google.android.gms.locatio
     private var velocidadMaxima = 0.0
     private var horaInicio: String? = null
     private var duracion = 0L
+    private var altitudInicial = 0.0
+    private var altitudMaxima: Double? = null
+    private var altitudMinima: Double? = null
     /**
      * Provides the entry point to the Fused Location Provider API.
      */
@@ -108,6 +111,16 @@ class SeguimientoActivity : AppCompatActivity()/*,com.google.android.gms.locatio
             args.putDouble("distancia", distancia)
             args.putString("horaInicio", horaInicio)
             args.putLong("duracion", duracion)
+
+            if (altitudMaxima != null) {
+                args.putDouble("altitudGanada", altitudMaxima!! - altitudInicial)
+                args.putDouble("altitudMaxima", altitudMaxima!!)
+            }
+
+            if (altitudMinima != null){
+                args.putDouble("altitudPerdida", altitudInicial - altitudMinima!!)
+            }
+
             popUpFragment.arguments = args
             popUpFragment.show(supportFragmentManager, "Save Route")
         }
@@ -291,7 +304,7 @@ class SeguimientoActivity : AppCompatActivity()/*,com.google.android.gms.locatio
                             // Se escribe el punto de geolocalización en el archivo KML
                             registro.anhadirPunto(posicion.latitude, posicion.longitude, 0.0)
 
-                            Log.i(TAG, "T-Distancia total: " + distancia)
+                            Log.i(TAG, "Distancia total hasta el momento: " + distancia)
                         }
                     }
 
@@ -304,31 +317,41 @@ class SeguimientoActivity : AppCompatActivity()/*,com.google.android.gms.locatio
                 this,
                 androidx.lifecycle.Observer { speed ->
                     speed?.let {
-                        Log.i(TAG, "T-Velocidad ${speed} velocidad")
-
-
-                        //if (speeds.isEmpty()) {
-                            //Toast.makeText(this@S, "No hay velocidades", Toast.LENGTH_SHORT)
-                            //    .show()
-                        //} else {
-                            //Toast.makeText(this,"Guardando ${speeds.size} velocidades",Toast.LENGTH_SHORT).show()
-                            //if (speeds.max() != null) {
-                                //velocidadMaxima += speeds.max()!!
                         velocidadMaxima = speed.toDouble()
-                        Log.i(TAG, "T-velocidad aqui1: $velocidadMaxima")
+                        Log.i(TAG, "Velocidad máxima hasta el momento: $velocidadMaxima")
+                    }
+                }
+            )
+
+            var primeraAltitud = true
+            // Obtenemos la primera altitud inicial, y la altitud máxima y mínima
+            locationRepository.altitudes.observe(
+                this, androidx.lifecycle.Observer { altitudes ->
+                    altitudes?.let {
+                        Log.i(TAG,"Leyendo ${altitudes.size} altitudes")
+                        if (altitudes.size > 0) {
+                            if (primeraAltitud) {
+
+                                altitudInicial = altitudes.last()
+                                Log.i(TAG, "Altitud inicial= $altitudInicial")
+                                primeraAltitud = false
+                            } else {
+                                if (altitudes.min()!! < altitudInicial) {
+                                    altitudMinima = altitudes.min()!!
+                                }
+                                if (altitudes.max()!! >= altitudInicial) {
+                                    Log.i(TAG, "Nueva altitud Máxima= $altitudMaxima")
+                                    altitudMaxima = altitudes.max()!!
+                                }
                             }
-                            //Toast.makeText(
-                            //    this,
-                            //    "Máxima velocidad: " + velocidadMaxima2,
-                            //    Toast.LENGTH_SHORT
-                            //).show()
-                      //  }
-                    //}
+                        }
+
+                    }
+
                 }
             )
 
         }
-
 
     }
 

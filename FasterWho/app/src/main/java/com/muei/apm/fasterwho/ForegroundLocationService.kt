@@ -9,7 +9,11 @@ import android.os.IBinder
 import android.widget.Toast
 import androidx.core.content.ContextCompat
 
-class ForegroundLocationService(/*context: Context, pendingIntent: PendingIntent*/): Service() {
+/**
+ * Clase que extiende de Service, encargada de mostrar una notificación y ejecutar un servicio
+ * en background para poder seguir recibiendo notificaciones
+ */
+class ForegroundLocationService: Service() {
     private val CHANNEL_ID = "ForegroundLocationService FasterWho"
     var pendingIntent : PendingIntent? = null
     var context : Context? = null

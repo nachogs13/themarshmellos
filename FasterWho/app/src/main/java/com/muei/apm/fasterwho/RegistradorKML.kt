@@ -7,6 +7,9 @@ import java.io.FileWriter
 import java.io.IOException
 import java.io.PrintWriter
 
+/**
+ * Clase que contiene el código necesario para crear un archivo KML con la ruta realizada
+ */
 class RegistradorKML(contexto: Context) {
     //==============================================================================================
     // CONSTANTES

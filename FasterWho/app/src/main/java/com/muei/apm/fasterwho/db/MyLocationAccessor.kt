@@ -19,10 +19,18 @@ class MyLocationAccessor(
     private val locationDAO = baseDatos.locationDAO()
 
     /**
+     * Método para obtener las altitudes almacenadas
+     */
+    fun getAltitudes() : LiveData<List<Double>> = locationDAO.getAltitudes()
+
+    /**
      * Obtiene las velocidades almacenadas
      */
     fun getSpeeds(): LiveData<List<Float>> = locationDAO.getSpeeds()
 
+    /**
+     * Método para obtenes la velocidad máxima
+     */
     fun getMaxSpeed(): LiveData<Float> = locationDAO.getMaxSpeed()
     /**
      * Obtiene los puntos almacenados de geolocalización
