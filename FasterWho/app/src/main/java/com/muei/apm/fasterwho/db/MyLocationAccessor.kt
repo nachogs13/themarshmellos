@@ -22,6 +22,8 @@ class MyLocationAccessor(
      * Obtiene las velocidades almacenadas
      */
     fun getSpeeds(): LiveData<List<Float>> = locationDAO.getSpeeds()
+
+    fun getMaxSpeed(): LiveData<Float> = locationDAO.getMaxSpeed()
     /**
      * Obtiene los puntos almacenados de geolocalización
      */
