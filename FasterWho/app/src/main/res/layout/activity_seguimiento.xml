@@ -61,7 +61,7 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent" />
 
-    <TextView
+    <!--<TextView
         android:id="@+id/clock_counter"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -72,9 +72,36 @@
         android:textSize="24sp"
         android:textStyle="bold"
         app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/map" />-->
+
+    <Chronometer
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginLeft="16dp"
+        android:layout_marginTop="16dp"
+        android:id="@+id/chronometer"
+        android:background="#000000"
+        android:gravity="center"
+        android:padding="10dp"
+        android:textColor="#1aff00"
+        android:textStyle="bold"
+
+        tools:ignore="MissingConstraints"
+        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/map" />
 
-    <TextView
+   <androidx.fragment.app.FragmentContainerView
+        android:id="@+id/fragmentSeguimiento"
+        android:name="com.muei.apm.fasterwho.SeguimientoFragment"
+        android:layout_width="match_parent"
+        app:layout_constrainedHeight="true"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintBottom_toTopOf="@+id/chronometer"
+        tools:ignore="MissingConstraints"
+        android:layout_height="match_parent" />
+
+    <!--<TextView
         android:id="@+id/meters_count"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -84,6 +111,6 @@
         android:text="@string/meters_count"
         android:textSize="18sp"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/clock_counter" />
+        app:layout_constraintTop_toBottomOf="@+id/chronometer" />-->
 
 </androidx.constraintlayout.widget.ConstraintLayout>

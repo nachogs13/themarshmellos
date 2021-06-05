@@ -5,18 +5,19 @@ import android.os.AsyncTask
 import android.os.Bundle
 import android.widget.Button
 import android.widget.Toast
+import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.OnMapReadyCallback
 import com.google.android.gms.maps.SupportMapFragment
-import com.google.android.gms.maps.model.LatLng
-import com.google.android.gms.maps.model.MarkerOptions
 import org.xml.sax.SAXException
 import java.io.File
 import java.io.FileInputStream
 import java.io.FileNotFoundException
 import java.io.IOException
+import java.text.SimpleDateFormat
+import java.util.*
 import javax.xml.parsers.ParserConfigurationException
 import javax.xml.parsers.SAXParser
 import javax.xml.parsers.SAXParserFactory
@@ -29,9 +30,31 @@ class EstadisticasActivity : AppCompatActivity(),OnMapReadyCallback {
     private var parser: SAXParser? = null
     private var handler: SaxHandler? = null
 
+    private var distancia : Double? = null
+    private var velocidadMaxima : Double? = null
+    private var horaInicio: String? = null
+    private var duracion: Long? = null
+    private val viewModel: EstadisticasViewModel by viewModels()
+
+
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_estadisticas)
+
+
+        // Obtenemos los datos que se le pasan al terminar la ruta
+        distancia = intent.getDoubleExtra("distancia", 0.0)
+        velocidadMaxima = intent.getDoubleExtra("velocidad", 0.0)
+        horaInicio = intent.getStringExtra("horaInicio")
+        duracion = intent.getLongExtra("duracion", 0L)
+
+        // Se le pasan los datos al fragment que los muestra
+        viewModel.setEstadisticas(listOf(ItemEstadistica(R.drawable.ic_directions_run_black_24dp,"Distancia", distancia.toString()),
+            ItemEstadistica(R.drawable.ic_speed_black_24dp,"Vel. Máx.", velocidadMaxima.toString()),
+            ItemEstadistica(R.drawable.ic_clock_24dp,"Hora Inicio", horaInicio),
+            ItemEstadistica(R.drawable.ic_timer_black_24dp,"Duración ", getDate(duracion!!))
+        ))
 
         // Obtain the SupportMapFragment and get notified when the map is ready to be used.
         val mapFragment = supportFragmentManager
@@ -113,5 +136,17 @@ class EstadisticasActivity : AppCompatActivity(),OnMapReadyCallback {
             // Se mueve la cámara a la última posición.
             mapa.moveCamera(CameraUpdateFactory.newLatLngZoom(handler?.getLastCoordenadas(), 15f))
         }
+    }
+
+    /**
+     * Método para convertir un long con milisegundos en un string que representado la hora
+     * con el formato "HH:MM:SS"
+     */
+    private fun getDate(milliSeconds : Long) :String {
+        val formatter = SimpleDateFormat("HH:mm:ss")
+        val calendar: Calendar = Calendar.getInstance()
+        calendar.setTimeInMillis(milliSeconds)
+
+        return formatter.format(calendar.time)
     }
 }
