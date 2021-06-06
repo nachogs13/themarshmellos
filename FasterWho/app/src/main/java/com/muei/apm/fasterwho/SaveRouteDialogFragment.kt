@@ -30,6 +30,7 @@ class SaveRouteDialogFragment : DialogFragment() {
                                 val altitudGanada = arguments?.getDouble("altitudGanada", 0.0)
                                 val altitudPerdida = arguments?.getDouble("altitudPErdida", 0.0)
                                 val altitudMaxima = arguments?.getDouble("altitudMaxima", 0.0)
+                                val nombreArchivoRuta = arguments?.getString("nombreArchivoRuta")
                                 val intent = Intent(activity, EstadisticasActivity::class.java)
                                 if (distancia != null) {
                                     intent.putExtra("distancia", String.format("%.2f",distancia/1000))
@@ -52,6 +53,7 @@ class SaveRouteDialogFragment : DialogFragment() {
                                 if (altitudMaxima != null) {
                                     intent.putExtra("altitudMaxima", altitudMaxima)
                                 }
+                                intent.putExtra("nombreArchivoRuta", nombreArchivoRuta)
                                 startActivity(intent)
                             })
                     .setNegativeButton(R.string.cancel_button,
@@ -64,6 +66,7 @@ class SaveRouteDialogFragment : DialogFragment() {
                                 val altitudGanada = arguments?.getDouble("altitudGanada", 0.0)
                                 val altitudPerdida = arguments?.getDouble("altitudPErdida", 0.0)
                                 val altitudMaxima = arguments?.getDouble("altitudMaxima", 0.0)
+                                val nombreArchivoRuta = arguments?.getString("nombreArchivoRuta")
                                 val intent = Intent(activity, EstadisticasActivity::class.java)
                                 if (distancia != null) {
                                     intent.putExtra("distancia", distancia/*String.format("%.2f",distancia/1000)*/)
@@ -87,6 +90,7 @@ class SaveRouteDialogFragment : DialogFragment() {
                                 if (altitudMaxima != null) {
                                     intent.putExtra("altitudMaxima", altitudMaxima)
                                 }
+                                intent.putExtra("nombreArchivoRuta", nombreArchivoRuta)
                                 startActivity(intent)
                             })
             // Create the AlertDialog object and return it

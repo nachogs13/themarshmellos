@@ -10,12 +10,11 @@ import java.io.PrintWriter
 /**
  * Clase que contiene el código necesario para crear un archivo KML con la ruta realizada
  */
-class RegistradorKML(contexto: Context) {
+class RegistradorKML(contexto: Context, nombreArchivo: String) {
     //==============================================================================================
     // CONSTANTES
     //==============================================================================================
     // KML.
-    val KML_NOMBRE_FICHERO = "ruta.kml"
     private val KML_CABECERA = """<?xml version="1.0" encoding="UTF-8"?>
 <kml xmlns="http://www.opengis.net/kml/2.2">
   <Placemark>"""
@@ -43,7 +42,7 @@ class RegistradorKML(contexto: Context) {
     //==============================================================================================
     init {
         this.contexto = contexto
-        fichero = File(contexto.filesDir, KML_NOMBRE_FICHERO)
+        fichero = File(contexto.filesDir, nombreArchivo)
     }
 
     //==============================================================================================

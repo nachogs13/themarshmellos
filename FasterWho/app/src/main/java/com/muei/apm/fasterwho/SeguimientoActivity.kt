@@ -42,8 +42,10 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 import java.lang.StringBuilder
+import java.text.SimpleDateFormat
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
+import java.util.*
 import java.util.concurrent.Executors
 
 class SeguimientoActivity : AppCompatActivity()/*,com.google.android.gms.location.LocationListener*/, OnMapReadyCallback,GoogleMap.OnMyLocationButtonClickListener{
@@ -67,6 +69,7 @@ class SeguimientoActivity : AppCompatActivity()/*,com.google.android.gms.locatio
     private var altitudInicial = 0.0
     private var altitudMaxima: Double? = null
     private var altitudMinima: Double? = null
+    private var nombreArchivoRuta: String? = null
     /**
      * Provides the entry point to the Fused Location Provider API.
      */
@@ -89,7 +92,9 @@ class SeguimientoActivity : AppCompatActivity()/*,com.google.android.gms.locatio
             .findFragmentById(R.id.map) as SupportMapFragment
         mapFragment.getMapAsync(this)
 
-        registro = RegistradorKML(this)
+        // Definimos el nombre del archivo KML de la ruta
+        nombreArchivoRuta = "ruta-" +getDate() + ".kml"
+        registro = RegistradorKML(this, nombreArchivoRuta!!)
 
         locationRepository = run {
             ViewModelProviders.of(this).get(LocationUpdateViewModel::class.java)
@@ -106,11 +111,12 @@ class SeguimientoActivity : AppCompatActivity()/*,com.google.android.gms.locatio
 
             // Le pasamos la distancia y la velocidad al pop up
             var args = Bundle()
-            Log.i(TAG,"T-Esta velocidad $velocidadMaxima ...")
+
             args.putDouble("velocidad", velocidadMaxima)
             args.putDouble("distancia", distancia)
             args.putString("horaInicio", horaInicio)
             args.putLong("duracion", duracion)
+            args.putString("nombreArchivoRuta", nombreArchivoRuta)
 
             if (altitudMaxima != null) {
                 args.putDouble("altitudGanada", altitudMaxima!! - altitudInicial)
@@ -564,5 +570,15 @@ class SeguimientoActivity : AppCompatActivity()/*,com.google.android.gms.locatio
             mMap.isMyLocationEnabled = false
             Toast.makeText(this, "Para activar la localización ve a ajustes y acepta los permisos", Toast.LENGTH_SHORT).show()
         }
+    }
+
+    /**
+     * Método para obtener la fecha actual en el formato yyyyMMddHHmmss
+     */
+    private fun getDate() :String {
+        val formatter = SimpleDateFormat("yyyyMMddHHmmss")
+        val calendar: Calendar = Calendar.getInstance()
+
+        return formatter.format(calendar.time)
     }
 }

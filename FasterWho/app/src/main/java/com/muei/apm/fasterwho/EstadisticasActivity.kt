@@ -1,8 +1,10 @@
 package com.muei.apm.fasterwho
 
 import android.content.Intent
+import android.net.Uri
 import android.os.AsyncTask
 import android.os.Bundle
+import android.util.Log
 import android.widget.Button
 import android.widget.Toast
 import androidx.activity.viewModels
@@ -11,6 +13,8 @@ import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.OnMapReadyCallback
 import com.google.android.gms.maps.SupportMapFragment
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.storage.FirebaseStorage
 import org.xml.sax.SAXException
 import java.io.File
 import java.io.FileInputStream
@@ -25,7 +29,7 @@ import javax.xml.parsers.SAXParserFactory
 class EstadisticasActivity : AppCompatActivity(),OnMapReadyCallback {
 
     private lateinit var mapa: GoogleMap
-
+    private val TAG = "EstadisticasActivity"
     // Esto se añade para poder usarlo en el AsyncTask.
     private var parser: SAXParser? = null
     private var handler: SaxHandler? = null
@@ -37,13 +41,45 @@ class EstadisticasActivity : AppCompatActivity(),OnMapReadyCallback {
     private var altitudGanada: Double? = null
     private var altitudPerdida: Double? = null
     private var altitudMaxima: Double? = null
+    private var nombreArchivoRuta: String? = null
     private val viewModel: EstadisticasViewModel by viewModels()
 
+    lateinit var storage: FirebaseStorage
+    private val firebaseAuth = FirebaseAuth.getInstance()
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_estadisticas)
+
+        // Obtenemos el nombre del archivo KML de la ruta
+        nombreArchivoRuta = intent.getStringExtra("nombreArchivoRuta")
+
+        Log.i(TAG, "Usuario actual: " + firebaseAuth.currentUser.email)
+        // inicializamos el almacenamiento en Firebase
+        storage= FirebaseStorage.getInstance()
+
+        // Creamos una referencia al storage desde nuestra app
+        var storageRef = storage.reference
+
+        // Obtenemos la ruta del fichero a subir
+        var file = Uri.fromFile(File(this.filesDir.absolutePath, nombreArchivoRuta))
+
+        // comprobamos si se quiere guardar la ruta
+        val guardarRuta = intent.getBooleanExtra("guardarRuta", false)
+        val rutaRef = storageRef.child("kmlsRutas/${firebaseAuth.currentUser.email}/${file.lastPathSegment}")
+        val uploadTask = rutaRef.putFile(file)
+
+        // registramos observadores para escuchar cuando la carga termina o falla
+        uploadTask.addOnFailureListener {
+            Log.i(TAG, "Falló la carga del kml")
+            Toast.makeText(this, "Error al cargar en Firebase el KML", Toast.LENGTH_SHORT).show()
+
+        }.addOnSuccessListener { taskSnapshot ->
+            Log.i(TAG, "Archivo cargado correctamente")
+            Toast.makeText(this, "Archivo KML cargado correctamente en Firebase", Toast.LENGTH_SHORT).show()
+        }
+
 
         // Obtenemos los datos que se le pasan al terminar la ruta
         distancia = intent.getDoubleExtra("distancia", 0.0)
