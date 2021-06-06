@@ -153,8 +153,6 @@ class SeguimientoActivity : AppCompatActivity()/*,com.google.android.gms.locatio
             // lanzamos el popup para saber si se quiere guardar la ruta
             launchPopUp()
 
-
-
         }
     }
 

@@ -20,6 +20,9 @@ import java.io.File
 import java.io.FileInputStream
 import java.io.FileNotFoundException
 import java.io.IOException
+import java.math.RoundingMode
+import java.text.DecimalFormat
+import java.text.DecimalFormatSymbols
 import java.text.SimpleDateFormat
 import java.util.*
 import javax.xml.parsers.ParserConfigurationException
@@ -90,15 +93,26 @@ class EstadisticasActivity : AppCompatActivity(),OnMapReadyCallback {
         altitudPerdida = intent.getDoubleExtra("altitudPerdida", 0.0)
         altitudMaxima = intent.getDoubleExtra("altitudMaxima", 0.0)
 
+        val df = DecimalFormat("#.##")
+        df.roundingMode = RoundingMode.CEILING
+        df.decimalFormatSymbols = DecimalFormatSymbols(Locale.ENGLISH)
+
+        // convertimos la distancia a metros o kilometros
+        var distanciaString : String? = null
+        if (distancia!! < 1000.0) {
+            distanciaString = df.format(distancia!!) + " metros"
+        } else {
+            distanciaString = df.format(distancia!!/1000) + " km"
+        }
         // Se le pasan los datos al fragment que los muestra
-        viewModel.setEstadisticas(listOf(ItemEstadistica(R.drawable.ic_directions_run_black_24dp,"Distancia", distancia.toString()),
-            ItemEstadistica(R.drawable.ic_speed_black_24dp,"Vel. Máx.", velocidadMaxima.toString()),
+        viewModel.setEstadisticas(listOf(ItemEstadistica(R.drawable.ic_directions_run_black_24dp,"Distancia", distanciaString),
+            ItemEstadistica(R.drawable.ic_speed_black_24dp,"Vel. Máx.", df.format(velocidadMaxima!!)),
             ItemEstadistica(R.drawable.ic_clock_24dp,"Hora Inicio", horaInicio),
             ItemEstadistica(R.drawable.ic_timer_black_24dp,"Duración ", getDate(duracion!!)),
-            ItemEstadistica(R.drawable.ic_elevation_24dp, "Elev. Ganada", altitudGanada.toString()),
-            ItemEstadistica(R.drawable.ic_elevation_24dp, "Elev. Perdida", altitudPerdida.toString()),
-            ItemEstadistica(R.drawable.ic_elevation_24dp, "Elev. Máxima", altitudMaxima.toString()))
-        )
+            ItemEstadistica(R.drawable.ic_elevation_24dp, "Elev. Ganada", df.format(altitudGanada!!)),
+            ItemEstadistica(R.drawable.ic_elevation_24dp, "Elev. Perdida", df.format(altitudPerdida!!)),
+            ItemEstadistica(R.drawable.ic_elevation_24dp, "Elev. Máxima", df.format(altitudMaxima!!))
+        ))
 
         // Obtain the SupportMapFragment and get notified when the map is ready to be used.
         val mapFragment = supportFragmentManager
@@ -182,7 +196,10 @@ class EstadisticasActivity : AppCompatActivity(),OnMapReadyCallback {
     private fun getDate(milliSeconds : Long) :String {
         val formatter = SimpleDateFormat("HH:mm:ss")
         val calendar: Calendar = Calendar.getInstance()
-        calendar.setTimeInMillis(milliSeconds)
+
+        calendar.timeInMillis = milliSeconds
+        // restamos una por a causa del cambio horario
+        calendar.add(Calendar.HOUR_OF_DAY, -1)
 
         return formatter.format(calendar.time)
     }

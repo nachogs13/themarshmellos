@@ -55,7 +55,8 @@
         <activity android:name=".MisAmigos" />
         <activity android:name=".InicioActivity" />
         <activity android:name=".RutaActivity" />
-        <activity android:name=".EstadisticasActivity" />
+        <activity android:name=".EstadisticasActivity"
+            android:screenOrientation="portrait"/>
         <activity android:name=".RankingActivity" />
         <activity android:name=".ProfileActivity" />
         <activity android:name=".FiltersActivity" />

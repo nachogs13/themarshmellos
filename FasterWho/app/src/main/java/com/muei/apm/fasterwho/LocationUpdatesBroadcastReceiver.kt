@@ -42,7 +42,8 @@ class LocationUpdatesBroadcastReceiver : BroadcastReceiver() {
                         foreground = isAppInForeground(context),
                         position = LatLng(location.latitude, location.longitude),
                         date = Date(location.time),
-                        speed = location.speed,
+                        speed = location.speed * 3.6F, // Lo multiplicamos por 3.6 para pasar
+                                                        // de m/s a km/h
                         altitude = location.altitude
                     )
                 }

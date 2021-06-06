@@ -45,7 +45,7 @@
     <string name="location_button">Buscar</string>
     <string name="button_route_end">Finalizar ruta</string>
     <string name="clock_counter">00:06:37</string>
-    <string name="meters_count">1,22 km</string>
+    <string name="meters_count">0 metros</string>
     <string name="route_name">Nombre de la ruta</string>
     <string name="direction_route">Dirección de la ruta</string>
     <string name="cancel_button">Cancelar</string>

@@ -23,7 +23,12 @@ class SeguimientoFragment: Fragment() {
 
         val textoDuracion : TextView = view.findViewById(R.id.meters_count)
         viewModel.getDistance.observe(viewLifecycleOwner, Observer {
-            item -> textoDuracion.text = item.toString()
+            item ->
+            if (item < 1000) {
+                textoDuracion.text = String.format("%.2f",item) + "metros"
+            } else {
+                textoDuracion.text = String.format("%.2f",(item/1000)) + "metros"
+            }
         })
 
         return view
