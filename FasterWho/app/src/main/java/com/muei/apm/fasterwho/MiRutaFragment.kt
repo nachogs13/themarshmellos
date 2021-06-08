@@ -62,12 +62,12 @@ class MiRutaFragment : Fragment() {
                 }
                 Log.d("currentUser", FirebaseAuth.getInstance().currentUser.email.toString())
                 db.collection("rutas")
-                        .whereEqualTo("propietario",FirebaseAuth.getInstance().currentUser.email.toString())
+                        .whereEqualTo("usuario",FirebaseAuth.getInstance().currentUser.email.toString())
                         .get().addOnSuccessListener {
 
                     for (document in it) {
                         direccionRuta = document.data.get("direccion").toString()
-                        nombreRuta = document.data.get("nombre") as String
+                        nombreRuta = document.data.get("nombre").toString()
                         rating = document.data.get("rating") as Number
                         coordenadasFin = document.data.get("coordenadas_fin") as GeoPoint
                         coordenadasInicio = document.data.get("coordenadas_inicio") as GeoPoint

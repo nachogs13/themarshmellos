@@ -1,6 +1,8 @@
 package com.muei.apm.fasterwho
 
 import android.content.Intent
+import android.location.Address
+import android.location.Geocoder
 import android.net.Uri
 import android.os.AsyncTask
 import android.os.Bundle
@@ -14,6 +16,8 @@ import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.OnMapReadyCallback
 import com.google.android.gms.maps.SupportMapFragment
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.firestore.GeoPoint
 import com.google.firebase.storage.FirebaseStorage
 import org.xml.sax.SAXException
 import java.io.File
@@ -45,44 +49,17 @@ class EstadisticasActivity : AppCompatActivity(),OnMapReadyCallback {
     private var altitudPerdida: Double? = null
     private var altitudMaxima: Double? = null
     private var nombreArchivoRuta: String? = null
+    private var nombreRuta: String? = null
     private val viewModel: EstadisticasViewModel by viewModels()
 
     lateinit var storage: FirebaseStorage
     private val firebaseAuth = FirebaseAuth.getInstance()
+    private val db = FirebaseFirestore.getInstance()
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_estadisticas)
-
-        // Obtenemos el nombre del archivo KML de la ruta
-        nombreArchivoRuta = intent.getStringExtra("nombreArchivoRuta")
-
-        Log.i(TAG, "Usuario actual: " + firebaseAuth.currentUser.email)
-        // inicializamos el almacenamiento en Firebase
-        storage= FirebaseStorage.getInstance()
-
-        // Creamos una referencia al storage desde nuestra app
-        var storageRef = storage.reference
-
-        // Obtenemos la ruta del fichero a subir
-        var file = Uri.fromFile(File(this.filesDir.absolutePath, nombreArchivoRuta))
-
-        // comprobamos si se quiere guardar la ruta
-        val guardarRuta = intent.getBooleanExtra("guardarRuta", false)
-        val rutaRef = storageRef.child("kmlsRutas/${firebaseAuth.currentUser.email}/${file.lastPathSegment}")
-        val uploadTask = rutaRef.putFile(file)
-
-        // registramos observadores para escuchar cuando la carga termina o falla
-        uploadTask.addOnFailureListener {
-            Log.i(TAG, "Falló la carga del kml")
-            Toast.makeText(this, "Error al cargar en Firebase el KML", Toast.LENGTH_SHORT).show()
-
-        }.addOnSuccessListener { taskSnapshot ->
-            Log.i(TAG, "Archivo cargado correctamente")
-            Toast.makeText(this, "Archivo KML cargado correctamente en Firebase", Toast.LENGTH_SHORT).show()
-        }
-
 
         // Obtenemos los datos que se le pasan al terminar la ruta
         distancia = intent.getDoubleExtra("distancia", 0.0)
@@ -92,6 +69,73 @@ class EstadisticasActivity : AppCompatActivity(),OnMapReadyCallback {
         altitudGanada = intent.getDoubleExtra("altitudGanada", 0.0)
         altitudPerdida = intent.getDoubleExtra("altitudPerdida", 0.0)
         altitudMaxima = intent.getDoubleExtra("altitudMaxima", 0.0)
+        nombreRuta = intent.getStringExtra("nombreRuta")
+
+
+        // comprobamos si se quiere guardar la ruta
+        val guardarRuta = intent.getBooleanExtra("guardarRuta", false)
+        if (guardarRuta) {
+            // Obtenemos el nombre del archivo KML de la ruta
+            nombreArchivoRuta = intent.getStringExtra("nombreArchivoRuta")
+
+            Log.i(TAG, "Usuario actual: " + firebaseAuth.currentUser.email)
+            // inicializamos el almacenamiento en Firebase
+            storage= FirebaseStorage.getInstance()
+
+            // Creamos una referencia al storage desde nuestra app
+            var storageRef = storage.reference
+
+            // Obtenemos la ruta del fichero a subir
+            var file = Uri.fromFile(File(this.filesDir.absolutePath, nombreArchivoRuta))
+
+            val rutaRef = storageRef.child("kmlsRutas/${firebaseAuth.currentUser.email}/${file.lastPathSegment}")
+            val uploadTask = rutaRef.putFile(file)
+
+            // registramos observadores para escuchar cuando la carga termina o falla
+            uploadTask.addOnFailureListener {
+                Log.i(TAG, "Falló la carga del kml")
+                Toast.makeText(this, "Error al cargar en Firebase el KML", Toast.LENGTH_SHORT).show()
+
+            }.addOnSuccessListener { taskSnapshot ->
+                Log.i(TAG, "Archivo cargado correctamente")
+                Toast.makeText(this, "Archivo KML cargado correctamente en Firebase", Toast.LENGTH_SHORT).show()
+
+            }
+            // Probamos a obtener la direccion a partir de LatLng
+            var addresses: List<Address>? = null;
+            val geocoder = Geocoder(this, Locale.getDefault())
+            var direccionRuta: String? = null
+            addresses = geocoder.getFromLocation(43.339849,-8.831307,1)
+            if (addresses.get(0).featureName != null) {
+                direccionRuta = addresses.get(0).featureName
+            } else {
+                direccionRuta = addresses.get(0).getAddressLine(0)
+            }
+            Log.i(TAG, "Dirección detectada: ${direccionRuta}")
+            // procedemos a almacenar en la coleccion "rutasPrivadas" de BD la información sobre la ruta
+            Log.i(TAG, "Ruta: ${filesDir.absolutePath}/${file.lastPathSegment}")
+            val ruta = hashMapOf(
+                "imgInicio" to db.document("ImgRutas/carreira-pedestre.PNG"),
+                "kmlfile" to db.document("${filesDir.absolutePath}/${file.lastPathSegment}"),
+                //"kmlFile" to storageRef.child("/kmlRutas/${firebaseAuth.currentUser.email}/${file.lastPathSegment}"),
+                "coordenadas_inicio" to GeoPoint(43.339849,-8.831307),
+                "coordenadas_fin" to GeoPoint(43.319368,-8.844123),
+                "direccion" to direccionRuta,
+                "distancia" to distancia,
+                "nombre" to nombreRuta,
+                "usuario" to firebaseAuth.currentUser.email,
+                "propietario" to firebaseAuth.currentUser.email,
+                "desnivel" to 0,
+                "public" to false,
+                "rating" to 0
+            )
+            // añadimos el documento a la base de datos
+            db.collection("rutas").document()
+                .set(ruta)
+                .addOnSuccessListener { Log.i(TAG, "Ruta guardada en Firebase") }
+                .addOnFailureListener { e -> Log.i(TAG, "Error al guardar la ruta en Firebase")}
+        }
+
 
         val df = DecimalFormat("#.##")
         df.roundingMode = RoundingMode.CEILING
