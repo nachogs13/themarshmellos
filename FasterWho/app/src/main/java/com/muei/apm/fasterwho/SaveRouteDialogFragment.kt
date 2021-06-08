@@ -24,7 +24,10 @@ class SaveRouteDialogFragment : DialogFragment() {
         val altitudPerdida = arguments?.getDouble("altitudPErdida", 0.0)
         val altitudMaxima = arguments?.getDouble("altitudMaxima", 0.0)
         val nombreArchivoRuta = arguments?.getString("nombreArchivoRuta")
-
+        val latitud_inicial = arguments?.getDouble("latitud_inicial")
+        val longitud_inicial =arguments?.getDouble("longitud_inicial")
+        val latitud_final = arguments?.getDouble("latitud_final")
+        val longitud_final = arguments?.getDouble("longitud_final")
 
 
         return activity?.let {
@@ -78,6 +81,10 @@ class SaveRouteDialogFragment : DialogFragment() {
                                 args.putDouble("altitudGanda", altitudGanada!!)
                                 args.putDouble("altitudPerdida", altitudPerdida!!)
                                 args.putDouble("altitudMaxima", altitudMaxima!!)
+                                args.putDouble("latitud_inicial", latitud_inicial!!)
+                                args.putDouble("longitud_inicial", longitud_inicial!!)
+                                args.putDouble("latitud_final", latitud_final!!)
+                                args.putDouble("longitud_final", longitud_final!!)
                                 args.putString("nombreArchivoRuta", nombreArchivoRuta)
 
                                 popUpFragment.arguments = args
@@ -112,7 +119,7 @@ class SaveRouteDialogFragment : DialogFragment() {
                                 if (altitudMaxima != null) {
                                     intent.putExtra("altitudMaxima", altitudMaxima)
                                 }
-                                //intent.putExtra("nombreArchivoRuta", nombreArchivoRuta)
+                                intent.putExtra("nombreArchivoRuta", nombreArchivoRuta)
                                 startActivity(intent)
                             })
             // Create the AlertDialog object and return it

@@ -50,6 +50,10 @@ class EstadisticasActivity : AppCompatActivity(),OnMapReadyCallback {
     private var altitudMaxima: Double? = null
     private var nombreArchivoRuta: String? = null
     private var nombreRuta: String? = null
+    private var latitud_inicial: Double? = null
+    private var latitud_final: Double? = null
+    private var longitud_inicial: Double? = null
+    private var longitud_final: Double? = null
     private val viewModel: EstadisticasViewModel by viewModels()
 
     lateinit var storage: FirebaseStorage
@@ -70,13 +74,22 @@ class EstadisticasActivity : AppCompatActivity(),OnMapReadyCallback {
         altitudPerdida = intent.getDoubleExtra("altitudPerdida", 0.0)
         altitudMaxima = intent.getDoubleExtra("altitudMaxima", 0.0)
         nombreRuta = intent.getStringExtra("nombreRuta")
+        // obtenemos las latitudes y longitudes iniciales y finales
+        latitud_inicial = intent.getDoubleExtra("latitud_inicial", 0.0)
+        latitud_final = intent.getDoubleExtra("latitud_final", 0.0)
+        longitud_inicial = intent.getDoubleExtra("longitud_inicial", 0.0)
+        longitud_final = intent.getDoubleExtra("longitud_final", 0.0)
+        // Obtenemos el nombre del archivo KML de la ruta
+        nombreArchivoRuta = intent.getStringExtra("nombreArchivoRuta")
 
+        val df = DecimalFormat("#.##")
+        df.roundingMode = RoundingMode.CEILING
+        df.decimalFormatSymbols = DecimalFormatSymbols(Locale.ENGLISH)
 
         // comprobamos si se quiere guardar la ruta
         val guardarRuta = intent.getBooleanExtra("guardarRuta", false)
         if (guardarRuta) {
-            // Obtenemos el nombre del archivo KML de la ruta
-            nombreArchivoRuta = intent.getStringExtra("nombreArchivoRuta")
+
 
             Log.i(TAG, "Usuario actual: " + firebaseAuth.currentUser.email)
             // inicializamos el almacenamiento en Firebase
@@ -101,27 +114,35 @@ class EstadisticasActivity : AppCompatActivity(),OnMapReadyCallback {
                 Toast.makeText(this, "Archivo KML cargado correctamente en Firebase", Toast.LENGTH_SHORT).show()
 
             }
+
             // Probamos a obtener la direccion a partir de LatLng
             var addresses: List<Address>? = null;
             val geocoder = Geocoder(this, Locale.getDefault())
             var direccionRuta: String? = null
-            addresses = geocoder.getFromLocation(43.339849,-8.831307,1)
-            if (addresses.get(0).featureName != null) {
-                direccionRuta = addresses.get(0).featureName
+            if (latitud_inicial != 0.0 && longitud_inicial != 0.0) {
+                addresses = geocoder.getFromLocation(latitud_inicial!!,longitud_final!!,1)
+                if (addresses.get(0).featureName != null) {
+                    direccionRuta = addresses.get(0).featureName
+                    Log.i(TAG, "Dirección corta detectada: ${direccionRuta}")
+                } else {
+                    direccionRuta = addresses.get(0).getAddressLine(0)
+                    Log.i(TAG, "Dirección larga detectada: ${direccionRuta}")
+                }
             } else {
-                direccionRuta = addresses.get(0).getAddressLine(0)
+                direccionRuta = ""
             }
-            Log.i(TAG, "Dirección detectada: ${direccionRuta}")
+
+
             // procedemos a almacenar en la coleccion "rutasPrivadas" de BD la información sobre la ruta
             Log.i(TAG, "Ruta: ${filesDir.absolutePath}/${file.lastPathSegment}")
             val ruta = hashMapOf(
                 "imgInicio" to db.document("ImgRutas/carreira-pedestre.PNG"),
                 "kmlfile" to db.document("${filesDir.absolutePath}/${file.lastPathSegment}"),
                 //"kmlFile" to storageRef.child("/kmlRutas/${firebaseAuth.currentUser.email}/${file.lastPathSegment}"),
-                "coordenadas_inicio" to GeoPoint(43.339849,-8.831307),
-                "coordenadas_fin" to GeoPoint(43.319368,-8.844123),
+                "coordenadas_inicio" to GeoPoint(latitud_inicial!!,longitud_inicial!!),
+                "coordenadas_fin" to GeoPoint(latitud_final!!,longitud_final!!),
                 "direccion" to direccionRuta,
-                "distancia" to distancia,
+                "distancia" to df.format(distancia!!/1000).toDouble(),
                 "nombre" to nombreRuta,
                 "usuario" to firebaseAuth.currentUser.email,
                 "propietario" to firebaseAuth.currentUser.email,
@@ -137,9 +158,7 @@ class EstadisticasActivity : AppCompatActivity(),OnMapReadyCallback {
         }
 
 
-        val df = DecimalFormat("#.##")
-        df.roundingMode = RoundingMode.CEILING
-        df.decimalFormatSymbols = DecimalFormatSymbols(Locale.ENGLISH)
+
 
         // convertimos la distancia a metros o kilometros
         var distanciaString : String? = null
@@ -208,7 +227,7 @@ class EstadisticasActivity : AppCompatActivity(),OnMapReadyCallback {
         override fun doInBackground(vararg params: String?): Boolean? {
             try {
                 parser!!.parse(
-                    FileInputStream(File(params[0],"ruta.kml")),
+                    FileInputStream(File(params[0],nombreArchivoRuta)),
                     handler
                 )
             } catch (e: FileNotFoundException) {

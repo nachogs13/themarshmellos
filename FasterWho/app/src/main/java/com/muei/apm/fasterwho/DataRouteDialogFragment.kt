@@ -25,6 +25,10 @@ class DataRouteDialogFragment : DialogFragment() {
         val altitudPerdida = arguments?.getDouble("altitudPErdida", 0.0)
         val altitudMaxima = arguments?.getDouble("altitudMaxima", 0.0)
         val nombreArchivoRuta = arguments?.getString("nombreArchivoRuta")
+        val latitud_inicial = arguments?.getDouble("latitud_inicial")
+        val longitud_inicial =arguments?.getDouble("longitud_inicial")
+        val latitud_final = arguments?.getDouble("latitud_final")
+        val longitud_final = arguments?.getDouble("longitud_final")
 
         val intent = Intent(activity, EstadisticasActivity::class.java)
 
@@ -70,6 +74,19 @@ class DataRouteDialogFragment : DialogFragment() {
                         }
                         if (altitudMaxima != null) {
                             intent.putExtra("altitudMaxima", altitudMaxima)
+                        }
+
+                        if (latitud_inicial != null) {
+                            intent.putExtra("latitud_inicial", latitud_inicial)
+                        }
+                        if (latitud_final != null) {
+                            intent.putExtra("latitud_final", latitud_final)
+                        }
+                        if (longitud_inicial != null) {
+                            intent.putExtra("longitud_inicial", longitud_inicial)
+                        }
+                        if (longitud_final != null) {
+                            intent.putExtra("longitud_final", longitud_final)
                         }
                         intent.putExtra("nombreArchivoRuta", nombreArchivoRuta)
 

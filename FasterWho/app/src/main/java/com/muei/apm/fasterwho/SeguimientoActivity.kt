@@ -2,17 +2,12 @@ package com.muei.apm.fasterwho
 
 import android.Manifest
 import android.annotation.SuppressLint
-import android.app.PendingIntent
 import android.content.*
 import android.content.pm.PackageManager
 import android.graphics.Color
 import android.location.Location
-import android.location.LocationListener
 import android.net.Uri
-import android.os.Build
-import android.os.Bundle
-import android.os.IBinder
-import android.os.SystemClock
+import android.os.*
 import android.provider.Settings
 import android.util.Log
 import android.view.View
@@ -23,10 +18,7 @@ import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
-import androidx.fragment.app.FragmentActivity
-import androidx.lifecycle.LiveData
 import androidx.lifecycle.ViewModelProviders
-import com.google.android.gms.location.FusedLocationProviderApi
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
 import com.google.android.gms.maps.CameraUpdateFactory
@@ -35,18 +27,15 @@ import com.google.android.gms.maps.OnMapReadyCallback
 import com.google.android.gms.maps.SupportMapFragment
 import com.google.android.gms.maps.model.*
 import com.google.android.material.snackbar.Snackbar
-import com.google.maps.android.SphericalUtil
 import com.google.maps.android.data.kml.KmlLayer
-import com.muei.apm.fasterwho.db.MyLocationAccessor
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
-import java.lang.StringBuilder
 import java.text.SimpleDateFormat
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 import java.util.*
-import java.util.concurrent.Executors
+
 
 class SeguimientoActivity : AppCompatActivity()/*,com.google.android.gms.location.LocationListener*/, OnMapReadyCallback,GoogleMap.OnMyLocationButtonClickListener{
     private lateinit var registro: RegistradorKML
@@ -83,6 +72,8 @@ class SeguimientoActivity : AppCompatActivity()/*,com.google.android.gms.locatio
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+
         setContentView(R.layout.activity_seguimiento)
 
 
@@ -127,12 +118,32 @@ class SeguimientoActivity : AppCompatActivity()/*,com.google.android.gms.locatio
                 args.putDouble("altitudPerdida", altitudInicial - altitudMinima!!)
             }
 
+            // primera localizacion
+            args.putDouble("latitud_inicial", ruta.points.first().latitude)
+            args.putDouble("longitud_inicial", ruta.points.first().longitude)
+            // última localización
+            args.putDouble("latitud_final", ruta.points.last().latitude)
+            args.putDouble("longitud_final", ruta.points.last().longitude)
+
             popUpFragment.arguments = args
             popUpFragment.show(supportFragmentManager, "Save Route")
         }
 
         val btnFinalizarRuta : Button = findViewById(R.id.finalizar_ruta_button)
         btnFinalizarRuta.setOnClickListener {
+            runBlocking {
+                launch {
+                    // escribimos los puntos al fichero
+                    // abrimos el fichero KML para comenzar a guardar los puntos en el
+                    registro.abrirFichero()
+                    for (i in ruta.points) {
+                        registro.anhadirPunto(i.latitude, i.longitude, 0.0)
+                    }
+                    // se cierra el fichero KML
+                    registro.cerrarFichero()
+                }
+            }
+
             chronometer?.stop()
 
             // calculamos el tiempo de duración de la actividad
@@ -147,8 +158,7 @@ class SeguimientoActivity : AppCompatActivity()/*,com.google.android.gms.locatio
                 unbindService(connection)
             stopService(Intent(baseContext, ForegroundLocationService::class.java))
 
-            // se cierra el fichero KML
-            registro.cerrarFichero()
+
 
             // lanzamos el popup para saber si se quiere guardar la ruta
             launchPopUp()
@@ -157,8 +167,8 @@ class SeguimientoActivity : AppCompatActivity()/*,com.google.android.gms.locatio
     }
 
     override fun onMapReady(googleMap: GoogleMap) {
-
         mMap = googleMap
+
         // Comprobamos los permisos
         if (!checkPermissions()) {
             requestPermissions()
@@ -265,7 +275,7 @@ class SeguimientoActivity : AppCompatActivity()/*,com.google.android.gms.locatio
             bindService(intentService, connection, Context.BIND_AUTO_CREATE)
 
             // abrimos el fichero KML para comenzar a guardar los puntos en el
-            registro.abrirFichero()
+            //registro.abrirFichero()
 
             // variables para comenzar a calcular la distancia recorrida
             var primeraLocalizacion = true
@@ -306,7 +316,7 @@ class SeguimientoActivity : AppCompatActivity()/*,com.google.android.gms.locatio
                             }
 
                             // Se escribe el punto de geolocalización en el archivo KML
-                            registro.anhadirPunto(posicion.latitude, posicion.longitude, 0.0)
+                            //registro.anhadirPunto(posicion.latitude, posicion.longitude, 0.0)
 
                             Log.i(TAG, "Distancia total hasta el momento: " + distancia)
                         }

@@ -56,7 +56,7 @@ class IniciarRutaActivity : AppCompatActivity(), OnMapReadyCallback {
 
         val btnIniciarRuta : Button = findViewById(R.id.iniciar_ruta_button)
         btnIniciarRuta.setOnClickListener {
-            Toast.makeText(this, "Se inicia seguimiento de actividad", Toast.LENGTH_SHORT).show()
+            //Toast.makeText(this, "Se inicia seguimiento de actividad", Toast.LENGTH_SHORT).show()
             val intent = Intent(this, SeguimientoActivity::class.java)
             // Le pasamos a SeguimientoActivity el fichero KML para que muestre la ruta
             intent.putExtra("file", this.intent.getStringExtra("file"))
