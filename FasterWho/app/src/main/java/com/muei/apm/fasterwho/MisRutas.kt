@@ -1,7 +1,9 @@
 package com.muei.apm.fasterwho
 
+import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.widget.Toast
 
 class MisRutas : Toolbar() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -17,6 +19,13 @@ class MisRutas : Toolbar() {
                  Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
                          .setAction("Action", null).show()
              }*/
+        val btnAnadirRuta : com.google.android.material.floatingactionbutton.FloatingActionButton = findViewById(R.id.floatingActionButton)
+        btnAnadirRuta.setOnClickListener({
+            Toast.makeText(this, "Iniciar Ruta", Toast.LENGTH_SHORT).show()
+            //val intent = Intent(this, IniciarRutaActivity::class.java)
+            val intent = Intent(this, SeguimientoActivity::class.java)
+            startActivity(intent)
+        })
     }
     override fun onResume() {
         super.onResume()

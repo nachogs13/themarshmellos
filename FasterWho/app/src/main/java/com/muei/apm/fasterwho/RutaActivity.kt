@@ -45,8 +45,8 @@ class RutaActivity : Toolbar(), OnMapReadyCallback {
 
         val btnEmpezar : Button = findViewById(R.id.buttonEmpezar)
         btnEmpezar.setOnClickListener {
-            //val intent = Intent(this, SeguimientoActivity::class.java)
-            val intent = Intent(this, IniciarRutaActivity::class.java)
+            val intent = Intent(this, SeguimientoActivity::class.java)
+            //val intent = Intent(this, IniciarRutaActivity::class.java)
             // Le pasamos a SeguimientoActivity el fichero KML para que muestre la ruta
             intent.putExtra("file", this.intent.getStringExtra("file"))
             intent.putExtra("latitud_fin", this.intent.getDoubleExtra("latitud_fin", 0.0))

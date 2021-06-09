@@ -193,8 +193,8 @@ class SeguimientoActivity : AppCompatActivity()/*,com.google.android.gms.locatio
             } else {
                 TODO("VERSION.SDK_INT < O")
             }
-            horaInicio = horaActual.format(DateTimeFormatter.ofPattern("HH:mm"))
-            chronometer?.start()
+            //horaInicio = horaActual.format(DateTimeFormatter.ofPattern("HH:mm"))
+            //chronometer?.start()
 
             // Comprobamos si esta activity se llama desde RutaActivity
             val file_kml = intent.getStringExtra("file")
@@ -220,6 +220,14 @@ class SeguimientoActivity : AppCompatActivity()/*,com.google.android.gms.locatio
                         BitmapDescriptorFactory.defaultMarker(
                             BitmapDescriptorFactory.
                     HUE_ORANGE)).title("Fin"))
+
+                val cameraPosition: CameraPosition = CameraPosition.Builder().
+                target(LatLng(latitud_ini, longitud_ini))
+                    .zoom(13.5f)
+                    .bearing(0f)
+                    .tilt(25f)
+                    .build()
+                mMap.moveCamera(CameraUpdateFactory.newCameraPosition(cameraPosition))
             }
 
             // Se añade esto para pintar el tramo de la ruta realizado
@@ -227,7 +235,7 @@ class SeguimientoActivity : AppCompatActivity()/*,com.google.android.gms.locatio
             ruta = mMap.addPolyline(opcionesPolyLine)
 
             // Obtenemos la posición actual y ponemos una marca en el mapa
-            fusedLocationClient.lastLocation
+            /*fusedLocationClient.lastLocation
                 .addOnCompleteListener { taskLocation ->
                     if (taskLocation.isSuccessful && taskLocation.result != null) {
                         val location = taskLocation.result
@@ -247,7 +255,7 @@ class SeguimientoActivity : AppCompatActivity()/*,com.google.android.gms.locatio
                         Log.w(TAG, "getLastLocation:exception", taskLocation.exception)
                         showSnackbar("No se detectado la localización. Asegúrese de que el GPS está activado")
                     }
-                }
+                }*/
 
             // Vamos actualizando la posición actual en tiempo real
             mMap.setOnMyLocationButtonClickListener(this)
@@ -278,6 +286,7 @@ class SeguimientoActivity : AppCompatActivity()/*,com.google.android.gms.locatio
             //registro.abrirFichero()
 
             // variables para comenzar a calcular la distancia recorrida
+            var puntoDescartado = false
             var primeraLocalizacion = true
             var previousLocation = LatLng(0.0, 0.0)
             var resultado = FloatArray(1)
@@ -289,36 +298,60 @@ class SeguimientoActivity : AppCompatActivity()/*,com.google.android.gms.locatio
                         if (locations.isEmpty()) {
                             Log.d(TAG, "Error localizaciones")
                         } else {
-                            // se actualiza la línea del mapa con los nuevos puntos y se centra la cámara
-                            ruta.points = locations
-                            val posicion = locations.last()
-                            mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(posicion,16f), 2500,null)
-                            Toast.makeText(this,"Puntos " + ruta.points.size, Toast.LENGTH_SHORT).show()
+                            if (!puntoDescartado) {
 
-                            // Calculamos la distancia
-                            if (!primeraLocalizacion) {
-                                Location.distanceBetween(
-                                    previousLocation.latitude,
-                                    previousLocation.longitude,
-                                    posicion.latitude,
-                                    posicion.longitude,
-                                    resultado
-                                )
-                                distancia += resultado[0]
-                                previousLocation = posicion
-
-                                // enviamos al fragment la nueva distancia
-                                viewModel.setDistance(distancia)
-
+                                // Eliminamos el primer punto obtenido, ya que muchas veces suele ser impreciso
+                                locationRepository.deleteLocations()
+                                // De todas formas centramos la cámara en esa posición
+                                val cameraPosition: CameraPosition = CameraPosition.Builder().
+                                target(LatLng(locations.first().latitude, locations.first().longitude))
+                                    .zoom(13.5f)
+                                    .bearing(0f)
+                                    .tilt(25f)
+                                    .build()
+                                mMap.moveCamera(CameraUpdateFactory.newCameraPosition(cameraPosition))
+                                Toast.makeText(this, "La ruta comenzará en 5 segundos...",Toast.LENGTH_SHORT).show()
+                                puntoDescartado = true
                             } else {
-                                previousLocation = posicion
-                                primeraLocalizacion = false
+                                // se actualiza la línea del mapa con los nuevos puntos y se centra la cámara
+                                ruta.points = locations
+                                val posicion = locations.last()
+                                mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(posicion,16f), 2500,null)
+                                //Toast.makeText(this,"Puntos " + ruta.points.size, Toast.LENGTH_SHORT).show()
+
+                                // Calculamos la distancia
+                                if (!primeraLocalizacion) {
+                                    Location.distanceBetween(
+                                        previousLocation.latitude,
+                                        previousLocation.longitude,
+                                        posicion.latitude,
+                                        posicion.longitude,
+                                        resultado
+                                    )
+                                    distancia += resultado[0]
+                                    previousLocation = posicion
+
+                                    // enviamos al fragment la nueva distancia
+                                    viewModel.setDistance(distancia)
+
+                                } else {
+                                    mMap.addMarker(posicion?.let { MarkerOptions().position(it).title("Empiezaste aquí") })
+                                    Toast.makeText(this, "¡Comienza la ruta!", Toast.LENGTH_SHORT).show()
+                                    previousLocation = posicion
+                                    primeraLocalizacion = false
+                                    horaInicio = horaActual.format(DateTimeFormatter.ofPattern("HH:mm"))
+                                    // inicializamos el cronometro
+                                    chronometer?.base = SystemClock.elapsedRealtime()
+                                    chronometer?.start()
+
+                                }
+
+                                // Se escribe el punto de geolocalización en el archivo KML
+                                //registro.anhadirPunto(posicion.latitude, posicion.longitude, 0.0)
+
+                                Log.i(TAG, "Distancia total hasta el momento: " + distancia)
                             }
 
-                            // Se escribe el punto de geolocalización en el archivo KML
-                            //registro.anhadirPunto(posicion.latitude, posicion.longitude, 0.0)
-
-                            Log.i(TAG, "Distancia total hasta el momento: " + distancia)
                         }
                     }
 
@@ -589,4 +622,5 @@ class SeguimientoActivity : AppCompatActivity()/*,com.google.android.gms.locatio
 
         return formatter.format(calendar.time)
     }
+
 }

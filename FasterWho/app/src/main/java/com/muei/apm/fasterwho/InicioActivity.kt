@@ -1,29 +1,28 @@
 package com.muei.apm.fasterwho
 
-import android.app.Activity
 import android.content.Intent
-import android.graphics.Color
-import androidx.appcompat.app.AppCompatActivity
+import android.os.Build
 import android.os.Bundle
 import android.util.Log
-import android.view.Menu
-import android.view.MenuItem
 import android.widget.Button
 import android.widget.TextView
 import android.widget.Toast
-import androidx.appcompat.app.ActionBarDrawerToggle
+import androidx.annotation.RequiresApi
 import androidx.appcompat.widget.Toolbar
-import androidx.core.view.GravityCompat
-import androidx.drawerlayout.widget.DrawerLayout
-import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.android.material.navigation.NavigationView
-import com.google.firebase.firestore.GeoPoint
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.launch
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.storage.FirebaseStorage
+import com.google.firebase.storage.ktx.component1
+import com.google.firebase.storage.ktx.component2
+import java.io.File
+import java.nio.file.Files
+import java.nio.file.Path
+import java.nio.file.Paths
 
 class InicioActivity : com.muei.apm.fasterwho.Toolbar(), NavigationView.OnNavigationItemSelectedListener {
     //private lateinit var drawerLayout: DrawerLayout
     //private lateinit var navView : NavigationView
+    @RequiresApi(Build.VERSION_CODES.O)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         //setContentView(R.layout.activity_profile)
@@ -45,9 +44,45 @@ class InicioActivity : com.muei.apm.fasterwho.Toolbar(), NavigationView.OnNaviga
         val btnAnadirRuta : com.google.android.material.floatingactionbutton.FloatingActionButton = findViewById(R.id.floatingActionButton)
         btnAnadirRuta.setOnClickListener({
             Toast.makeText(this, "Iniciar Ruta", Toast.LENGTH_SHORT).show()
-            val intent = Intent(this, IniciarRutaActivity::class.java)
+            //val intent = Intent(this, IniciarRutaActivity::class.java)
+            val intent = Intent(this, SeguimientoActivity::class.java)
             startActivity(intent)
         })
+
+        // listamos las rutas en Firebase del usuario, y comprobamos si los archivos KML existen
+        // en el almacenamiento interno.
+        // En caso de no existir se intenta descargarlos
+        // !!! Pendiente hacer esto con una corrutina
+        val storage = FirebaseStorage.getInstance()
+        val firebaseAuth = FirebaseAuth.getInstance()
+        val listRef = storage.reference.child("kmlsRutas/${firebaseAuth.currentUser.email}")
+
+        listRef.listAll()
+            .addOnSuccessListener { (items, prefixes) ->
+                prefixes.forEach { prefix ->
+                    Log.i("prueba1", prefix.name)
+                }
+
+                items.forEach { item ->
+                    var prue: Path = Paths.get("${this.filesDir}/${item.name}")
+                    if (Files.exists(prue)) {
+                        Log.i("prueba2", "Existe ${item.name}")
+                    } else {
+                        Log.i("prueba2", "No existe ${item.name}")
+                        val localFile = File(this.filesDir, item.name)
+                        item.
+                        storage.reference.child("kmlsRutas/${firebaseAuth.currentUser.email}/${item.name}").getFile(localFile).addOnSuccessListener {
+                            Log.i("prueba2", "Archivo creado")
+                        }.addOnFailureListener{ it ->
+                            Log.i("prueba2", "fallo ${it.toString()}")
+                        }
+                    }
+
+                }
+            }
+            .addOnFailureListener {
+                Log.i("prueba", "error")
+            }
     }
 
     override fun onResume() {
