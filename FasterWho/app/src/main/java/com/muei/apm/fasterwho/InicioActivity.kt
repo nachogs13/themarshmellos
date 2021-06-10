@@ -11,10 +11,12 @@ import androidx.annotation.RequiresApi
 import androidx.appcompat.widget.Toolbar
 import com.google.android.material.navigation.NavigationView
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.storage.FirebaseStorage
 import com.google.firebase.storage.ktx.component1
 import com.google.firebase.storage.ktx.component2
 import java.io.File
+import java.lang.Exception
 import java.nio.file.Files
 import java.nio.file.Path
 import java.nio.file.Paths
@@ -22,6 +24,7 @@ import java.nio.file.Paths
 class InicioActivity : com.muei.apm.fasterwho.Toolbar(), NavigationView.OnNavigationItemSelectedListener {
     //private lateinit var drawerLayout: DrawerLayout
     //private lateinit var navView : NavigationView
+    private val TAG = "InicioActivity"
     @RequiresApi(Build.VERSION_CODES.O)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -55,33 +58,90 @@ class InicioActivity : com.muei.apm.fasterwho.Toolbar(), NavigationView.OnNaviga
         // !!! Pendiente hacer esto con una corrutina
         val storage = FirebaseStorage.getInstance()
         val firebaseAuth = FirebaseAuth.getInstance()
+        val db = FirebaseFirestore.getInstance()
+        lateinit var file : String
+        lateinit var image: String
         val listRef = storage.reference.child("kmlsRutas/${firebaseAuth.currentUser.email}")
 
         listRef.listAll()
             .addOnSuccessListener { (items, prefixes) ->
                 prefixes.forEach { prefix ->
-                    Log.i("prueba1", prefix.name)
+                    Log.i(TAG, prefix.name)
                 }
 
                 items.forEach { item ->
                     var prue: Path = Paths.get("${this.filesDir}/${item.name}")
                     if (Files.exists(prue)) {
-                        Log.i("prueba2", "Existe ${item.name}")
+                        Log.i(TAG, "Existe ${item.name}")
                     } else {
-                        Log.i("prueba2", "No existe ${item.name}")
+                        Log.i(TAG, "No existe ${item.name}")
                         val localFile = File(this.filesDir, item.name)
-                        item.
+
                         storage.reference.child("kmlsRutas/${firebaseAuth.currentUser.email}/${item.name}").getFile(localFile).addOnSuccessListener {
-                            Log.i("prueba2", "Archivo creado")
+                            Log.i(TAG, "Archivo creado")
                         }.addOnFailureListener{ it ->
-                            Log.i("prueba2", "fallo ${it.toString()}")
+                            Log.i(TAG, "fallo ${it.toString()}")
                         }
                     }
 
                 }
             }
             .addOnFailureListener {
-                Log.i("prueba", "error")
+                Log.i(TAG, "error")
+            }
+
+        // Descargamos las imagenes públicas
+        db.collection("rutas")
+            .whereEqualTo("public",true)
+            .get().addOnSuccessListener {
+                for (document in it) {
+                    //file = document.data.get("kml") as String
+                    image = document.data.get("imagen") as String
+                    // intentamos descargar la imagen
+                    try {
+                        if (Files.exists(Paths.get("${this.filesDir}/$image"))) {
+                            Log.i(TAG, "Existe imagen ${image}")
+                        } else {
+                            Log.i(TAG, "No existe imagen ${image}")
+                            val localFile = File(this.filesDir, image)
+                            storage.reference.child("ImgRutas/${image}").getFile(localFile).addOnSuccessListener {
+                                Log.i(TAG, "Imagen ${image} creada")
+                            }.addOnFailureListener{ it ->
+                                Log.i(TAG, "fallo ${it.toString()}")
+                            }
+                        }
+                    } catch (e : Exception) {
+                        Log.d(TAG, "Ha ocurrido un error al descargar la imagen ${image}")
+                    }
+
+                }
+            }
+
+        // descargamos las imagenes privadas
+        db.collection("rutas")
+            .whereEqualTo("usuario",firebaseAuth.currentUser.email)
+            .get().addOnSuccessListener {
+                for (document in it) {
+                    //file = document.data.get("kml") as String
+                    image = document.data.get("imagen") as String
+
+                    // intentamos descargar la imagen
+                    try {
+                        if (Files.exists(Paths.get("${this.filesDir}/$image"))) {
+                            Log.i(TAG, "Existe imagen ${image}")
+                        } else {
+                            Log.i(TAG, "No existe imagen ${image}")
+                            val localFile = File(this.filesDir, image)
+                            storage.reference.child("ImgRutas/${image}").getFile(localFile).addOnSuccessListener {
+                                Log.i(TAG, "Imagen ${image} creada")
+                            }.addOnFailureListener{ it ->
+                                Log.i(TAG, "fallo ${it.toString()}")
+                            }
+                        }
+                    } catch (e : Exception) {
+                        Log.d(TAG, "Ha ocurrido un error al descargar la imagen ${image}")
+                    }
+                }
             }
     }
 
