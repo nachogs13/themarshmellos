@@ -1,13 +1,14 @@
 package com.muei.apm.fasterwho
 
+import android.content.DialogInterface
 import android.content.Intent
+import android.graphics.BitmapFactory
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.provider.MediaStore
 import android.util.Log
-import android.widget.Button
-import android.widget.ImageButton
-import android.widget.TextView
-import android.widget.Toast
+import android.widget.*
+import androidx.appcompat.app.AlertDialog
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.DocumentReference
 import com.google.firebase.firestore.DocumentSnapshot
@@ -20,6 +21,7 @@ import java.sql.Timestamp
 class ProfileActivity : Toolbar() {
     private val db = FirebaseFirestore.getInstance()
     private val firebaseAuth = FirebaseAuth.getInstance()
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         //setContentView(R.layout.activity_profile)
@@ -31,6 +33,8 @@ class ProfileActivity : Toolbar() {
 
         val btnImagen : ImageButton = findViewById(R.id.imageButton3)
         btnImagen.setOnClickListener({
+            //startActivity(Intent(this, CameraActivity::class.java))
+            showDialog()
             Toast.makeText(this, "Se cambia la imagen del perfil", Toast.LENGTH_SHORT).show()
         })
 
@@ -44,6 +48,57 @@ class ProfileActivity : Toolbar() {
     override fun onResume() {
         super.onResume()
         navView.menu.getItem(1).setChecked(true)
+    }
+
+    private fun showDialog(){
+        val items = arrayOf("Tomar foto", "Seleccionar desde galería")
+        val builder = AlertDialog.Builder(this)
+        builder.setTitle("Cambiar foto de perfil")
+            .setItems(items,
+                DialogInterface.OnClickListener { dialog, which ->
+                    when(which) {
+                        0 -> startActivity(Intent(this, CameraActivity::class.java))
+                        1 -> {startActivityForResult(Intent(Intent.
+                        ACTION_PICK,android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI),
+                            2)
+                        }
+                    }
+
+                })
+        builder.setNegativeButton("Cancelar", null)
+        val dialog: AlertDialog = builder.create()
+        dialog.show()
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        val storage = FirebaseStorage.getInstance()
+        val storageRef = storage.reference
+        Log.d("DATA",data.toString())
+        if (resultCode == RESULT_OK && null != data) {
+            val selectedImage = data.data
+            val btnImagen : ImageButton = findViewById(R.id.imageButton3)
+            btnImagen.setImageURI(selectedImage)
+
+            if (selectedImage != null) {
+                storageRef.child("ImgPerfil/${firebaseAuth.currentUser.email}.jpg").putFile(selectedImage)
+
+
+                db.collection("usuarios").document(firebaseAuth.currentUser.email).get()
+                        .addOnSuccessListener {
+                            val username = it.get("username").toString()
+                            db.collection("usuarios")
+                                    .document(firebaseAuth.currentUser.email)
+                                    .update("imgPerfil",storageRef.child("ImgPerfil/${firebaseAuth.currentUser.email}.jpg"))
+                            if(it.get("imgPerfil")!=null) {
+                                storageRef.child("ImgPerfil/${firebaseAuth.currentUser.email}.jpg").delete()
+                            }
+
+
+                        }
+            }
+        }
+
     }
 
     private fun getInfoUsuario(){

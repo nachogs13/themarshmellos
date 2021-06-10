@@ -11,7 +11,7 @@ android {
 
     defaultConfig {
         applicationId "com.muei.apm.fasterwho"
-        minSdkVersion 19
+        minSdkVersion 21
         targetSdkVersion 30
         versionCode 4
         versionName "4"
@@ -80,4 +80,10 @@ dependencies {
     kapt 'com.android.databinding:compiler:3.1.4'
     implementation 'com.google.android.gms:play-services-location:17.0.0'
     implementation "com.google.firebase:firebase-storage-ktx:20.0.0"
+
+    def camerax_version = "1.0.0-beta07"
+    // Dependencias de CameraX:
+    implementation "androidx.camera:camera-camera2:$camerax_version"
+    implementation "androidx.camera:camera-lifecycle:$camerax_version"
+    implementation "androidx.camera:camera-view:1.0.0-alpha14"
 }
