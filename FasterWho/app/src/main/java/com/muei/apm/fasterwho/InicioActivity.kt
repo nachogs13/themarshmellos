@@ -91,7 +91,91 @@ class InicioActivity : com.muei.apm.fasterwho.Toolbar(), NavigationView.OnNaviga
             .addOnFailureListener {
                 Log.i("prueba", "error")
             }*/
+        // descargamos las rutas publicas
+        db.collection("rutas")
+            .whereEqualTo("public",true)
+            .get().addOnSuccessListener {
+                for (document in it) {
+                    file = document.data.get("kml") as String
+                    image = document.data.get("imagen") as String
+                    // intentamos descargar el kml
+                    try {
+                        if (Files.exists(Paths.get("${this.filesDir}/$file"))) {
+                            Log.i(TAG, "Existe ${file}")
+                        } else {
+                            Log.i(TAG, "No existe ${file}")
+                            val localFile = File(this.filesDir, file)
+                            storage.reference.child("kmlsRutas/${file}").getFile(localFile).addOnSuccessListener {
+                                Log.i(TAG, "Archivo creado")
+                            }.addOnFailureListener{ it ->
+                                Log.i(TAG, "fallo ${it.toString()}")
+                            }
+                        }
+                    } catch (e : Exception) {
+                        Log.d(TAG, "Ha ocurrido un error al descargar la ruta publica")
+                    }
+                    // intentamos descargar la imagen
+                    try {
+                        if (Files.exists(Paths.get("${this.filesDir}/$image"))) {
+                            Log.i(TAG, "Existe imagen ${image}")
+                        } else {
+                            Log.i(TAG, "No existe imagen ${image}")
+                            val localFile = File(this.filesDir, file)
+                            storage.reference.child("ImgRutas/${image}").getFile(localFile).addOnSuccessListener {
+                                Log.i(TAG, "Imagen creada")
+                            }.addOnFailureListener{ it ->
+                                Log.i(TAG, "fallo ${it.toString()}")
+                            }
+                        }
+                    } catch (e : Exception) {
+                        Log.d(TAG, "Ha ocurrido un error al descargar la imagen publica")
+                    }
 
+                }
+            }
+
+        // descargamos las rutas privadas y sus imágenes
+        db.collection("rutas")
+            .whereEqualTo("usuario",firebaseAuth.currentUser.email)
+            .get().addOnSuccessListener {
+                for (document in it) {
+                    file = document.data.get("kml") as String
+                    image = document.data.get("imagen") as String
+                    // intentamos descargar el kml
+                    try {
+                        if (Files.exists(Paths.get("${this.filesDir}/$file"))) {
+                            Log.i(TAG, "Existe ${file}")
+                        } else {
+                            Log.i(TAG, "No existe ${file}")
+                            val localFile = File(this.filesDir, file)
+                            storage.reference.child("kmlsRutas/${file}").getFile(localFile).addOnSuccessListener {
+                                Log.i(TAG, "Archivo creado")
+                            }.addOnFailureListener{ it ->
+                                Log.i(TAG, "fallo ${it.toString()}")
+                            }
+                        }
+                    } catch (e: Exception) {
+                        Log.d(TAG, "Ha ocurrido un error al descargar las rutas privadas")
+                    }
+                    // intentamos descargar la imagen
+                    try {
+                        if (Files.exists(Paths.get("${this.filesDir}/$image"))) {
+                            Log.i(TAG, "Existe imagen ${image}")
+                        } else {
+                            Log.i(TAG, "No existe imagen ${image}")
+                            val localFile = File(this.filesDir, file)
+                            storage.reference.child("ImgRutas/${image}").getFile(localFile).addOnSuccessListener {
+                                Log.i(TAG, "Imagen creada")
+                            }.addOnFailureListener{ it ->
+                                Log.i(TAG, "fallo ${it.toString()}")
+                            }
+                        }
+                    } catch (e : Exception) {
+                        Log.d(TAG, "Ha ocurrido un error al descargar la imagen privada")
+                    }
+
+                }
+            }
     }
 
     override fun onResume() {
