@@ -31,15 +31,26 @@ import com.google.maps.android.data.kml.KmlLayer
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
+import org.xml.sax.SAXException
+import java.io.File
+import java.io.FileInputStream
+import java.io.FileNotFoundException
+import java.io.IOException
 import java.text.SimpleDateFormat
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 import java.util.*
+import javax.xml.parsers.ParserConfigurationException
+import javax.xml.parsers.SAXParser
+import javax.xml.parsers.SAXParserFactory
 
 
 class SeguimientoActivity : AppCompatActivity()/*,com.google.android.gms.location.LocationListener*/, OnMapReadyCallback,GoogleMap.OnMyLocationButtonClickListener{
     private lateinit var registro: RegistradorKML
+    private var parser: SAXParser? = null
+    private var handler: SaxHandler? = null
     private lateinit var ruta: Polyline
+    private lateinit var ruta2: Polyline
     private lateinit var mMap: GoogleMap
     private val TAG = "SeguimientoActivity"
     private val REQUEST_FINE_LOCATION_PERMISSIONS_REQUEST_CODE = 34
@@ -59,6 +70,7 @@ class SeguimientoActivity : AppCompatActivity()/*,com.google.android.gms.locatio
     private var altitudMaxima: Double? = null
     private var altitudMinima: Double? = null
     private var nombreArchivoRuta: String? = null
+    private var file: String? = null
     /**
      * Provides the entry point to the Fused Location Provider API.
      */
@@ -197,8 +209,8 @@ class SeguimientoActivity : AppCompatActivity()/*,com.google.android.gms.locatio
             //chronometer?.start()
 
             // Comprobamos si esta activity se llama desde RutaActivity
-            val file_kml = intent.getStringExtra("file")
-            if (file_kml != null) {
+            file = intent.getStringExtra("file")
+            if (file != null) {
                 Log.d(TAG, "En seguimientoActivity se va a mostrar la ruta a seguir")
 
                 val latitud_fin = intent.getDoubleExtra("latitud_fin",0.0)
@@ -206,10 +218,25 @@ class SeguimientoActivity : AppCompatActivity()/*,com.google.android.gms.locatio
                 val longitud_ini = intent.getDoubleExtra("longitud_ini",0.0)
                 val latitud_ini = intent.getDoubleExtra("latitud_ini",0.0)
 
-                val id = resources.getIdentifier(file_kml,"raw",packageName)
+                val id = resources.getIdentifier(file,"raw",packageName)
 
-                val layer = KmlLayer(mMap,id,this)
-                layer.addLayerToMap()
+                //val layer = KmlLayer(mMap,id,this)
+                //layer.addLayerToMap()
+                val factory = SAXParserFactory.newInstance()
+                try {
+                    parser = factory.newSAXParser()
+
+                    // Manejador SAX programado por nosotros. Le pasamos nuestro mapa para que ponga los puntos.
+                    handler = SaxHandler(mMap)
+
+                    // AsyncTask. Le pasamos el directorio de ficheros como string.
+                    val procesador: SeguimientoActivity.ProcesarKML = ProcesarKML()
+                    procesador.execute(this.filesDir.absolutePath)
+                } catch (e: SAXException) {
+                    println(e.message)
+                } catch (e: ParserConfigurationException) {
+                    println(e.message)
+                }
                 mMap.addMarker(MarkerOptions().position(LatLng(latitud_ini,longitud_ini))
                     .icon(
                         BitmapDescriptorFactory.defaultMarker(
@@ -232,7 +259,9 @@ class SeguimientoActivity : AppCompatActivity()/*,com.google.android.gms.locatio
 
             // Se añade esto para pintar el tramo de la ruta realizado
             var opcionesPolyLine = PolylineOptions().color(Color.CYAN).width(4F)
+            var opcionesPolyLine2 = PolylineOptions().color(Color.GREEN).width(20F)
             ruta = mMap.addPolyline(opcionesPolyLine)
+            ruta2 = mMap.addPolyline(opcionesPolyLine2)
 
             // Obtenemos la posición actual y ponemos una marca en el mapa
             /*fusedLocationClient.lastLocation
@@ -315,6 +344,9 @@ class SeguimientoActivity : AppCompatActivity()/*,com.google.android.gms.locatio
                             } else {
                                 // se actualiza la línea del mapa con los nuevos puntos y se centra la cámara
                                 ruta.points = locations
+                                ruta2.points = handler!!.getPoints()
+                                ruta2.width = 20F
+                                //mMap.addPolyline(handler?.getRuta())
                                 val posicion = locations.last()
                                 mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(posicion,16f), 2500,null)
                                 //Toast.makeText(this,"Puntos " + ruta.points.size, Toast.LENGTH_SHORT).show()
@@ -621,6 +653,35 @@ class SeguimientoActivity : AppCompatActivity()/*,com.google.android.gms.locatio
         val calendar: Calendar = Calendar.getInstance()
 
         return formatter.format(calendar.time)
+    }
+
+    //==============================================================================================
+    // ASYNCTASK - TAREA ASÍNCRONA
+    //==============================================================================================
+    private inner class ProcesarKML : AsyncTask<String?, Int?, Boolean>() {
+        override fun doInBackground(vararg params: String?): Boolean? {
+            try {
+                parser!!.parse(
+                    FileInputStream(File(params[0],file)),
+                    handler
+                )
+            } catch (e: FileNotFoundException) {
+                // Pongo null en los contexto para evitar el error. Revisarlo!!
+                Log.d("ErrorFichero", e.toString())
+            } catch (e: SAXException) {
+                Log.d("ErrorRuta", e.toString())
+            } catch (e: IOException) {
+                Log.d("Error", e.toString())
+            }
+            return true
+        }
+
+        override fun onPostExecute(aBoolean: Boolean) {
+            mMap.addPolyline(handler?.getRuta()) // Se añade una ruta.
+
+            // Se mueve la cámara a la última posición.
+            mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(handler?.getLastCoordenadas(), 15f))
+        }
     }
 
 }

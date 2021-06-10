@@ -1,6 +1,7 @@
 package com.muei.apm.fasterwho
 
 import android.graphics.Color
+import android.util.Log
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.PolylineOptions
@@ -80,6 +81,7 @@ class SaxHandler(mapa: GoogleMap): DefaultHandler() {
             if (localName == "coordinates") {
                 // Entraremos aquí cada vez que SAX lea un </coordinates>.
                 try {
+                    Log.d("SAX", textoLeido!!)
                     // Cogemos un punto mediante los indexOf de las comas.
                     // Para saber si hay que sumar o restar al índice haz pruebas con SYSO.
                     val latitud = textoLeido!!.substring(0, textoLeido!!.indexOf(',')).toDouble()
@@ -90,9 +92,11 @@ class SaxHandler(mapa: GoogleMap): DefaultHandler() {
                     //double altura = Double.parseDouble(textoLeido.substring(textoLeido.lastIndexOf(',')+1, textoLeido.length()));
                     //double altura = Double.parseDouble(textoLeido.substring(textoLeido.lastIndexOf(',')+1, textoLeido.length()));
                     punto = LatLng(latitud, longitud)
+
                     listaPuntos?.add(punto!!) // Se añade un punto a la lista, para crear una ruta después.
 
                 } catch (e: Exception) {
+                    Log.d("SAX","Saltando punto errróneas: $textoLeido")
                     println("Saltando punto errróneas: $textoLeido")
                 }
             }
@@ -119,7 +123,7 @@ class SaxHandler(mapa: GoogleMap): DefaultHandler() {
     override fun endDocument() {
         // Añadimos la lista de puntos (el array de puntos que hemos ido guardando).
         if (!listaPuntos?.isEmpty()!!) {
-            ruta?.addAll(listaPuntos)?.color(Color.BLUE)
+            ruta?.addAll(listaPuntos)?.color(Color.GREEN)
         } else println("Error, no hay puntos o no hay fichero.")
     }
 
@@ -135,6 +139,10 @@ class SaxHandler(mapa: GoogleMap): DefaultHandler() {
      */
     fun getRuta(): PolylineOptions? {
         return ruta
+    }
+
+    fun getPoints() : List<LatLng> {
+        return ruta?.points!!
     }
 
     /**

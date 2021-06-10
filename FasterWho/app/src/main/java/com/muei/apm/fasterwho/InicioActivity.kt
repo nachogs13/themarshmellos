@@ -11,10 +11,14 @@ import androidx.annotation.RequiresApi
 import androidx.appcompat.widget.Toolbar
 import com.google.android.material.navigation.NavigationView
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.firestore.DocumentReference
+import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.firestore.GeoPoint
 import com.google.firebase.storage.FirebaseStorage
 import com.google.firebase.storage.ktx.component1
 import com.google.firebase.storage.ktx.component2
 import java.io.File
+import java.lang.Exception
 import java.nio.file.Files
 import java.nio.file.Path
 import java.nio.file.Paths
@@ -22,6 +26,7 @@ import java.nio.file.Paths
 class InicioActivity : com.muei.apm.fasterwho.Toolbar(), NavigationView.OnNavigationItemSelectedListener {
     //private lateinit var drawerLayout: DrawerLayout
     //private lateinit var navView : NavigationView
+    private val TAG= "InicioActivity"
     @RequiresApi(Build.VERSION_CODES.O)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -54,10 +59,13 @@ class InicioActivity : com.muei.apm.fasterwho.Toolbar(), NavigationView.OnNaviga
         // En caso de no existir se intenta descargarlos
         // !!! Pendiente hacer esto con una corrutina
         val storage = FirebaseStorage.getInstance()
+         val db = FirebaseFirestore.getInstance()
         val firebaseAuth = FirebaseAuth.getInstance()
+        lateinit var file : String
+        lateinit var image: String
         val listRef = storage.reference.child("kmlsRutas/${firebaseAuth.currentUser.email}")
 
-        listRef.listAll()
+        /*listRef.listAll()
             .addOnSuccessListener { (items, prefixes) ->
                 prefixes.forEach { prefix ->
                     Log.i("prueba1", prefix.name)
@@ -82,7 +90,8 @@ class InicioActivity : com.muei.apm.fasterwho.Toolbar(), NavigationView.OnNaviga
             }
             .addOnFailureListener {
                 Log.i("prueba", "error")
-            }
+            }*/
+
     }
 
     override fun onResume() {

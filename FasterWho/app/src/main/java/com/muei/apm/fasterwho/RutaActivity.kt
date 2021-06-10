@@ -163,11 +163,11 @@ class RutaActivity : Toolbar(), OnMapReadyCallback {
                 )
             } catch (e: FileNotFoundException) {
                 // Pongo null en los contexto para evitar el error. Revisarlo!!
-                Toast.makeText(null, "Error: " + e.message, Toast.LENGTH_LONG).show()
+                Log.d("ErrorFichero", e.toString())
             } catch (e: SAXException) {
-                Toast.makeText(null, "Error: " + e.message, Toast.LENGTH_LONG).show()
+                Log.d("ErrorRuta", e.toString())
             } catch (e: IOException) {
-                Toast.makeText(null, "Error: " + e.message, Toast.LENGTH_LONG).show()
+                Log.d("Error", e.toString())
             }
             return true
         }

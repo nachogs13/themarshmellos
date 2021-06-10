@@ -14,7 +14,7 @@ class ItemRuta {
     var coordenadasInicioRuta: GeoPoint ? = null
     var coordenadasFinRuta: GeoPoint? = null
     var rating: Number ? = null
-    var file: DocumentReference ? = null
+    var file: String ? = null
     var img: DocumentReference ? = null
     var distancia: Number ? = null
     var desnivel: Number ? = null
@@ -27,7 +27,7 @@ class ItemRuta {
         coordenadasInicioRuta: GeoPoint?,
         coordenadasFinRuta: GeoPoint?,
         rating: Number?,
-        file: DocumentReference?,
+        file: String?,
         img: DocumentReference?,
         distancia: Number,
         desnivel: Number
@@ -49,7 +49,7 @@ class ItemRuta {
             coordenadasInicioRuta: GeoPoint?,
             coordenadasFinRuta: GeoPoint?,
             rating: Number?,
-            file: DocumentReference?,
+            file: String?,
             img: DocumentReference?,
             distancia: Number,
             desnivel: Number,
@@ -72,7 +72,7 @@ class ItemRuta {
             coordenadasInicioRuta: GeoPoint?,
             coordenadasFinRuta: GeoPoint?,
             rating: Number?,
-            file: DocumentReference?,
+            file: String?,
             img: DocumentReference?,
             distancia: Number,
             desnivel: Number,
