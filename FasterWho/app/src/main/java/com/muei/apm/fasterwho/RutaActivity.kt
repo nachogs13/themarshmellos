@@ -53,6 +53,7 @@ class RutaActivity : Toolbar(), OnMapReadyCallback {
             intent.putExtra("longitud_fin", this.intent.getDoubleExtra("longitud_fin", 0.0))
             intent.putExtra("longitud_ini", this.intent.getDoubleExtra("longitud_ini", 0.0))
             intent.putExtra("latitud_ini", this.intent.getDoubleExtra("latitud_ini", 0.0))
+            intent.putExtra("rutaRealizada", this.intent.getStringExtra("nombre"))
 
             startActivity(intent)
         }
@@ -61,28 +62,6 @@ class RutaActivity : Toolbar(), OnMapReadyCallback {
             .findFragmentById(R.id.mapRutaConcreta) as SupportMapFragment
         mapFragment.getMapAsync(this)
 
-        /*val btnMaria : TextView = findViewById(R.id.maria)
-        btnMaria.setOnClickListener {
-            Toast.makeText(this, "Viendo usuario María", Toast.LENGTH_SHORT).show()
-        }
-        val btnAvatarMaria : ImageView = findViewById(R.id.avatar1)
-        btnAvatarMaria.setOnClickListener {
-            Toast.makeText(this, "Viendo usuario María", Toast.LENGTH_SHORT).show()
-        }
-
-        val btnElena : TextView = findViewById(R.id.elena)
-        btnElena.setOnClickListener {
-            Toast.makeText(this, "Viendo usuario Elena", Toast.LENGTH_SHORT).show()
-        }
-        val btnAvatarElena : ImageView = findViewById(R.id.avatar2)
-        btnAvatarElena.setOnClickListener {
-            Toast.makeText(this, "Viendo usuario Elena", Toast.LENGTH_SHORT).show()
-        }*/
-
-        /*val btnMapa : ImageView = findViewById(R.id.imagenMapa)
-        btnMapa.setOnClickListener {
-            Toast.makeText(this, "Viendo Mapa Completo", Toast.LENGTH_SHORT).show()
-        }*/
         val textView: TextView = findViewById(R.id.distanciaTotal)
         textView.text = "Distancia total ${intent.getDoubleExtra("distancia",0.0)} km"
         val textViewNombreRuta: TextView = findViewById(R.id.textNombreRuta)
@@ -101,13 +80,7 @@ class RutaActivity : Toolbar(), OnMapReadyCallback {
         val latitud_ini = intent.getDoubleExtra("latitud_ini",0.0)
         file = intent.getStringExtra("file")
 
-        val id = resources.getIdentifier(file,"raw",packageName)
-
-
         mMap = googleMap
-        /*val double = 42.880444
-        val double2 = -8.545669*/
-        //mMap.setMapType(GoogleMap.MAP_TYPE_SATELLITE)
         val cameraPosition: CameraPosition = CameraPosition.Builder().
         target(LatLng(latitud_ini, longitud_ini))
                 .zoom(13.5f)
@@ -116,31 +89,24 @@ class RutaActivity : Toolbar(), OnMapReadyCallback {
                 .build()
         mMap.moveCamera(CameraUpdateFactory.newCameraPosition(cameraPosition))
 
-        // intentamos poner el kml con KmlLayer, si salta excepción quiere decir que estamos ante
-        // una ruta propia del usuario, por lo tanto hay que buscarla en el almacenamiento interno
-        // y añadir el KML al mapa mediante ProcesarKML
+
+        // Lo que hacemos aquí es leer el KML con SAX y llenar el mapa de puntos.
+        // Lo hay que hacer con AsyncTask porque sino puede fallar cuando hay muchos puntos
+        val factory = SAXParserFactory.newInstance()
         try {
-            val layer = KmlLayer(mMap,id,this)
-            layer.addLayerToMap()
-        } catch(e: Exception) {
-            // Lo que hacemos aquí es leer el KML con SAX y llenar el mapa de puntos.
-            // Lo hay que hacer con AsyncTask porque sino puede fallar cuando hay muchos puntos
-            val factory = SAXParserFactory.newInstance()
+            parser = factory.newSAXParser()
+            // Manejador SAX programado por nosotros. Le pasamos nuestro mapa para que ponga los puntos.
+            handler = SaxHandler(mMap)
 
-            try {
-                parser = factory.newSAXParser()
-
-                // Manejador SAX programado por nosotros. Le pasamos nuestro mapa para que ponga los puntos.
-                handler = SaxHandler(mMap)
-
-                // AsyncTask. Le pasamos el directorio de ficheros como string.
-                val procesador: RutaActivity.ProcesarKML = ProcesarKML()
-                procesador.execute(this.filesDir.absolutePath)
-            } catch (e: SAXException) {
-                println(e.message)
-            } catch (e: ParserConfigurationException) {
-                println(e.message)
-            }
+            // AsyncTask. Le pasamos el directorio de ficheros como string.
+            val procesador: RutaActivity.ProcesarKML = ProcesarKML()
+            procesador.execute(this.filesDir.absolutePath)
+        } catch (e: SAXException) {
+            println(e.message)
+            Log.d("ErrorSAX", e.toString())
+        } catch (e: ParserConfigurationException) {
+            println(e.message)
+            Log.d("ErrorParser", e.toString())
         }
 
         mMap.addMarker(MarkerOptions().position(LatLng(latitud_ini,longitud_ini))
@@ -162,12 +128,11 @@ class RutaActivity : Toolbar(), OnMapReadyCallback {
                     handler
                 )
             } catch (e: FileNotFoundException) {
-                // Pongo null en los contexto para evitar el error. Revisarlo!!
-                Toast.makeText(null, "Error: " + e.message, Toast.LENGTH_LONG).show()
+                Log.d("ErrorFichero", e.toString())
             } catch (e: SAXException) {
-                Toast.makeText(null, "Error: " + e.message, Toast.LENGTH_LONG).show()
+                Log.d("ErrorRuta", e.toString())
             } catch (e: IOException) {
-                Toast.makeText(null, "Error: " + e.message, Toast.LENGTH_LONG).show()
+                Log.d("Error", e.toString())
             }
             return true
         }

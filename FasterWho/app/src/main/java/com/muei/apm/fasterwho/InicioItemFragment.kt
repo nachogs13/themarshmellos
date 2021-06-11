@@ -35,7 +35,7 @@ class InicioItemFragment : Fragment() {
     private lateinit var coordenadasInicio : GeoPoint
     private lateinit var coordenadasFin : GeoPoint
     private lateinit var rating : Number
-    private lateinit var file : DocumentReference
+    private lateinit var file : String
     private var listItem : ArrayList<ItemRuta> = ArrayList()
     private var filteredList : ArrayList<ItemRuta> = ArrayList()
     private var puntuacion : Float = 0F
@@ -77,7 +77,7 @@ class InicioItemFragment : Fragment() {
                         rating = document.data.get("rating") as Number
                         coordenadasFin = document.data.get("coordenadas_fin") as GeoPoint
                         coordenadasInicio = document.data.get("coordenadas_inicio") as GeoPoint
-                        file = document.data.get("kmlfile") as DocumentReference
+                        file = document.data.get("kml") as String
                         val dist = document.data.get("distancia") as Number
                         val public = document.data.get("public") as Boolean
                         val desnivel = document.data.get("desnivel") as Number

@@ -54,6 +54,7 @@ class EstadisticasActivity : AppCompatActivity(),OnMapReadyCallback {
     private var latitud_final: Double? = null
     private var longitud_inicial: Double? = null
     private var longitud_final: Double? = null
+    private var rutaRealizada: String? = null
     private val viewModel: EstadisticasViewModel by viewModels()
 
     lateinit var storage: FirebaseStorage
@@ -81,6 +82,12 @@ class EstadisticasActivity : AppCompatActivity(),OnMapReadyCallback {
         longitud_final = intent.getDoubleExtra("longitud_final", 0.0)
         // Obtenemos el nombre del archivo KML de la ruta
         nombreArchivoRuta = intent.getStringExtra("nombreArchivoRuta")
+        // Obtenemos el nombre de la ruta que se ha realizada (si es el caso)
+        rutaRealizada = intent.getStringExtra("rutaRealizada")
+
+        if (rutaRealizada != null) {
+            Toast.makeText(this, "Ruta hecha: $rutaRealizada",Toast.LENGTH_SHORT).show()
+        }
 
         val df = DecimalFormat("#.##")
         df.roundingMode = RoundingMode.CEILING
@@ -89,7 +96,6 @@ class EstadisticasActivity : AppCompatActivity(),OnMapReadyCallback {
         // comprobamos si se quiere guardar la ruta
         val guardarRuta = intent.getBooleanExtra("guardarRuta", false)
         if (guardarRuta) {
-
 
             Log.i(TAG, "Usuario actual: " + firebaseAuth.currentUser.email)
             // inicializamos el almacenamiento en Firebase
@@ -101,7 +107,7 @@ class EstadisticasActivity : AppCompatActivity(),OnMapReadyCallback {
             // Obtenemos la ruta del fichero a subir
             var file = Uri.fromFile(File(this.filesDir.absolutePath, nombreArchivoRuta))
 
-            val rutaRef = storageRef.child("kmlsRutas/${firebaseAuth.currentUser.email}/${file.lastPathSegment}")
+            val rutaRef = storageRef.child("kmlsRutas/${file.lastPathSegment}")
             val uploadTask = rutaRef.putFile(file)
 
             // registramos observadores para escuchar cuando la carga termina o falla
@@ -132,7 +138,6 @@ class EstadisticasActivity : AppCompatActivity(),OnMapReadyCallback {
                 direccionRuta = ""
             }
 
-
             // procedemos a almacenar en la coleccion "rutasPrivadas" de BD la información sobre la ruta
             Log.i(TAG, "Ruta: ${filesDir.absolutePath}/${file.lastPathSegment}")
             val ruta = hashMapOf(
@@ -156,9 +161,6 @@ class EstadisticasActivity : AppCompatActivity(),OnMapReadyCallback {
                 .addOnSuccessListener { Log.i(TAG, "Ruta guardada en Firebase") }
                 .addOnFailureListener { e -> Log.i(TAG, "Error al guardar la ruta en Firebase")}
         }
-
-
-
 
         // convertimos la distancia a metros o kilometros
         var distanciaString : String? = null
@@ -184,7 +186,7 @@ class EstadisticasActivity : AppCompatActivity(),OnMapReadyCallback {
 
         val btnFinalizar : Button = findViewById(R.id.buttonEstFinalizar)
         btnFinalizar.setOnClickListener({
-            Toast.makeText(this, "Se finaliza de ver el resumen ruta", Toast.LENGTH_SHORT).show()
+            //Toast.makeText(this, "Se finaliza de ver el resumen ruta", Toast.LENGTH_SHORT).show()
             val intent = Intent(this, RankingActivity::class.java)
             startActivity(intent)
         })
@@ -214,10 +216,6 @@ class EstadisticasActivity : AppCompatActivity(),OnMapReadyCallback {
         } catch (e: ParserConfigurationException) {
             println(e.message)
         }
-        // Add a marker in Sydney and move the camera
-        //val sydney = LatLng(-34.0, 151.0)
-        //mapa.addMarker(MarkerOptions().position(sydney).title("Marker in Sydney"))
-        //mapa.moveCamera(CameraUpdateFactory.newLatLng(sydney))
     }
 
     //==============================================================================================
@@ -232,11 +230,11 @@ class EstadisticasActivity : AppCompatActivity(),OnMapReadyCallback {
                 )
             } catch (e: FileNotFoundException) {
                 // Pongo null en los contexto para evitar el error. Revisarlo!!
-                Toast.makeText(null, "Error: " + e.message, Toast.LENGTH_LONG).show()
+                Log.d(TAG, "Archivo KML no encontrado")
             } catch (e: SAXException) {
-                Toast.makeText(null, "Error: " + e.message, Toast.LENGTH_LONG).show()
+                Log.d(TAG, "Error SAX - ${e.toString()}")
             } catch (e: IOException) {
-                Toast.makeText(null, "Error: " + e.message, Toast.LENGTH_LONG).show()
+                Log.d(TAG, "Error IO - ${e.toString()}")
             }
             return true
         }
@@ -244,11 +242,9 @@ class EstadisticasActivity : AppCompatActivity(),OnMapReadyCallback {
         override fun onPostExecute(aBoolean: Boolean) {
             mapa.addPolyline(handler?.getRuta()) // Se añade una ruta.
 
-            // Se añade un punto en el mapa.
-            //mapa.addMarker(new MarkerOptions().position(handler.coordenadas).title("hola"));
-
             // Se mueve la cámara a la última posición.
             mapa.moveCamera(CameraUpdateFactory.newLatLngZoom(handler?.getLastCoordenadas(), 15f))
+
         }
     }
 

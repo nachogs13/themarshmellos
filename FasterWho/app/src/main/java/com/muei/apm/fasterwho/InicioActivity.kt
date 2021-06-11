@@ -3,6 +3,7 @@ package com.muei.apm.fasterwho
 import android.content.Intent
 import android.os.Build
 import android.os.Bundle
+import android.os.Environment
 import android.util.Log
 import android.widget.Button
 import android.widget.TextView
@@ -11,7 +12,9 @@ import androidx.annotation.RequiresApi
 import androidx.appcompat.widget.Toolbar
 import com.google.android.material.navigation.NavigationView
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.firestore.DocumentReference
 import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.firestore.GeoPoint
 import com.google.firebase.storage.FirebaseStorage
 import com.google.firebase.storage.ktx.component1
 import com.google.firebase.storage.ktx.component2
@@ -25,6 +28,7 @@ class InicioActivity : com.muei.apm.fasterwho.Toolbar(), NavigationView.OnNaviga
     //private lateinit var drawerLayout: DrawerLayout
     //private lateinit var navView : NavigationView
     private val TAG = "InicioActivity"
+
     @RequiresApi(Build.VERSION_CODES.O)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -57,13 +61,14 @@ class InicioActivity : com.muei.apm.fasterwho.Toolbar(), NavigationView.OnNaviga
         // En caso de no existir se intenta descargarlos
         // !!! Pendiente hacer esto con una corrutina
         val storage = FirebaseStorage.getInstance()
+         val db = FirebaseFirestore.getInstance()
         val firebaseAuth = FirebaseAuth.getInstance()
-        val db = FirebaseFirestore.getInstance()
+
         lateinit var file : String
         lateinit var image: String
         val listRef = storage.reference.child("kmlsRutas/${firebaseAuth.currentUser.email}")
 
-        listRef.listAll()
+        /*listRef.listAll()
             .addOnSuccessListener { (items, prefixes) ->
                 prefixes.forEach { prefix ->
                     Log.i(TAG, prefix.name)
@@ -88,15 +93,31 @@ class InicioActivity : com.muei.apm.fasterwho.Toolbar(), NavigationView.OnNaviga
             }
             .addOnFailureListener {
                 Log.i(TAG, "error")
-            }
-
-        // Descargamos las imagenes públicas
+            }*/
+        // descargamos las rutas publicas
         db.collection("rutas")
             .whereEqualTo("public",true)
             .get().addOnSuccessListener {
                 for (document in it) {
-                    //file = document.data.get("kml") as String
+
+                    file = document.data.get("kml") as String
                     image = document.data.get("imagen") as String
+                    // intentamos descargar el kml
+                    try {
+                        if (Files.exists(Paths.get("${this.filesDir}/$file"))) {
+                            Log.i(TAG, "Existe ${file}")
+                        } else {
+                            Log.i(TAG, "No existe ${file}")
+                            val localFile = File(this.filesDir, file)
+                            storage.reference.child("kmlsRutas/${file}").getFile(localFile).addOnSuccessListener {
+                                Log.i(TAG, "Archivo ${file} creado")
+                            }.addOnFailureListener{ it ->
+                                Log.i(TAG, "fallo ${it.toString()}")
+                            }
+                        }
+                    } catch (e : Exception) {
+                        Log.d(TAG, "Ha ocurrido un error al descargar la ruta publica ${file}")
+                    }
                     // intentamos descargar la imagen
                     try {
                         if (Files.exists(Paths.get("${this.filesDir}/$image"))) {
@@ -117,13 +138,30 @@ class InicioActivity : com.muei.apm.fasterwho.Toolbar(), NavigationView.OnNaviga
                 }
             }
 
-        // descargamos las imagenes privadas
+        // descargamos las rutas privadas y sus imágenes
+
         db.collection("rutas")
             .whereEqualTo("usuario",firebaseAuth.currentUser.email)
             .get().addOnSuccessListener {
                 for (document in it) {
-                    //file = document.data.get("kml") as String
+                    file = document.data.get("kml") as String
                     image = document.data.get("imagen") as String
+                    // intentamos descargar el kml
+                    try {
+                        if (Files.exists(Paths.get("${this.filesDir}/$file"))) {
+                            Log.i(TAG, "Existe ${file}")
+                        } else {
+                            Log.i(TAG, "No existe ${file}")
+                            val localFile = File(this.filesDir, file)
+                            storage.reference.child("kmlsRutas/${file}").getFile(localFile).addOnSuccessListener {
+                                Log.i(TAG, "Archivo ${file} creado")
+                            }.addOnFailureListener{ it ->
+                                Log.i(TAG, "fallo ${it.toString()}")
+                            }
+                        }
+                    } catch (e: Exception) {
+                        Log.d(TAG, "Ha ocurrido un error al descargar la rutas privada ${file}")
+                    }
 
                     // intentamos descargar la imagen
                     try {
