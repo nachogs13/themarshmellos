@@ -98,6 +98,6 @@ class ForegroundLocationService: Service() {
 
     override fun onDestroy() {
         super.onDestroy()
-        Toast.makeText(this,"Se para el servicio",Toast.LENGTH_LONG).show()
+        //Toast.makeText(this,"Se para el servicio",Toast.LENGTH_LONG).show()
     }
 }

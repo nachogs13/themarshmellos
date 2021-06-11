@@ -3,6 +3,7 @@ package com.muei.apm.fasterwho
 import android.content.Intent
 import android.os.Build
 import android.os.Bundle
+import android.os.Environment
 import android.util.Log
 import android.widget.Button
 import android.widget.TextView
@@ -106,7 +107,7 @@ class InicioActivity : com.muei.apm.fasterwho.Toolbar(), NavigationView.OnNaviga
                             Log.i(TAG, "No existe ${file}")
                             val localFile = File(this.filesDir, file)
                             storage.reference.child("kmlsRutas/${file}").getFile(localFile).addOnSuccessListener {
-                                Log.i(TAG, "Archivo creado")
+                                Log.i(TAG, "Archivo ${file} creado")
                             }.addOnFailureListener{ it ->
                                 Log.i(TAG, "fallo ${it.toString()}")
                             }
@@ -120,9 +121,9 @@ class InicioActivity : com.muei.apm.fasterwho.Toolbar(), NavigationView.OnNaviga
                             Log.i(TAG, "Existe imagen ${image}")
                         } else {
                             Log.i(TAG, "No existe imagen ${image}")
-                            val localFile = File(this.filesDir, file)
+                            val localFile = File(this.filesDir, image)
                             storage.reference.child("ImgRutas/${image}").getFile(localFile).addOnSuccessListener {
-                                Log.i(TAG, "Imagen creada")
+                                Log.i(TAG, "Imagen ${image} creada")
                             }.addOnFailureListener{ it ->
                                 Log.i(TAG, "fallo ${it.toString()}")
                             }
@@ -149,7 +150,7 @@ class InicioActivity : com.muei.apm.fasterwho.Toolbar(), NavigationView.OnNaviga
                             Log.i(TAG, "No existe ${file}")
                             val localFile = File(this.filesDir, file)
                             storage.reference.child("kmlsRutas/${file}").getFile(localFile).addOnSuccessListener {
-                                Log.i(TAG, "Archivo creado")
+                                Log.i(TAG, "Archivo ${file} creado")
                             }.addOnFailureListener{ it ->
                                 Log.i(TAG, "fallo ${it.toString()}")
                             }
@@ -163,9 +164,9 @@ class InicioActivity : com.muei.apm.fasterwho.Toolbar(), NavigationView.OnNaviga
                             Log.i(TAG, "Existe imagen ${image}")
                         } else {
                             Log.i(TAG, "No existe imagen ${image}")
-                            val localFile = File(this.filesDir, file)
+                            val localFile = File(this.filesDir, image)
                             storage.reference.child("ImgRutas/${image}").getFile(localFile).addOnSuccessListener {
-                                Log.i(TAG, "Imagen creada")
+                                Log.i(TAG, "Imagen ${image} creada")
                             }.addOnFailureListener{ it ->
                                 Log.i(TAG, "fallo ${it.toString()}")
                             }

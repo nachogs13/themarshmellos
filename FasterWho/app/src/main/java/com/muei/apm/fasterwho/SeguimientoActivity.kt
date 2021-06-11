@@ -27,6 +27,7 @@ import com.google.android.gms.maps.OnMapReadyCallback
 import com.google.android.gms.maps.SupportMapFragment
 import com.google.android.gms.maps.model.*
 import com.google.android.material.snackbar.Snackbar
+import com.google.firebase.auth.FirebaseAuth
 import com.google.maps.android.data.kml.KmlLayer
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
@@ -45,7 +46,7 @@ import javax.xml.parsers.SAXParser
 import javax.xml.parsers.SAXParserFactory
 
 
-class SeguimientoActivity : AppCompatActivity()/*,com.google.android.gms.location.LocationListener*/, OnMapReadyCallback,GoogleMap.OnMyLocationButtonClickListener{
+class SeguimientoActivity : AppCompatActivity(), OnMapReadyCallback,GoogleMap.OnMyLocationButtonClickListener{
     private lateinit var registro: RegistradorKML
     private var parser: SAXParser? = null
     private var handler: SaxHandler? = null
@@ -71,6 +72,7 @@ class SeguimientoActivity : AppCompatActivity()/*,com.google.android.gms.locatio
     private var altitudMinima: Double? = null
     private var nombreArchivoRuta: String? = null
     private var file: String? = null
+    private val firebaseAuth = FirebaseAuth.getInstance()
     /**
      * Provides the entry point to the Fused Location Provider API.
      */
@@ -85,9 +87,7 @@ class SeguimientoActivity : AppCompatActivity()/*,com.google.android.gms.locatio
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-
         setContentView(R.layout.activity_seguimiento)
-
 
         // Se obtiene el provider para poder acceder a las funcionalidades de localización
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(this)
@@ -96,7 +96,7 @@ class SeguimientoActivity : AppCompatActivity()/*,com.google.android.gms.locatio
         mapFragment.getMapAsync(this)
 
         // Definimos el nombre del archivo KML de la ruta
-        nombreArchivoRuta = "ruta-" +getDate() + ".kml"
+        nombreArchivoRuta = "ruta-" + firebaseAuth.currentUser.email +getDate() + ".kml"
         registro = RegistradorKML(this, nombreArchivoRuta!!)
 
         locationRepository = run {
@@ -107,6 +107,9 @@ class SeguimientoActivity : AppCompatActivity()/*,com.google.android.gms.locatio
 
         // inicializamos el cronometro
         chronometer = findViewById(R.id.chronometer)
+
+        // Comprobamos si esta activity se llama desde RutaActivity
+        file = intent.getStringExtra("file")
 
         // función para lanzar el popup que muestra si se quiere guardar la ruta
         fun launchPopUp() {
@@ -161,7 +164,7 @@ class SeguimientoActivity : AppCompatActivity()/*,com.google.android.gms.locatio
             // calculamos el tiempo de duración de la actividad
             duracion = (SystemClock.elapsedRealtime() - chronometer?.base!!)
 
-            Toast.makeText(this, "Se finaliza el seguimiento", Toast.LENGTH_SHORT).show()
+            //Toast.makeText(this, "Se finaliza el seguimiento", Toast.LENGTH_SHORT).show()
 
             // Se para el broadcast que recibe las actualizaciones
             locationRepository.stopLocationUpdates()
@@ -170,10 +173,42 @@ class SeguimientoActivity : AppCompatActivity()/*,com.google.android.gms.locatio
                 unbindService(connection)
             stopService(Intent(baseContext, ForegroundLocationService::class.java))
 
+            // Si es una ruta nueva lanzamos el popup para saber si se quiere guardar la ruta
+            if (file == null) {
+                launchPopUp()
+            } else {
+                // En caso contrario llamamos directamente a EstadisticasActivity
+                val intent = Intent(this, EstadisticasActivity::class.java)
+                intent.putExtra("guardarRuta", false)
+                if (distancia != null) {
+                    intent.putExtra("distancia", distancia)
+                }
+                if (velocidadMaxima != null) {
+                    intent.putExtra("velocidad", velocidadMaxima)
+                }
 
+                if (horaInicio != null) {
+                    intent.putExtra("horaInicio",horaInicio)
+                }
+                if (duracion != null) {
+                    intent.putExtra("duracion", duracion)
+                }
+                if (altitudMaxima != null) {
+                    intent.putExtra("altitudGanada", altitudMaxima!! - altitudInicial)
+                    intent.putExtra("altitudMaxima", altitudMaxima!!)
+                }
+                if (altitudMinima !=null) {
+                    intent.putExtra("altitudPerdida", altitudInicial - altitudMinima!!)
+                }
+                val rutaRealizada = intent.getStringExtra("rutaRealizada")
+                if (rutaRealizada != null) {
+                    intent.putExtra("rutaRealizada", rutaRealizada)
+                }
 
-            // lanzamos el popup para saber si se quiere guardar la ruta
-            launchPopUp()
+                intent.putExtra("nombreArchivoRuta" ,nombreArchivoRuta)
+
+                startActivity(intent)
+            }
 
         }
     }
@@ -209,7 +244,6 @@ class SeguimientoActivity : AppCompatActivity()/*,com.google.android.gms.locatio
             //chronometer?.start()
 
             // Comprobamos si esta activity se llama desde RutaActivity
-            file = intent.getStringExtra("file")
             if (file != null) {
                 Log.d(TAG, "En seguimientoActivity se va a mostrar la ruta a seguir")
 
@@ -218,10 +252,6 @@ class SeguimientoActivity : AppCompatActivity()/*,com.google.android.gms.locatio
                 val longitud_ini = intent.getDoubleExtra("longitud_ini",0.0)
                 val latitud_ini = intent.getDoubleExtra("latitud_ini",0.0)
 
-                val id = resources.getIdentifier(file,"raw",packageName)
-
-                //val layer = KmlLayer(mMap,id,this)
-                //layer.addLayerToMap()
                 val factory = SAXParserFactory.newInstance()
                 try {
                     parser = factory.newSAXParser()
@@ -234,8 +264,10 @@ class SeguimientoActivity : AppCompatActivity()/*,com.google.android.gms.locatio
                     procesador.execute(this.filesDir.absolutePath)
                 } catch (e: SAXException) {
                     println(e.message)
+                    Log.d(TAG, "Error SAX al leer el KML")
                 } catch (e: ParserConfigurationException) {
                     println(e.message)
+                    Log.d(TAG, "Error de parser al leer el KML")
                 }
                 mMap.addMarker(MarkerOptions().position(LatLng(latitud_ini,longitud_ini))
                     .icon(
@@ -259,9 +291,9 @@ class SeguimientoActivity : AppCompatActivity()/*,com.google.android.gms.locatio
 
             // Se añade esto para pintar el tramo de la ruta realizado
             var opcionesPolyLine = PolylineOptions().color(Color.CYAN).width(4F)
-            var opcionesPolyLine2 = PolylineOptions().color(Color.GREEN).width(20F)
+            //var opcionesPolyLine2 = PolylineOptions().color(Color.GREEN).width(20F)
             ruta = mMap.addPolyline(opcionesPolyLine)
-            ruta2 = mMap.addPolyline(opcionesPolyLine2)
+            //ruta2 = mMap.addPolyline(opcionesPolyLine2)
 
             // Obtenemos la posición actual y ponemos una marca en el mapa
             /*fusedLocationClient.lastLocation
@@ -327,7 +359,7 @@ class SeguimientoActivity : AppCompatActivity()/*,com.google.android.gms.locatio
                         if (locations.isEmpty()) {
                             Log.d(TAG, "Error localizaciones")
                         } else {
-                            if (!puntoDescartado) {
+                            /*if (!puntoDescartado) {
 
                                 // Eliminamos el primer punto obtenido, ya que muchas veces suele ser impreciso
                                 locationRepository.deleteLocations()
@@ -339,13 +371,13 @@ class SeguimientoActivity : AppCompatActivity()/*,com.google.android.gms.locatio
                                     .tilt(25f)
                                     .build()
                                 mMap.moveCamera(CameraUpdateFactory.newCameraPosition(cameraPosition))
-                                Toast.makeText(this, "La ruta comenzará en 5 segundos...",Toast.LENGTH_SHORT).show()
-                                puntoDescartado = true
-                            } else {
+                                //Toast.makeText(this, "La ruta comenzará en 5 segundos...",Toast.LENGTH_SHORT).show()
+                                //puntoDescartado = true
+                            } else {*/
                                 // se actualiza la línea del mapa con los nuevos puntos y se centra la cámara
                                 ruta.points = locations
-                                ruta2.points = handler!!.getPoints()
-                                ruta2.width = 20F
+                                //ruta2.points = handler!!.getPoints()
+                                //ruta2.width = 20F
                                 //mMap.addPolyline(handler?.getRuta())
                                 val posicion = locations.last()
                                 mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(posicion,16f), 2500,null)
@@ -382,7 +414,7 @@ class SeguimientoActivity : AppCompatActivity()/*,com.google.android.gms.locatio
                                 //registro.anhadirPunto(posicion.latitude, posicion.longitude, 0.0)
 
                                 Log.i(TAG, "Distancia total hasta el momento: " + distancia)
-                            }
+                            //}
 
                         }
                     }
@@ -606,29 +638,7 @@ class SeguimientoActivity : AppCompatActivity()/*,com.google.android.gms.locatio
 
     override fun onMyLocationButtonClick(): Boolean {
         Toast.makeText(this, "Centrando el mapa", Toast.LENGTH_SHORT).show()
-        //Log.i(TAG, "Localizacion modificada")
-        //Toast.makeText(this, "Localizacion Modificada", Toast.LENGTH_SHORT).show()
-        //val locationListLiveData = locationRepository.getLocations()
-        /*locationRepository.locationListLiveData.observe(
-            this,androidx.lifecycle.Observer { locations ->
-                locations?.let {
 
-                    if (locations.isEmpty()) {
-                        Log.d(TAG, "Error localizaciones")
-                    } else {
-                        val points = ruta.points
-                        points.add(LatLng(
-                            locations.last().latitude, locations.last().longitude
-                        ))
-
-                        ruta.points = points
-                        Log.d(TAG, "Se obtienen ${locations.size} localizaciones")
-                        Toast.makeText(this, "Se obtienen ${locations.size} localizaciones", Toast.LENGTH_SHORT).show()
-                    }
-                }
-
-            }
-        )*/
         return false
     }
 
