@@ -80,7 +80,9 @@
         android:layout_marginStart="16dp"
         android:layout_marginLeft="16dp"
         android:layout_marginTop="16dp"
+        android:layout_marginBottom="16dp"
         android:id="@+id/chronometer"
+        android:textSize="18sp"
 
         android:gravity="center"
         android:padding="10dp"
@@ -88,18 +90,16 @@
         android:textStyle="bold"
 
         tools:ignore="MissingConstraints"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/map" />
+        app:layout_constraintTop_toBottomOf="@id/fragmentSeguimiento" />
 
    <androidx.fragment.app.FragmentContainerView
         android:id="@+id/fragmentSeguimiento"
         android:name="com.muei.apm.fasterwho.SeguimientoFragment"
         android:layout_width="match_parent"
-        app:layout_constrainedHeight="true"
-        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/map"
         app:layout_constraintBottom_toTopOf="@+id/chronometer"
         tools:ignore="MissingConstraints"
-        android:layout_height="match_parent" />
+        android:layout_height="wrap_content" />
 
     <!--<TextView
         android:id="@+id/meters_count"

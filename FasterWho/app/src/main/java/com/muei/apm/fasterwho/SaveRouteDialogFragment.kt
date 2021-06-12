@@ -28,7 +28,7 @@ class SaveRouteDialogFragment : DialogFragment() {
         val longitud_inicial =arguments?.getDouble("longitud_inicial")
         val latitud_final = arguments?.getDouble("latitud_final")
         val longitud_final = arguments?.getDouble("longitud_final")
-
+        val velocidadMedia = arguments?.getDouble("velocidadMedia")
 
         return activity?.let {
             // Use the Builder class for convenient dialog construction
@@ -41,37 +41,7 @@ class SaveRouteDialogFragment : DialogFragment() {
                     .setTitle("Guardar ruta")
                     .setPositiveButton(R.string.accept_button,
                             DialogInterface.OnClickListener { dialog, id ->
-                                /*val intent = Intent(activity, DataRouteDialogFragment::class.java)
-                                intent.putExtra("guardarRuta", true)
-                                if (inputText.text != null) {
-                                    intent.putExtra("nombreRuta", inputText.text.toString())
-                                }
 
-                                Log.i("PopUp", "Se guarda la ruta : ${inputText.text.toString()}")
-                                if (distancia != null) {
-                                    intent.putExtra("distancia", distancia)
-                                }
-                                if (velocidadMaxima != null) {
-                                    intent.putExtra("velocidad", velocidadMaxima)
-                                }
-                                if (horaInicio != null) {
-                                    intent.putExtra("horaInicio",horaInicio)
-                                }
-                                if (duracion != null) {
-                                    intent.putExtra("duracion", duracion)
-                                }
-                                if (altitudGanada != null) {
-                                    intent.putExtra("altitudGanada", altitudGanada)
-                                }
-                                if (altitudPerdida !=null) {
-                                    intent.putExtra("altitudPerdida", altitudPerdida)
-                                }
-                                if (altitudMaxima != null) {
-                                    intent.putExtra("altitudMaxima", altitudMaxima)
-                                }
-                                intent.putExtra("nombreArchivoRuta", nombreArchivoRuta)
-
-                                startActivity(intent)*/
                                 val popUpFragment = DataRouteDialogFragment()
                                 var args = Bundle()
                                 args.putDouble("distancia", distancia!!)
@@ -86,6 +56,7 @@ class SaveRouteDialogFragment : DialogFragment() {
                                 args.putDouble("latitud_final", latitud_final!!)
                                 args.putDouble("longitud_final", longitud_final!!)
                                 args.putString("nombreArchivoRuta", nombreArchivoRuta)
+                                args.putDouble("velocidadMedia", velocidadMedia!!)
 
                                 popUpFragment.arguments = args
                                 popUpFragment.show(requireActivity().supportFragmentManager, "Save Route")
@@ -118,6 +89,10 @@ class SaveRouteDialogFragment : DialogFragment() {
 
                                 if (altitudMaxima != null) {
                                     intent.putExtra("altitudMaxima", altitudMaxima)
+                                }
+
+                                if (velocidadMedia != null) {
+                                    intent.putExtra("velocidadMedia", velocidadMedia)
                                 }
                                 intent.putExtra("nombreArchivoRuta", nombreArchivoRuta)
                                 startActivity(intent)

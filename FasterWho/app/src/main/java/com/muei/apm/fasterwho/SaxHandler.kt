@@ -123,7 +123,7 @@ class SaxHandler(mapa: GoogleMap): DefaultHandler() {
     override fun endDocument() {
         // Añadimos la lista de puntos (el array de puntos que hemos ido guardando).
         if (!listaPuntos?.isEmpty()!!) {
-            ruta?.addAll(listaPuntos)?.color(Color.GREEN)
+            ruta?.addAll(listaPuntos)?.color(Color.RED)
         } else println("Error, no hay puntos o no hay fichero.")
     }
 

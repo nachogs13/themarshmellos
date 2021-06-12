@@ -55,6 +55,7 @@ class EstadisticasActivity : AppCompatActivity(),OnMapReadyCallback {
     private var longitud_inicial: Double? = null
     private var longitud_final: Double? = null
     private var rutaRealizada: String? = null
+    private var velocidadMedia: Double? = null
     private val viewModel: EstadisticasViewModel by viewModels()
 
     lateinit var storage: FirebaseStorage
@@ -84,7 +85,9 @@ class EstadisticasActivity : AppCompatActivity(),OnMapReadyCallback {
         nombreArchivoRuta = intent.getStringExtra("nombreArchivoRuta")
         // Obtenemos el nombre de la ruta que se ha realizada (si es el caso)
         rutaRealizada = intent.getStringExtra("rutaRealizada")
+        velocidadMedia = intent.getDoubleExtra("velocidadMedia", 0.0)
 
+        // Se muestra el nombre de la ruta pública realizada
         if (rutaRealizada != null) {
             Toast.makeText(this, "Ruta hecha: $rutaRealizada",Toast.LENGTH_SHORT).show()
         }
@@ -127,22 +130,24 @@ class EstadisticasActivity : AppCompatActivity(),OnMapReadyCallback {
             var direccionRuta: String? = null
             if (latitud_inicial != 0.0 && longitud_inicial != 0.0) {
                 addresses = geocoder.getFromLocation(latitud_inicial!!,longitud_final!!,1)
-                if (addresses.get(0).featureName != null) {
+                /*if (addresses.get(0).featureName != null) {
                     direccionRuta = addresses.get(0).featureName
                     Log.i(TAG, "Dirección corta detectada: ${direccionRuta}")
-                } else {
+                } else {*/
                     direccionRuta = addresses.get(0).getAddressLine(0)
                     Log.i(TAG, "Dirección larga detectada: ${direccionRuta}")
-                }
+                //}
             } else {
                 direccionRuta = ""
             }
 
-            // procedemos a almacenar en la coleccion "rutasPrivadas" de BD la información sobre la ruta
+            // procedemos a almacenar en la coleccion "rutas" de BD la información sobre la ruta
             Log.i(TAG, "Ruta: ${filesDir.absolutePath}/${file.lastPathSegment}")
             val ruta = hashMapOf(
                 "imgInicio" to db.document("ImgRutas/carreira-pedestre.PNG"),
+                "imagen" to "carreira-pedestre.PNG",
                 "kmlfile" to db.document("${filesDir.absolutePath}/${file.lastPathSegment}"),
+                "kml" to "$nombreArchivoRuta",
                 //"kmlFile" to storageRef.child("/kmlRutas/${firebaseAuth.currentUser.email}/${file.lastPathSegment}"),
                 "coordenadas_inicio" to GeoPoint(latitud_inicial!!,longitud_inicial!!),
                 "coordenadas_fin" to GeoPoint(latitud_final!!,longitud_final!!),
@@ -151,7 +156,7 @@ class EstadisticasActivity : AppCompatActivity(),OnMapReadyCallback {
                 "nombre" to nombreRuta,
                 "usuario" to firebaseAuth.currentUser.email,
                 "propietario" to firebaseAuth.currentUser.email,
-                "desnivel" to 0,
+                "desnivel" to altitudMaxima,
                 "public" to false,
                 "rating" to 0
             )
@@ -172,6 +177,7 @@ class EstadisticasActivity : AppCompatActivity(),OnMapReadyCallback {
         // Se le pasan los datos al fragment que los muestra
         viewModel.setEstadisticas(listOf(ItemEstadistica(R.drawable.ic_directions_run_black_24dp,"Distancia", distanciaString),
             ItemEstadistica(R.drawable.ic_speed_black_24dp,"Vel. Máx.", df.format(velocidadMaxima!!)),
+            ItemEstadistica(R.drawable.ic_speed_black_24dp,"Vel. Media.", df.format(velocidadMedia!!)),
             ItemEstadistica(R.drawable.ic_clock_24dp,"Hora Inicio", horaInicio),
             ItemEstadistica(R.drawable.ic_timer_black_24dp,"Duración ", getDate(duracion!!)),
             ItemEstadistica(R.drawable.ic_elevation_24dp, "Elev. Ganada", df.format(altitudGanada!!)),
@@ -219,7 +225,8 @@ class EstadisticasActivity : AppCompatActivity(),OnMapReadyCallback {
     }
 
     //==============================================================================================
-    // ASYNCTASK - TAREA ASÍNCRONA
+    // ASYNCTASK - Tarea asíncrona para cargar el kml y que se produzcan fallos cuando contiene
+    // muchos puntos
     //==============================================================================================
     private inner class ProcesarKML : AsyncTask<String?, Int?, Boolean>() {
         override fun doInBackground(vararg params: String?): Boolean? {
@@ -243,7 +250,7 @@ class EstadisticasActivity : AppCompatActivity(),OnMapReadyCallback {
             mapa.addPolyline(handler?.getRuta()) // Se añade una ruta.
 
             // Se mueve la cámara a la última posición.
-            mapa.moveCamera(CameraUpdateFactory.newLatLngZoom(handler?.getLastCoordenadas(), 15f))
+            mapa.moveCamera(CameraUpdateFactory.newLatLngZoom(handler?.getLastCoordenadas(), 17f))
 
         }
     }

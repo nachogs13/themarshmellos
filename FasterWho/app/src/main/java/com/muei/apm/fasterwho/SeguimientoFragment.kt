@@ -25,9 +25,9 @@ class SeguimientoFragment: Fragment() {
         viewModel.getDistance.observe(viewLifecycleOwner, Observer {
             item ->
             if (item < 1000) {
-                textoDuracion.text = String.format("%.2f",item) + "metros"
+                textoDuracion.text = String.format("%.2f",item) + " metros"
             } else {
-                textoDuracion.text = String.format("%.2f",(item/1000)) + "metros"
+                textoDuracion.text = String.format("%.2f",(item/1000)) + " km"
             }
         })
 

@@ -41,7 +41,7 @@ class InicioItemFragment : Fragment() {
     private var puntuacion : Float = 0F
     private var dificultad : Float = 0F
     private var distancia : Int = 0
-
+    private var TAG = "InicioItemFragment"
 
     override fun onCreate(savedInstanceState: Bundle?) {
 
@@ -72,19 +72,23 @@ class InicioItemFragment : Fragment() {
                 db.collection("rutas").whereEqualTo("public",true).get().addOnSuccessListener {
 
                     for (document in it) {
-                        direccionRuta = document.data.get("direccion").toString()
-                        nombreRuta = document.data.get("nombre") as String
-                        rating = document.data.get("rating") as Number
-                        coordenadasFin = document.data.get("coordenadas_fin") as GeoPoint
-                        coordenadasInicio = document.data.get("coordenadas_inicio") as GeoPoint
-                        file = document.data.get("kml") as String
-                        val dist = document.data.get("distancia") as Number
-                        val public = document.data.get("public") as Boolean
-                        val desnivel = document.data.get("desnivel") as Number
-                        var img = document.data.get("imgInicio") as DocumentReference
+                        try {
+                            direccionRuta = document.data.get("direccion").toString()
+                            nombreRuta = document.data.get("nombre") as String
+                            rating = document.data.get("rating") as Number
+                            coordenadasFin = document.data.get("coordenadas_fin") as GeoPoint
+                            coordenadasInicio = document.data.get("coordenadas_inicio") as GeoPoint
+                            file = document.data.get("kml") as String
+                            val dist = document.data.get("distancia") as Number
+                            val public = document.data.get("public") as Boolean
+                            val desnivel = document.data.get("desnivel") as Number
+                            var img = document.data.get("imgInicio") as DocumentReference
 
-                        listItem.add(ItemRuta(nombreRuta,direccionRuta,coordenadasInicio,
+                            listItem.add(ItemRuta(nombreRuta,direccionRuta,coordenadasInicio,
                                 coordenadasFin,rating,file,img, dist, desnivel,public))
+                        } catch (e: Exception) {
+                            Log.d(TAG, "Fallo al obtener la información de una ruta pública")
+                        }
                     }
                     if (puntuacion!=0F || distancia!=0 || dificultad!=0F){
                         filteredList = filtrarLista()
