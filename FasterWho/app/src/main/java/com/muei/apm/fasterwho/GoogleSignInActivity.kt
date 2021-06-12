@@ -12,11 +12,13 @@ import com.google.android.gms.common.api.ApiException
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.auth.GoogleAuthProvider
+import com.google.firebase.firestore.FirebaseFirestore
 
 
 class GoogleSignInActivity : AppCompatActivity() {
     lateinit var mGoogleSignInClient: GoogleSignInClient
     private lateinit var auth: FirebaseAuth
+    private val db = FirebaseFirestore.getInstance()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -86,7 +88,17 @@ class GoogleSignInActivity : AppCompatActivity() {
                     // Sign in success, update UI with the signed-in user's information
                     Log.d(TAG, "signInWithCredential:success")
                     val user = auth.currentUser
-                    updateUI(user)
+                    db.collection("usuarios").document(user.email).get().addOnSuccessListener {
+                        if(it.get("username")==null){
+                            db.collection("usuarios").document(FirebaseAuth.getInstance().currentUser.email)
+                                    .set(hashMapOf("username" to user.email.toString().substringBeforeLast("@")))
+                                    .addOnCompleteListener { updateUI(user)  }
+                        }else{
+                            updateUI(user)
+                        }
+                    }
+
+
                 } else {
                     // If sign in fails, display a message to the user.
                     Log.w(TAG, "signInWithCredential:failure", task.exception)

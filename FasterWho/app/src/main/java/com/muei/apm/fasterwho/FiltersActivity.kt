@@ -1,8 +1,10 @@
 package com.muei.apm.fasterwho
 
+import android.app.Application
 import android.content.Context
 import android.content.Intent
 import android.content.SharedPreferences
+import android.location.Geocoder
 import android.os.Bundle
 import android.util.Log
 import android.view.View
@@ -30,6 +32,7 @@ class FiltersActivity : AppCompatActivity() {
     private lateinit var nivelDificultad : RatingBar
     private lateinit var listView: ListView
     private var listOfPlaces = ArrayList<String>()
+    private lateinit var latLng : LatLng
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -125,8 +128,18 @@ class FiltersActivity : AppCompatActivity() {
         })
         listView.setOnItemClickListener { parent, view, position, id ->
             listView.visibility = View.GONE
+            val geocoder = Geocoder(applicationContext)
             textSelected = listOfPlaces.get(id.toInt())
             mSearchButton.setQuery(listOfPlaces.get(id.toInt()),true)
+            if(textSelected.isNotEmpty()){
+                val result = geocoder.getFromLocationName(textSelected, 1,
+                        41.8074776, -9.3015156,
+                        43.7923795, -6.733953199999999)
+                if(result.size != 0){
+                    Log.e("TAG", "Place : " + result[0].latitude + " long " + result[0].longitude)
+                    latLng = LatLng(result[0].latitude, result[0].longitude)
+                }
+            }
         }
     }
 
