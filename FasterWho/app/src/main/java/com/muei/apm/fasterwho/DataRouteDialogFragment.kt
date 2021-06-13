@@ -29,6 +29,7 @@ class DataRouteDialogFragment : DialogFragment() {
         val longitud_inicial =arguments?.getDouble("longitud_inicial")
         val latitud_final = arguments?.getDouble("latitud_final")
         val longitud_final = arguments?.getDouble("longitud_final")
+        val aceleracionMaxima = arguments?.getDouble("aceleracionMaxima")
 
         val intent = Intent(activity, EstadisticasActivity::class.java)
 
@@ -87,6 +88,10 @@ class DataRouteDialogFragment : DialogFragment() {
                         }
                         if (longitud_final != null) {
                             intent.putExtra("longitud_final", longitud_final)
+                        }
+
+                        if (aceleracionMaxima != null ){
+                            intent.putExtra("aceleracionMaxima", aceleracionMaxima)
                         }
                         intent.putExtra("nombreArchivoRuta", nombreArchivoRuta)
 

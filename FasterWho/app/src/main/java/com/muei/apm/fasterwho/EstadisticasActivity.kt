@@ -56,6 +56,7 @@ class EstadisticasActivity : AppCompatActivity(),OnMapReadyCallback {
     private var longitud_final: Double? = null
     private var rutaRealizada: String? = null
     private var velocidadMedia: Double? = null
+    private var aceleracionMaxima: Double? = null
     private val viewModel: EstadisticasViewModel by viewModels()
 
     lateinit var storage: FirebaseStorage
@@ -86,7 +87,7 @@ class EstadisticasActivity : AppCompatActivity(),OnMapReadyCallback {
         // Obtenemos el nombre de la ruta que se ha realizada (si es el caso)
         rutaRealizada = intent.getStringExtra("rutaRealizada")
         velocidadMedia = intent.getDoubleExtra("velocidadMedia", 0.0)
-
+        aceleracionMaxima = intent.getDoubleExtra("aceleracionMaxima", 0.0)
         // Se muestra el nombre de la ruta pública realizada
         if (rutaRealizada != null) {
             Toast.makeText(this, "Ruta hecha: $rutaRealizada",Toast.LENGTH_SHORT).show()
@@ -178,6 +179,7 @@ class EstadisticasActivity : AppCompatActivity(),OnMapReadyCallback {
         viewModel.setEstadisticas(listOf(ItemEstadistica(R.drawable.ic_directions_run_black_24dp,"Distancia", distanciaString),
             ItemEstadistica(R.drawable.ic_speed_black_24dp,"Vel. Máx.", df.format(velocidadMaxima!!)),
             ItemEstadistica(R.drawable.ic_speed_black_24dp,"Vel. Media.", df.format(velocidadMedia!!)),
+            ItemEstadistica(R.drawable.ic_speed_black_24dp,"Acel. Máxima.", df.format(aceleracionMaxima!!)),
             ItemEstadistica(R.drawable.ic_clock_24dp,"Hora Inicio", horaInicio),
             ItemEstadistica(R.drawable.ic_timer_black_24dp,"Duración ", getDate(duracion!!)),
             ItemEstadistica(R.drawable.ic_elevation_24dp, "Elev. Ganada", df.format(altitudGanada!!)),

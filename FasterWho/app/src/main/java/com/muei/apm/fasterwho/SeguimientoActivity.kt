@@ -5,6 +5,10 @@ import android.annotation.SuppressLint
 import android.content.*
 import android.content.pm.PackageManager
 import android.graphics.Color
+import android.hardware.Sensor
+import android.hardware.SensorEvent
+import android.hardware.SensorEventListener
+import android.hardware.SensorManager
 import android.location.Location
 import android.net.Uri
 import android.os.*
@@ -46,7 +50,7 @@ import javax.xml.parsers.SAXParser
 import javax.xml.parsers.SAXParserFactory
 
 
-class SeguimientoActivity : AppCompatActivity(), OnMapReadyCallback,GoogleMap.OnMyLocationButtonClickListener {
+class SeguimientoActivity : AppCompatActivity(), OnMapReadyCallback,GoogleMap.OnMyLocationButtonClickListener, SensorEventListener {
     private lateinit var registro: RegistradorKML
     private var parser: SAXParser? = null
     private var handler: SaxHandler? = null
@@ -75,7 +79,11 @@ class SeguimientoActivity : AppCompatActivity(), OnMapReadyCallback,GoogleMap.On
     private var textoBoton : TextView? = null
     private var velocidades: List<Float>? = null
     private var rutaRealizada: String? = null
-
+    // variables para los sensores
+    private var haySensorAceleracion: Boolean = false
+    private lateinit var sm: SensorManager
+    private var mAcelerometro: Sensor? = null
+    private var aceleracionMaxima = 0.0
     /**
      * Provides the entry point to the Fused Location Provider API.
      */
@@ -97,6 +105,13 @@ class SeguimientoActivity : AppCompatActivity(), OnMapReadyCallback,GoogleMap.On
         val mapFragment = supportFragmentManager
             .findFragmentById(R.id.map) as SupportMapFragment
         mapFragment.getMapAsync(this)
+
+        // listamos los sensores y comprobamos si hay acelerometro
+        sm = getSystemService(Context.SENSOR_SERVICE) as SensorManager
+        listarSensores()
+        if (haySensorAceleracion) {
+            mAcelerometro = sm.getDefaultSensor(Sensor.TYPE_ACCELEROMETER)
+        }
 
         // Definimos el nombre del archivo KML de la ruta
         nombreArchivoRuta = "ruta-" + firebaseAuth.currentUser.email + getDate() + ".kml"
@@ -149,6 +164,11 @@ class SeguimientoActivity : AppCompatActivity(), OnMapReadyCallback,GoogleMap.On
             if (velocidades != null && velocidades!!.isNotEmpty()) {
                 val velocidadMedia = velocidades!!.average()
                 args.putDouble("velocidadMedia", velocidadMedia)
+            }
+
+            // aceleración máxima
+            if (aceleracionMaxima != 0.0) {
+                args.putDouble("aceleracionMaxima", aceleracionMaxima)
             }
 
             popUpFragment.arguments = args
@@ -223,6 +243,11 @@ class SeguimientoActivity : AppCompatActivity(), OnMapReadyCallback,GoogleMap.On
                         val velocidadMedia = velocidades!!.average()
                         intent.putExtra("velocidadMedia", velocidadMedia)
                     }
+
+                    // aceleración máxima
+                    if (aceleracionMaxima != 0.0) {
+                        intent.putExtra("aceleracionMaxima", aceleracionMaxima)
+                    }
                     // nombre del archivo kml
                     intent.putExtra("nombreArchivoRuta", nombreArchivoRuta)
                     // nombre de la ruta
@@ -269,7 +294,7 @@ class SeguimientoActivity : AppCompatActivity(), OnMapReadyCallback,GoogleMap.On
     /**
      * Método que implementa la lógica necesaria para obtener las actualizaciones de la geolocalización
      */
-    fun obtenerLocalizaciones() {
+    private fun obtenerLocalizaciones() {
         // Obtenemos la hora en la que se inicia la actividad
         val horaActual = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             LocalDateTime.now()
@@ -640,6 +665,47 @@ class SeguimientoActivity : AppCompatActivity(), OnMapReadyCallback,GoogleMap.On
     }
 
     /**
+     * Sobreescribimos el método para registrar el listener del acelerómetro
+     */
+    override fun onResume() {
+        super.onResume()
+        if (haySensorAceleracion) {
+            mAcelerometro?.also{ aceleracion ->
+                sm.registerListener(this, aceleracion, SensorManager.SENSOR_DELAY_NORMAL)
+            }
+        }
+    }
+
+    /**
+     * Sobreescribimos el método que detecta cuando cambia la precisión del sensor
+     */
+    override fun onAccuracyChanged(sensor: Sensor?, accuracy: Int) {
+        if (haySensorAceleracion)
+            Log.i(TAG, "Ha cambiado la precisión del acelerómetro")
+    }
+
+    /**
+     * Sobreeescribimos el método que detecta nuevos valores por el sensor
+     */
+    override fun onSensorChanged(event: SensorEvent?) {
+        if (haySensorAceleracion) {
+            val acel_X = event?.values!![0]
+            if (acel_X.toDouble() > aceleracionMaxima) {
+                aceleracionMaxima = acel_X.toDouble()
+                Log.i(TAG, "Nueva aceleración máxima: $aceleracionMaxima")
+            }
+        }
+    }
+
+    /**
+     * Sobreescribimos este método para desregistrar el acelerómetro
+     */
+    override fun onPause() {
+        super.onPause()
+        sm.unregisterListener(this)
+    }
+
+    /**
      * Método para obtener la fecha actual en el formato yyyyMMddHHmmss
      */
     private fun getDate() :String {
@@ -647,6 +713,23 @@ class SeguimientoActivity : AppCompatActivity(), OnMapReadyCallback,GoogleMap.On
         val calendar: Calendar = Calendar.getInstance()
 
         return formatter.format(calendar.time)
+    }
+
+    /**
+     * Método que imprime en los logs todos los sensores que dispone el dispositivo (se hace simplemente
+     * a modo de prueba) y comprueba si dispone del sensor de aceleración
+     */
+    private fun listarSensores() {
+        //val sm = getSystemService(Context.SENSOR_SERVICE) as SensorManager
+        val listaSensores: List<Sensor> = sm.getSensorList(Sensor.TYPE_ALL)
+        Log.i(TAG, "Listado de sensores disponibles: ")
+        for (i in 0 until listaSensores.size) {
+            Log.i(TAG, "$i- ${listaSensores.get(i).name}")
+            if (listaSensores.get(i).type == Sensor.TYPE_LINEAR_ACCELERATION) {
+                Log.i(TAG, "Este sensor es un acelerómetro lineal")
+                haySensorAceleracion = true
+            }
+        }
     }
 
     //==============================================================================================

@@ -29,6 +29,7 @@ class SaveRouteDialogFragment : DialogFragment() {
         val latitud_final = arguments?.getDouble("latitud_final")
         val longitud_final = arguments?.getDouble("longitud_final")
         val velocidadMedia = arguments?.getDouble("velocidadMedia")
+        val aceleracionMaxima = arguments?.getDouble("aceleracionMaxima")
 
         return activity?.let {
             // Use the Builder class for convenient dialog construction
@@ -57,6 +58,7 @@ class SaveRouteDialogFragment : DialogFragment() {
                         args.putDouble("longitud_final", longitud_final!!)
                         args.putString("nombreArchivoRuta", nombreArchivoRuta)
                         args.putDouble("velocidadMedia", velocidadMedia!!)
+                        args.putDouble("aceleracionMaxima", aceleracionMaxima!!)
 
                         popUpFragment.arguments = args
                         popUpFragment.show(requireActivity().supportFragmentManager, "Save Route")
@@ -93,6 +95,10 @@ class SaveRouteDialogFragment : DialogFragment() {
 
                         if (velocidadMedia != null) {
                             intent.putExtra("velocidadMedia", velocidadMedia)
+                        }
+
+                        if (aceleracionMaxima != null) {
+                            intent.putExtra("aceleracionMaxima", aceleracionMaxima!!)
                         }
                         intent.putExtra("nombreArchivoRuta", nombreArchivoRuta)
                         startActivity(intent)
