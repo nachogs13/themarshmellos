@@ -68,32 +68,6 @@ class InicioActivity : com.muei.apm.fasterwho.Toolbar(), NavigationView.OnNaviga
         lateinit var image: String
         val listRef = storage.reference.child("kmlsRutas/${firebaseAuth.currentUser.email}")
 
-        /*listRef.listAll()
-            .addOnSuccessListener { (items, prefixes) ->
-                prefixes.forEach { prefix ->
-                    Log.i(TAG, prefix.name)
-                }
-
-                items.forEach { item ->
-                    var prue: Path = Paths.get("${this.filesDir}/${item.name}")
-                    if (Files.exists(prue)) {
-                        Log.i(TAG, "Existe ${item.name}")
-                    } else {
-                        Log.i(TAG, "No existe ${item.name}")
-                        val localFile = File(this.filesDir, item.name)
-
-                        storage.reference.child("kmlsRutas/${firebaseAuth.currentUser.email}/${item.name}").getFile(localFile).addOnSuccessListener {
-                            Log.i(TAG, "Archivo creado")
-                        }.addOnFailureListener{ it ->
-                            Log.i(TAG, "fallo ${it.toString()}")
-                        }
-                    }
-
-                }
-            }
-            .addOnFailureListener {
-                Log.i(TAG, "error")
-            }*/
         // descargamos las rutas publicas
         db.collection("rutas")
             .whereEqualTo("public",true)
@@ -139,7 +113,6 @@ class InicioActivity : com.muei.apm.fasterwho.Toolbar(), NavigationView.OnNaviga
             }
 
         // descargamos las rutas privadas y sus imágenes
-
         db.collection("rutas")
             .whereEqualTo("usuario",firebaseAuth.currentUser.email)
             .get().addOnSuccessListener {

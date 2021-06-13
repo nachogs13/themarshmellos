@@ -2,6 +2,8 @@ package com.muei.apm.fasterwho
 
 import android.content.Context
 import android.content.SharedPreferences
+import android.location.Address
+import android.location.Geocoder
 import android.os.Bundle
 import android.util.Log
 import androidx.fragment.app.Fragment
@@ -22,6 +24,8 @@ import com.google.firebase.storage.FirebaseStorage
 import com.google.firebase.storage.StorageReference
 import kotlinx.coroutines.*
 import java.lang.ref.Reference
+import java.util.*
+import kotlin.collections.ArrayList
 
 /**
  * A fragment representing a list of Items.
@@ -41,6 +45,8 @@ class InicioItemFragment : Fragment() {
     private var puntuacion : Float = 0F
     private var dificultad : Float = 0F
     private var distancia : Int = 0
+    private var latitudBuscada = 0F
+    private var longitudBuscada = 0F
     private var TAG = "InicioItemFragment"
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -54,6 +60,8 @@ class InicioItemFragment : Fragment() {
         puntuacion = preferences.getFloat(getString(R.string.puntuacion),0F)
         dificultad = preferences.getFloat(getString(R.string.nivel_de_dificultad),0F)
         distancia = preferences.getInt(getString(R.string.distancia),0)
+        latitudBuscada = preferences.getFloat("LatitudBuscada", 0F)
+        longitudBuscada = preferences.getFloat("LongitudBuscada", 0F)
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
@@ -90,7 +98,7 @@ class InicioItemFragment : Fragment() {
                             Log.d(TAG, "Fallo al obtener la información de una ruta pública")
                         }
                     }
-                    if (puntuacion!=0F || distancia!=0 || dificultad!=0F){
+                    if (puntuacion!=0F || distancia!=0 || dificultad!=0F || longitudBuscada != 0F){
                         filteredList = filtrarLista()
 
                         if (!filteredList.isEmpty()){
@@ -154,6 +162,25 @@ class InicioItemFragment : Fragment() {
                 nivelDif == nivelDificultad
             }
             filteredList = match as ArrayList<ItemRuta>
+        }
+
+        // filtramos por localidad
+        if (latitudBuscada != 0F && longitudBuscada != 0F){
+            var addresses: List<Address>? = null;
+            val geocoder = Geocoder(activity, Locale.getDefault())
+            var direccionRuta: String? = null
+            addresses = geocoder.getFromLocation(latitudBuscada.toDouble(), longitudBuscada.toDouble(),1)
+            Log.i(TAG, "Localidad a filtrar " + addresses.get(0).locality)
+            direccionRuta = addresses.get(0).locality
+
+            if (direccionRuta != null) {
+                if (!filteredList.isEmpty()) listItem = filteredList
+                val (match, noMatch) = listItem.partition {
+                    it.coordenadasInicioRuta!!.latitude
+                    direccionRuta == geocoder.getFromLocation(it.coordenadasInicioRuta!!.latitude, it.coordenadasInicioRuta!!.longitude,1).get(0).locality
+                }
+                filteredList = match as ArrayList<ItemRuta>
+            }
         }
         return filteredList
     }

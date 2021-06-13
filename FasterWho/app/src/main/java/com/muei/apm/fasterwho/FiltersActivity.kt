@@ -32,7 +32,7 @@ class FiltersActivity : AppCompatActivity() {
     private lateinit var nivelDificultad : RatingBar
     private lateinit var listView: ListView
     private var listOfPlaces = ArrayList<String>()
-    private lateinit var latLng : LatLng
+    private var latLng : LatLng? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -150,6 +150,10 @@ class FiltersActivity : AppCompatActivity() {
             putFloat(getString(R.string.puntuacion),rating.rating)
             putInt(getString(R.string.distancia),progressSeekBar)
             putFloat(getString(R.string.nivel_de_dificultad),nivelDificultad.rating)
+            if (latLng != null) {
+                putFloat("LatitudBuscada", latLng!!.latitude.toFloat())
+                putFloat("LongitudBuscada", latLng!!.longitude.toFloat())
+            }
             apply()
         }
     }
@@ -169,6 +173,10 @@ class FiltersActivity : AppCompatActivity() {
         if (sharedPreferences.contains(getString(R.string.nivel_de_dificultad))){
             nivelDificultad.rating = sharedPreferences.getFloat(getString(R.string.nivel_de_dificultad),0F)
         }
+
+        if (sharedPreferences.contains("LatitudBuscada")) {
+
+        }
     }
     private fun limpiarFiltros(){
         val sharedPreferences : SharedPreferences = this.getSharedPreferences(getString(R.string.preference_filtersActivity_key),Context.MODE_PRIVATE) ?: return
@@ -176,6 +184,8 @@ class FiltersActivity : AppCompatActivity() {
             remove(getString(R.string.puntuacion))
             remove(getString(R.string.nivel_de_dificultad))
             remove(getString(R.string.distancia))
+            remove("LatitudBuscada")
+            remove("LongitudBuscada")
             apply()
         }
         progressSeekBar = 0
