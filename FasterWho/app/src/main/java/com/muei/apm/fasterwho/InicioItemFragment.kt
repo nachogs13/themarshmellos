@@ -41,16 +41,16 @@ class InicioItemFragment : Fragment() {
     private var puntuacion : Float = 0F
     private var dificultad : Float = 0F
     private var distancia : Int = 0
-
+    private var TAG = "InicioItemFragment"
 
     override fun onCreate(savedInstanceState: Bundle?) {
 
         super.onCreate(savedInstanceState)
-                arguments?.let {
+        arguments?.let {
             columnCount = it.getInt(ARG_COLUMN_COUNT)
         }
         val preferences = this.activity?.getSharedPreferences(getString(
-                R.string.preference_filtersActivity_key), Context.MODE_PRIVATE) ?: return
+            R.string.preference_filtersActivity_key), Context.MODE_PRIVATE) ?: return
         puntuacion = preferences.getFloat(getString(R.string.puntuacion),0F)
         dificultad = preferences.getFloat(getString(R.string.nivel_de_dificultad),0F)
         distancia = preferences.getInt(getString(R.string.distancia),0)
@@ -72,19 +72,23 @@ class InicioItemFragment : Fragment() {
                 db.collection("rutas").whereEqualTo("public",true).get().addOnSuccessListener {
 
                     for (document in it) {
-                        direccionRuta = document.data.get("direccion").toString()
-                        nombreRuta = document.data.get("nombre") as String
-                        rating = document.data.get("rating") as Number
-                        coordenadasFin = document.data.get("coordenadas_fin") as GeoPoint
-                        coordenadasInicio = document.data.get("coordenadas_inicio") as GeoPoint
-                        file = document.data.get("kml") as String
-                        val dist = document.data.get("distancia") as Number
-                        val public = document.data.get("public") as Boolean
-                        val desnivel = document.data.get("desnivel") as Number
-                        var img = document.data.get("imgInicio") as DocumentReference
+                        try {
+                            direccionRuta = document.data.get("direccion").toString()
+                            nombreRuta = document.data.get("nombre") as String
+                            rating = document.data.get("rating") as Number
+                            coordenadasFin = document.data.get("coordenadas_fin") as GeoPoint
+                            coordenadasInicio = document.data.get("coordenadas_inicio") as GeoPoint
+                            file = document.data.get("kml") as String
+                            val dist = document.data.get("distancia") as Number
+                            val public = document.data.get("public") as Boolean
+                            val desnivel = document.data.get("desnivel") as Number
+                            var img = document.data.get("imgInicio") as DocumentReference
 
-                        listItem.add(ItemRuta(nombreRuta,direccionRuta,coordenadasInicio,
+                            listItem.add(ItemRuta(nombreRuta,direccionRuta,coordenadasInicio,
                                 coordenadasFin,rating,file,img, dist, desnivel,public))
+                        } catch (e: Exception) {
+                            Log.d(TAG, "Fallo al obtener la información de una ruta pública")
+                        }
                     }
                     if (puntuacion!=0F || distancia!=0 || dificultad!=0F){
                         filteredList = filtrarLista()
@@ -99,7 +103,6 @@ class InicioItemFragment : Fragment() {
                     }
 
                 }
-
 
             }
         }

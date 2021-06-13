@@ -28,100 +28,75 @@ class SaveRouteDialogFragment : DialogFragment() {
         val longitud_inicial =arguments?.getDouble("longitud_inicial")
         val latitud_final = arguments?.getDouble("latitud_final")
         val longitud_final = arguments?.getDouble("longitud_final")
-
+        val velocidadMedia = arguments?.getDouble("velocidadMedia")
 
         return activity?.let {
             // Use the Builder class for convenient dialog construction
             //var inputText: EditText? = EditText(context)
             //inputText!!.inputType = InputType.TYPE_CLASS_TEXT
-           // inputText.hint = "Nombre Ruta"
+            // inputText.hint = "Nombre Ruta"
             val builder = AlertDialog.Builder(it)
             //builder.setView(inputText)
             builder.setMessage("¿Desea guardar una imagen de la ruta?")
-                    .setTitle("Guardar ruta")
-                    .setPositiveButton(R.string.accept_button,
-                            DialogInterface.OnClickListener { dialog, id ->
-                                /*val intent = Intent(activity, DataRouteDialogFragment::class.java)
-                                intent.putExtra("guardarRuta", true)
-                                if (inputText.text != null) {
-                                    intent.putExtra("nombreRuta", inputText.text.toString())
-                                }
+                .setTitle("Guardar ruta")
+                .setPositiveButton(R.string.accept_button,
+                    DialogInterface.OnClickListener { dialog, id ->
 
-                                Log.i("PopUp", "Se guarda la ruta : ${inputText.text.toString()}")
-                                if (distancia != null) {
-                                    intent.putExtra("distancia", distancia)
-                                }
-                                if (velocidadMaxima != null) {
-                                    intent.putExtra("velocidad", velocidadMaxima)
-                                }
-                                if (horaInicio != null) {
-                                    intent.putExtra("horaInicio",horaInicio)
-                                }
-                                if (duracion != null) {
-                                    intent.putExtra("duracion", duracion)
-                                }
-                                if (altitudGanada != null) {
-                                    intent.putExtra("altitudGanada", altitudGanada)
-                                }
-                                if (altitudPerdida !=null) {
-                                    intent.putExtra("altitudPerdida", altitudPerdida)
-                                }
-                                if (altitudMaxima != null) {
-                                    intent.putExtra("altitudMaxima", altitudMaxima)
-                                }
-                                intent.putExtra("nombreArchivoRuta", nombreArchivoRuta)
+                        val popUpFragment = DataRouteDialogFragment()
+                        var args = Bundle()
+                        args.putDouble("distancia", distancia!!)
+                        args.putDouble("velocidad", velocidadMaxima!!)
+                        args.putString("horaInicio", horaInicio)
+                        args.putLong("duracion", duracion!!)
+                        args.putDouble("altitudGanda", altitudGanada!!)
+                        args.putDouble("altitudPerdida", altitudPerdida!!)
+                        args.putDouble("altitudMaxima", altitudMaxima!!)
+                        args.putDouble("latitud_inicial", latitud_inicial!!)
+                        args.putDouble("longitud_inicial", longitud_inicial!!)
+                        args.putDouble("latitud_final", latitud_final!!)
+                        args.putDouble("longitud_final", longitud_final!!)
+                        args.putString("nombreArchivoRuta", nombreArchivoRuta)
+                        args.putDouble("velocidadMedia", velocidadMedia!!)
 
-                                startActivity(intent)*/
-                                val popUpFragment = DataRouteDialogFragment()
-                                var args = Bundle()
-                                args.putDouble("distancia", distancia!!)
-                                args.putDouble("velocidad", velocidadMaxima!!)
-                                args.putString("horaInicio", horaInicio)
-                                args.putLong("duracion", duracion!!)
-                                args.putDouble("altitudGanda", altitudGanada!!)
-                                args.putDouble("altitudPerdida", altitudPerdida!!)
-                                args.putDouble("altitudMaxima", altitudMaxima!!)
-                                args.putDouble("latitud_inicial", latitud_inicial!!)
-                                args.putDouble("longitud_inicial", longitud_inicial!!)
-                                args.putDouble("latitud_final", latitud_final!!)
-                                args.putDouble("longitud_final", longitud_final!!)
-                                args.putString("nombreArchivoRuta", nombreArchivoRuta)
+                        popUpFragment.arguments = args
+                        popUpFragment.show(requireActivity().supportFragmentManager, "Save Route")
+                    })
+                .setNegativeButton(R.string.cancel_button,
+                    DialogInterface.OnClickListener { dialog, id ->
+                        Toast.makeText( activity, "No se guarda la ruta", Toast.LENGTH_SHORT).show()
+                        val intent = Intent(activity, EstadisticasActivity::class.java)
+                        intent.putExtra("guardarRuta", false)
+                        if (distancia != null) {
+                            intent.putExtra("distancia", distancia)
+                        }
+                        if (velocidadMaxima != null) {
+                            intent.putExtra("velocidad", velocidadMaxima)
+                        }
 
-                                popUpFragment.arguments = args
-                                popUpFragment.show(requireActivity().supportFragmentManager, "Save Route")
-                            })
-                    .setNegativeButton(R.string.cancel_button,
-                            DialogInterface.OnClickListener { dialog, id ->
-                                Toast.makeText( activity, "No se guarda la ruta", Toast.LENGTH_SHORT).show()
-                                val intent = Intent(activity, EstadisticasActivity::class.java)
-                                intent.putExtra("guardarRuta", false)
-                                if (distancia != null) {
-                                    intent.putExtra("distancia", distancia)
-                                }
-                                if (velocidadMaxima != null) {
-                                    intent.putExtra("velocidad", velocidadMaxima)
-                                }
+                        val horaInicio = arguments?.getString("horaInicio")
+                        if (horaInicio != null) {
+                            intent.putExtra("horaInicio",horaInicio)
+                        }
+                        if (duracion != null) {
+                            intent.putExtra("duracion", duracion)
+                        }
+                        if (altitudGanada != null) {
+                            intent.putExtra("altitudGanada", altitudGanada)
+                        }
+                        if (altitudPerdida !=null) {
+                            intent.putExtra("altitudPerdida", altitudPerdida)
+                        }
 
-                                val horaInicio = arguments?.getString("horaInicio")
-                                if (horaInicio != null) {
-                                    intent.putExtra("horaInicio",horaInicio)
-                                }
-                                if (duracion != null) {
-                                    intent.putExtra("duracion", duracion)
-                                }
-                                if (altitudGanada != null) {
-                                    intent.putExtra("altitudGanada", altitudGanada)
-                                }
-                                if (altitudPerdida !=null) {
-                                    intent.putExtra("altitudPerdida", altitudPerdida)
-                                }
+                        if (altitudMaxima != null) {
+                            intent.putExtra("altitudMaxima", altitudMaxima)
+                        }
 
-                                if (altitudMaxima != null) {
-                                    intent.putExtra("altitudMaxima", altitudMaxima)
-                                }
-                                intent.putExtra("nombreArchivoRuta", nombreArchivoRuta)
-                                startActivity(intent)
-                            })
+                        if (velocidadMedia != null) {
+                            intent.putExtra("velocidadMedia", velocidadMedia)
+                        }
+                        intent.putExtra("nombreArchivoRuta", nombreArchivoRuta)
+                        startActivity(intent)
+                    })
             // Create the AlertDialog object and return it
             builder.create()
         } ?: throw IllegalStateException("Activity cannot be null")

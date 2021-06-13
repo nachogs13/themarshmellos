@@ -13,6 +13,7 @@ import android.util.Log
 import android.view.View
 import android.widget.Button
 import android.widget.Chronometer
+import android.widget.TextView
 import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
@@ -28,8 +29,6 @@ import com.google.android.gms.maps.SupportMapFragment
 import com.google.android.gms.maps.model.*
 import com.google.android.material.snackbar.Snackbar
 import com.google.firebase.auth.FirebaseAuth
-import com.google.maps.android.data.kml.KmlLayer
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 import org.xml.sax.SAXException
@@ -37,6 +36,7 @@ import java.io.File
 import java.io.FileInputStream
 import java.io.FileNotFoundException
 import java.io.IOException
+import java.lang.Math.abs
 import java.text.SimpleDateFormat
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
@@ -46,23 +46,21 @@ import javax.xml.parsers.SAXParser
 import javax.xml.parsers.SAXParserFactory
 
 
-class SeguimientoActivity : AppCompatActivity(), OnMapReadyCallback,GoogleMap.OnMyLocationButtonClickListener{
+class SeguimientoActivity : AppCompatActivity(), OnMapReadyCallback,GoogleMap.OnMyLocationButtonClickListener {
     private lateinit var registro: RegistradorKML
     private var parser: SAXParser? = null
     private var handler: SaxHandler? = null
     private lateinit var ruta: Polyline
-    private lateinit var ruta2: Polyline
     private lateinit var mMap: GoogleMap
     private val TAG = "SeguimientoActivity"
     private val REQUEST_FINE_LOCATION_PERMISSIONS_REQUEST_CODE = 34
     private val REQUEST_BACKGROUND_LOCATION_PERMISSIONS_REQUEST_CODE = 56
-    private lateinit var intentService : Intent
+    private lateinit var intentService: Intent
+
     // Servicio para poder recibir actualizacioens de localización en background
     private lateinit var foregroundLocationService: ForegroundLocationService
     private var mBound: Boolean = false
-    private lateinit var  connection : ServiceConnection
-    private var longitude: Double? = null
-    private var latitude: Double? = null
+    private lateinit var connection: ServiceConnection
     private var distancia = 0.0
     private var velocidadMaxima = 0.0
     private var horaInicio: String? = null
@@ -73,6 +71,11 @@ class SeguimientoActivity : AppCompatActivity(), OnMapReadyCallback,GoogleMap.On
     private var nombreArchivoRuta: String? = null
     private var file: String? = null
     private val firebaseAuth = FirebaseAuth.getInstance()
+    private var permisosConcedidos: Boolean = false
+    private var textoBoton : TextView? = null
+    private var velocidades: List<Float>? = null
+    private var rutaRealizada: String? = null
+
     /**
      * Provides the entry point to the Fused Location Provider API.
      */
@@ -96,7 +99,7 @@ class SeguimientoActivity : AppCompatActivity(), OnMapReadyCallback,GoogleMap.On
         mapFragment.getMapAsync(this)
 
         // Definimos el nombre del archivo KML de la ruta
-        nombreArchivoRuta = "ruta-" + firebaseAuth.currentUser.email +getDate() + ".kml"
+        nombreArchivoRuta = "ruta-" + firebaseAuth.currentUser.email + getDate() + ".kml"
         registro = RegistradorKML(this, nombreArchivoRuta!!)
 
         locationRepository = run {
@@ -108,8 +111,10 @@ class SeguimientoActivity : AppCompatActivity(), OnMapReadyCallback,GoogleMap.On
         // inicializamos el cronometro
         chronometer = findViewById(R.id.chronometer)
 
-        // Comprobamos si esta activity se llama desde RutaActivity
+        // Comprobamos si esta activity se llama desde RutaActivity y obtenemos el kml
+        // y el nombre de la ruta
         file = intent.getStringExtra("file")
+        rutaRealizada = intent.getStringExtra("rutaRealizada")
 
         // función para lanzar el popup que muestra si se quiere guardar la ruta
         fun launchPopUp() {
@@ -129,7 +134,7 @@ class SeguimientoActivity : AppCompatActivity(), OnMapReadyCallback,GoogleMap.On
                 args.putDouble("altitudMaxima", altitudMaxima!!)
             }
 
-            if (altitudMinima != null){
+            if (altitudMinima != null) {
                 args.putDouble("altitudPerdida", altitudInicial - altitudMinima!!)
             }
 
@@ -140,76 +145,95 @@ class SeguimientoActivity : AppCompatActivity(), OnMapReadyCallback,GoogleMap.On
             args.putDouble("latitud_final", ruta.points.last().latitude)
             args.putDouble("longitud_final", ruta.points.last().longitude)
 
+            // velocidad media
+            if (velocidades != null && velocidades!!.isNotEmpty()) {
+                val velocidadMedia = velocidades!!.average()
+                args.putDouble("velocidadMedia", velocidadMedia)
+            }
+
             popUpFragment.arguments = args
             popUpFragment.show(supportFragmentManager, "Save Route")
         }
 
-        val btnFinalizarRuta : Button = findViewById(R.id.finalizar_ruta_button)
+        val btnFinalizarRuta: Button = findViewById(R.id.finalizar_ruta_button)
+        textoBoton = findViewById(R.id.finalizar_ruta_button)
         btnFinalizarRuta.setOnClickListener {
-            runBlocking {
-                launch {
-                    // escribimos los puntos al fichero
-                    // abrimos el fichero KML para comenzar a guardar los puntos en el
-                    registro.abrirFichero()
-                    for (i in ruta.points) {
-                        registro.anhadirPunto(i.latitude, i.longitude, 0.0)
+            // si hay permisos se pasa a mostrar las estadisticas de la ruta hecha,
+            // en caso contrario se vuelve al inicio
+            if (permisosConcedidos) {
+                // escribimos los puntos al fichero
+                runBlocking {
+                    launch {
+                        // abrimos el fichero KML para comenzar a guardar los puntos en el
+                        registro.abrirFichero()
+                        for (i in ruta.points) {
+                            registro.anhadirPunto(i.latitude, i.longitude, 0.0)
+                        }
+                        // se cierra el fichero KML
+                        registro.cerrarFichero()
                     }
-                    // se cierra el fichero KML
-                    registro.cerrarFichero()
-                }
-            }
-
-            chronometer?.stop()
-
-            // calculamos el tiempo de duración de la actividad
-            duracion = (SystemClock.elapsedRealtime() - chronometer?.base!!)
-
-            //Toast.makeText(this, "Se finaliza el seguimiento", Toast.LENGTH_SHORT).show()
-
-            // Se para el broadcast que recibe las actualizaciones
-            locationRepository.stopLocationUpdates()
-            // se cierra el servicio que permite recibir actualizaciones en background
-            if (mBound)
-                unbindService(connection)
-            stopService(Intent(baseContext, ForegroundLocationService::class.java))
-
-            // Si es una ruta nueva lanzamos el popup para saber si se quiere guardar la ruta
-            if (file == null) {
-                launchPopUp()
-            } else {
-                // En caso contrario llamamos directamente a EstadisticasActivity
-                val intent = Intent(this, EstadisticasActivity::class.java)
-                intent.putExtra("guardarRuta", false)
-                if (distancia != null) {
-                    intent.putExtra("distancia", distancia)
-                }
-                if (velocidadMaxima != null) {
-                    intent.putExtra("velocidad", velocidadMaxima)
                 }
 
-                if (horaInicio != null) {
-                    intent.putExtra("horaInicio",horaInicio)
-                }
-                if (duracion != null) {
-                    intent.putExtra("duracion", duracion)
-                }
-                if (altitudMaxima != null) {
-                    intent.putExtra("altitudGanada", altitudMaxima!! - altitudInicial)
-                    intent.putExtra("altitudMaxima", altitudMaxima!!)
-                }
-                if (altitudMinima !=null) {
-                    intent.putExtra("altitudPerdida", altitudInicial - altitudMinima!!)
-                }
-                val rutaRealizada = intent.getStringExtra("rutaRealizada")
-                if (rutaRealizada != null) {
+                // se para el cronometro
+                chronometer?.stop()
+
+                // calculamos el tiempo de duración de la actividad
+                duracion = (SystemClock.elapsedRealtime() - chronometer?.base!!)
+
+                // Se para el broadcast que recibe las actualizaciones
+                locationRepository.stopLocationUpdates()
+                // se cierra el servicio que permite recibir actualizaciones en background
+                if (mBound)
+                    unbindService(connection)
+                stopService(Intent(baseContext, ForegroundLocationService::class.java))
+
+                // Si es una ruta nueva lanzamos el popup para saber si se quiere guardar la ruta
+                if (file == null) {
+                    launchPopUp()
+                } else {
+                    // En caso contrario llamamos directamente a EstadisticasActivity
+                    val intent = Intent(this, EstadisticasActivity::class.java)
+                    intent.putExtra("guardarRuta", false)
+                    if (distancia != null) {
+                        intent.putExtra("distancia", distancia)
+                    }
+                    if (velocidadMaxima != null) {
+                        intent.putExtra("velocidad", velocidadMaxima)
+                    }
+
+                    if (horaInicio != null) {
+                        intent.putExtra("horaInicio", horaInicio)
+                    }
+                    if (duracion != null) {
+                        intent.putExtra("duracion", duracion)
+                    }
+                    if (altitudMaxima != null) {
+                        intent.putExtra("altitudGanada", altitudMaxima!! - altitudInicial)
+                        intent.putExtra("altitudMaxima", altitudMaxima!!)
+                    }
+                    if (altitudMinima != null) {
+                        intent.putExtra("altitudPerdida", altitudInicial - altitudMinima!!)
+                    }
+                    if (rutaRealizada != null) {
+                        intent.putExtra("rutaRealizada", rutaRealizada)
+                    }
+
+                    // velocidad media
+                    if (velocidades != null && !velocidades!!.isEmpty()) {
+                        val velocidadMedia = velocidades!!.average()
+                        intent.putExtra("velocidadMedia", velocidadMedia)
+                    }
+                    // nombre del archivo kml
+                    intent.putExtra("nombreArchivoRuta", nombreArchivoRuta)
+                    // nombre de la ruta
                     intent.putExtra("rutaRealizada", rutaRealizada)
+
+                    startActivity(intent)
                 }
-
-                intent.putExtra("nombreArchivoRuta" ,nombreArchivoRuta)
-
+            } else {
+                val intent = Intent(this, InicioActivity::class.java)
                 startActivity(intent)
             }
-
         }
     }
 
@@ -234,271 +258,207 @@ class SeguimientoActivity : AppCompatActivity(), OnMapReadyCallback,GoogleMap.On
                 // for ActivityCompat#requestPermissions for more details.
                 return
             }
-            // Obtenemos la hora en la que se inicia la actividad
-            val horaActual = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                LocalDateTime.now()
-            } else {
-                TODO("VERSION.SDK_INT < O")
-            }
-            //horaInicio = horaActual.format(DateTimeFormatter.ofPattern("HH:mm"))
-            //chronometer?.start()
-
-            // Comprobamos si esta activity se llama desde RutaActivity
-            if (file != null) {
-                Log.d(TAG, "En seguimientoActivity se va a mostrar la ruta a seguir")
-
-                val latitud_fin = intent.getDoubleExtra("latitud_fin",0.0)
-                val longitud_fin = intent.getDoubleExtra("longitud_fin", 0.0)
-                val longitud_ini = intent.getDoubleExtra("longitud_ini",0.0)
-                val latitud_ini = intent.getDoubleExtra("latitud_ini",0.0)
-
-                val factory = SAXParserFactory.newInstance()
-                try {
-                    parser = factory.newSAXParser()
-
-                    // Manejador SAX programado por nosotros. Le pasamos nuestro mapa para que ponga los puntos.
-                    handler = SaxHandler(mMap)
-
-                    // AsyncTask. Le pasamos el directorio de ficheros como string.
-                    val procesador: SeguimientoActivity.ProcesarKML = ProcesarKML()
-                    procesador.execute(this.filesDir.absolutePath)
-                } catch (e: SAXException) {
-                    println(e.message)
-                    Log.d(TAG, "Error SAX al leer el KML")
-                } catch (e: ParserConfigurationException) {
-                    println(e.message)
-                    Log.d(TAG, "Error de parser al leer el KML")
-                }
-                mMap.addMarker(MarkerOptions().position(LatLng(latitud_ini,longitud_ini))
-                    .icon(
-                        BitmapDescriptorFactory.defaultMarker(
-                            BitmapDescriptorFactory.
-                    HUE_GREEN)).title("Inicio"))
-                mMap.addMarker(MarkerOptions().position(LatLng(latitud_fin,longitud_fin))
-                    .icon(
-                        BitmapDescriptorFactory.defaultMarker(
-                            BitmapDescriptorFactory.
-                    HUE_ORANGE)).title("Fin"))
-
-                val cameraPosition: CameraPosition = CameraPosition.Builder().
-                target(LatLng(latitud_ini, longitud_ini))
-                    .zoom(13.5f)
-                    .bearing(0f)
-                    .tilt(25f)
-                    .build()
-                mMap.moveCamera(CameraUpdateFactory.newCameraPosition(cameraPosition))
-            }
-
-            // Se añade esto para pintar el tramo de la ruta realizado
-            var opcionesPolyLine = PolylineOptions().color(Color.CYAN).width(4F)
-            //var opcionesPolyLine2 = PolylineOptions().color(Color.GREEN).width(20F)
-            ruta = mMap.addPolyline(opcionesPolyLine)
-            //ruta2 = mMap.addPolyline(opcionesPolyLine2)
-
-            // Obtenemos la posición actual y ponemos una marca en el mapa
-            /*fusedLocationClient.lastLocation
-                .addOnCompleteListener { taskLocation ->
-                    if (taskLocation.isSuccessful && taskLocation.result != null) {
-                        val location = taskLocation.result
-                        // Obtenemos la latitud y longitud
-                        var longitude2 = location?.longitude
-                        var latitude2 = location?.latitude
-
-                        // Añadimos la marca
-                        val posicion = latitude2?.let { longitude2?.let { it1 -> LatLng(it, it1) } }
-                        mMap.addMarker(posicion?.let { MarkerOptions().position(it).title("Empiezaste aquí") })
-                        if (file_kml == null) {
-                            //mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(posicion,16f), 2500,null)
-                            mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(posicion,16f))
-                        }
-
-                    } else {
-                        Log.w(TAG, "getLastLocation:exception", taskLocation.exception)
-                        showSnackbar("No se detectado la localización. Asegúrese de que el GPS está activado")
-                    }
-                }*/
-
-            // Vamos actualizando la posición actual en tiempo real
-            mMap.setOnMyLocationButtonClickListener(this)
-            enableMyLocation()
-            var context: Context = this
-            var pendingIntent = locationRepository.startLocationUpdates()
-
-            /* se añade esto para poder crear el servicio */
-            connection = object : ServiceConnection {
-                override fun onServiceConnected(name: ComponentName?, service: IBinder?) {
-                    val binder = service as ForegroundLocationService.BinderLocationService
-                    foregroundLocationService = binder.getService()
-                    mBound = true
-                    foregroundLocationService.pendingIntent = pendingIntent
-                    foregroundLocationService.context = context
-                    startService(intentService)
-                }
-
-                override fun onServiceDisconnected(name: ComponentName?) {
-                    mBound = false
-                }
-            }
-            // nos suscribimos al servicio para que se inicie
-            intentService =Intent(this,ForegroundLocationService::class.java)
-            bindService(intentService, connection, Context.BIND_AUTO_CREATE)
-
-            // abrimos el fichero KML para comenzar a guardar los puntos en el
-            //registro.abrirFichero()
-
-            // variables para comenzar a calcular la distancia recorrida
-            var puntoDescartado = false
-            var primeraLocalizacion = true
-            var previousLocation = LatLng(0.0, 0.0)
-            var resultado = FloatArray(1)
-            // se comprueba las actualizaciones recibidas
-            locationRepository.locationListLiveData.observe(
-                this,androidx.lifecycle.Observer { locations ->
-                    locations?.let {
-                        Log.d(TAG, "Se obtienen ${locations.size} localizaciones")
-                        if (locations.isEmpty()) {
-                            Log.d(TAG, "Error localizaciones")
-                        } else {
-                            /*if (!puntoDescartado) {
-
-                                // Eliminamos el primer punto obtenido, ya que muchas veces suele ser impreciso
-                                locationRepository.deleteLocations()
-                                // De todas formas centramos la cámara en esa posición
-                                val cameraPosition: CameraPosition = CameraPosition.Builder().
-                                target(LatLng(locations.first().latitude, locations.first().longitude))
-                                    .zoom(13.5f)
-                                    .bearing(0f)
-                                    .tilt(25f)
-                                    .build()
-                                mMap.moveCamera(CameraUpdateFactory.newCameraPosition(cameraPosition))
-                                //Toast.makeText(this, "La ruta comenzará en 5 segundos...",Toast.LENGTH_SHORT).show()
-                                //puntoDescartado = true
-                            } else {*/
-                                // se actualiza la línea del mapa con los nuevos puntos y se centra la cámara
-                                ruta.points = locations
-                                //ruta2.points = handler!!.getPoints()
-                                //ruta2.width = 20F
-                                //mMap.addPolyline(handler?.getRuta())
-                                val posicion = locations.last()
-                                mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(posicion,16f), 2500,null)
-                                //Toast.makeText(this,"Puntos " + ruta.points.size, Toast.LENGTH_SHORT).show()
-
-                                // Calculamos la distancia
-                                if (!primeraLocalizacion) {
-                                    Location.distanceBetween(
-                                        previousLocation.latitude,
-                                        previousLocation.longitude,
-                                        posicion.latitude,
-                                        posicion.longitude,
-                                        resultado
-                                    )
-                                    distancia += resultado[0]
-                                    previousLocation = posicion
-
-                                    // enviamos al fragment la nueva distancia
-                                    viewModel.setDistance(distancia)
-
-                                } else {
-                                    mMap.addMarker(posicion?.let { MarkerOptions().position(it).title("Empiezaste aquí") })
-                                    Toast.makeText(this, "¡Comienza la ruta!", Toast.LENGTH_SHORT).show()
-                                    previousLocation = posicion
-                                    primeraLocalizacion = false
-                                    horaInicio = horaActual.format(DateTimeFormatter.ofPattern("HH:mm"))
-                                    // inicializamos el cronometro
-                                    chronometer?.base = SystemClock.elapsedRealtime()
-                                    chronometer?.start()
-
-                                }
-
-                                // Se escribe el punto de geolocalización en el archivo KML
-                                //registro.anhadirPunto(posicion.latitude, posicion.longitude, 0.0)
-
-                                Log.i(TAG, "Distancia total hasta el momento: " + distancia)
-                            //}
-
-                        }
-                    }
-
-                }
-
-            )
-
-            // Obtenemos la velocidad máxima hasta el momento
-            locationRepository.speed.observe(
-                this,
-                androidx.lifecycle.Observer { speed ->
-                    speed?.let {
-                        velocidadMaxima = speed.toDouble()
-                        Log.i(TAG, "Velocidad máxima hasta el momento: $velocidadMaxima")
-                    }
-                }
-            )
-
-            var primeraAltitud = true
-            // Obtenemos la primera altitud inicial, y la altitud máxima y mínima
-            locationRepository.altitudes.observe(
-                this, androidx.lifecycle.Observer { altitudes ->
-                    altitudes?.let {
-                        Log.i(TAG,"Leyendo ${altitudes.size} altitudes")
-                        if (altitudes.size > 0) {
-                            if (primeraAltitud) {
-
-                                altitudInicial = altitudes.last()
-                                Log.i(TAG, "Altitud inicial= $altitudInicial")
-                                primeraAltitud = false
-                            } else {
-                                if (altitudes.min()!! < altitudInicial) {
-                                    altitudMinima = altitudes.min()!!
-                                }
-                                if (altitudes.max()!! >= altitudInicial) {
-                                    Log.i(TAG, "Nueva altitud Máxima= $altitudMaxima")
-                                    altitudMaxima = altitudes.max()!!
-                                }
-                            }
-                        }
-
-                    }
-
-                }
-            )
+            // Tenemos permisos para la geolcalización, llamamos al método que obitene las actualizaciones
+            permisosConcedidos = true
+            obtenerLocalizaciones()
 
         }
 
-    }
-
-    // Se añade esta funcion para la integracion con geolocaclizacion
-    override fun onStart() {
-        super.onStart()
-
-        if (!checkPermissions()) {
-            requestPermissions()
-        } else {
-            getLastLocation()
-        }
     }
 
     /**
-     * Provides a simple way of getting a device's location and is well suited for
-     * applications that do not require a fine-grained location and that do not need location
-     * updates. Gets the best and most recent location currently available, which may be null
-     * in rare cases when a location is not available.
-     *
-     * Note: this method should be called after location permission has been granted.
+     * Método que implementa la lógica necesaria para obtener las actualizaciones de la geolocalización
      */
-    @SuppressLint("MissingPermission")
-    private fun getLastLocation() {
-        fusedLocationClient.lastLocation
-            .addOnCompleteListener { taskLocation ->
-                if (taskLocation.isSuccessful && taskLocation.result != null) {
-                    val location = taskLocation.result
+    fun obtenerLocalizaciones() {
+        // Obtenemos la hora en la que se inicia la actividad
+        val horaActual = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            LocalDateTime.now()
+        } else {
+            TODO("VERSION.SDK_INT < O")
+        }
 
-                    longitude = location?.longitude
-                    latitude = location?.latitude
-                } else {
-                    Log.w(TAG, "getLastLocation:exception", taskLocation.exception)
-                    showSnackbar("No se ha detectado la localización. Asegúrese de que el GPS está activado")
+        // Comprobamos si esta activity se llama desde RutaActivity, y en ese caso mostramos
+        // la el recorrido de la ruta que se quiere realizar
+        if (file != null) {
+            Log.d(TAG, "En seguimientoActivity se va a mostrar la ruta a seguir")
+
+            val latitud_fin = intent.getDoubleExtra("latitud_fin", 0.0)
+            val longitud_fin = intent.getDoubleExtra("longitud_fin", 0.0)
+            val longitud_ini = intent.getDoubleExtra("longitud_ini", 0.0)
+            val latitud_ini = intent.getDoubleExtra("latitud_ini", 0.0)
+
+            val factory = SAXParserFactory.newInstance()
+            // intentamos cargar el kml
+            try {
+                parser = factory.newSAXParser()
+
+                // Manejador SAX programado por nosotros. Le pasamos nuestro mapa para que ponga los puntos.
+                handler = SaxHandler(mMap)
+
+                // AsyncTask. Le pasamos el directorio de ficheros como string.
+                val procesador: SeguimientoActivity.ProcesarKML = ProcesarKML()
+                procesador.execute(this.filesDir.absolutePath)
+            } catch (e: SAXException) {
+                println(e.message)
+                Log.d(TAG, "Error SAX al leer el KML")
+            } catch (e: ParserConfigurationException) {
+                println(e.message)
+                Log.d(TAG, "Error de parser al leer el KML")
+            }
+            // se añade el punto de inicio
+            mMap.addMarker(
+                MarkerOptions().position(LatLng(latitud_ini, longitud_ini))
+                    .icon(
+                        BitmapDescriptorFactory.defaultMarker(
+                            BitmapDescriptorFactory.HUE_GREEN
+                        )
+                    ).title("Inicio")
+            )
+            // se añade el punto de fun
+            mMap.addMarker(
+                MarkerOptions().position(LatLng(latitud_fin, longitud_fin))
+                    .icon(
+                        BitmapDescriptorFactory.defaultMarker(
+                            BitmapDescriptorFactory.HUE_ORANGE
+                        )
+                    ).title("Fin")
+            )
+            // se mueve la cámara a la posición inicial
+            val cameraPosition: CameraPosition =
+                CameraPosition.Builder().target(LatLng(latitud_ini, longitud_ini))
+                    .zoom(15.3f)
+                    .bearing(0f)
+                    .tilt(25f)
+                    .build()
+            mMap.moveCamera(CameraUpdateFactory.newCameraPosition(cameraPosition))
+        }
+
+        // Se añade esto para pintar el tramo de la ruta realizado
+        var opcionesPolyLine = PolylineOptions().color(Color.BLUE).width(8F)
+        ruta = mMap.addPolyline(opcionesPolyLine)
+
+        // Vamos actualizando la posición actual en tiempo real
+        mMap.setOnMyLocationButtonClickListener(this)
+        enableMyLocation()
+        var context: Context = this
+        var pendingIntent = locationRepository.startLocationUpdates()
+
+        /* se añade esto para poder crear el servicio de background*/
+        connection = object : ServiceConnection {
+            override fun onServiceConnected(name: ComponentName?, service: IBinder?) {
+                val binder = service as ForegroundLocationService.BinderLocationService
+                foregroundLocationService = binder.getService()
+                mBound = true
+                foregroundLocationService.pendingIntent = pendingIntent
+                foregroundLocationService.context = context
+                startService(intentService)
+            }
+
+            override fun onServiceDisconnected(name: ComponentName?) {
+                mBound = false
+            }
+        }
+        // nos suscribimos al servicio para que se inicie
+        intentService = Intent(this, ForegroundLocationService::class.java)
+        bindService(intentService, connection, Context.BIND_AUTO_CREATE)
+
+        // variables para comenzar a calcular la distancia recorrida
+        var puntoDescartado = false
+        var primeraLocalizacion = true
+        var previousLocation = LatLng(0.0, 0.0)
+        var resultado = FloatArray(1)
+        // se comprueba las actualizaciones recibidas
+        locationRepository.locationListLiveData.observe(
+            this, androidx.lifecycle.Observer { locations ->
+                locations?.let {
+                    Log.d(TAG, "Se obtienen ${locations.size} localizaciones")
+                    if (locations.isEmpty()) {
+                        Log.d(TAG, "Error localizaciones")
+                    } else {
+                        // se actualiza la línea del mapa con los nuevos puntos y se centra la cámara
+                        ruta.points = locations
+
+                        val posicion = locations.last()
+                        mMap.animateCamera(
+                            CameraUpdateFactory.newLatLngZoom(posicion, 17f),
+                            2500,
+                            null
+                        )
+
+                        // Calculamos la distancia recorrida
+                        if (!primeraLocalizacion) {
+                            Location.distanceBetween(
+                                previousLocation.latitude,
+                                previousLocation.longitude,
+                                posicion.latitude,
+                                posicion.longitude,
+                                resultado
+                            )
+                            distancia += abs(resultado[0])
+                            previousLocation = posicion
+
+                            // enviamos al fragment la nueva distancia
+                            viewModel.setDistance(distancia)
+
+                        } else {
+                            Toast.makeText(this, "¡Comienza la ruta!", Toast.LENGTH_SHORT).show()
+                            previousLocation = posicion
+                            primeraLocalizacion = false
+                            horaInicio = horaActual.format(DateTimeFormatter.ofPattern("HH:mm"))
+                            // inicializamos el cronometro
+                            chronometer?.base = SystemClock.elapsedRealtime()
+                            chronometer?.start()
+
+                        }
+
+                        Log.i(TAG, "Distancia total hasta el momento: " + distancia)
+                    }
+
                 }
             }
+
+        )
+
+        // Obtenemos las velocidades hasta el momento
+        locationRepository.speeds.observe(
+            this,
+            androidx.lifecycle.Observer { speeds ->
+                speeds?.let {
+                    if (speeds != null && speeds.isNotEmpty()) {
+                        velocidades = speeds
+                        velocidadMaxima = speeds.max()!!.toDouble()
+                    }
+                }
+            }
+        )
+
+        var primeraAltitud = true
+        // Obtenemos la primera altitud inicial, y la altitud máxima y mínima
+        locationRepository.altitudes.observe(
+            this, androidx.lifecycle.Observer { altitudes ->
+                altitudes?.let {
+                    Log.i(TAG, "Leyendo ${altitudes.size} altitudes")
+                    if (altitudes.size > 0) {
+                        if (primeraAltitud) {
+
+                            altitudInicial = altitudes.last()
+                            Log.i(TAG, "Altitud inicial= $altitudInicial")
+                            primeraAltitud = false
+                        } else {
+                            if (altitudes.min()!! < altitudInicial) {
+                                altitudMinima = altitudes.min()!!
+                            }
+                            if (altitudes.max()!! >= altitudInicial) {
+                                Log.i(TAG, "Nueva altitud Máxima= $altitudMaxima")
+                                altitudMaxima = altitudes.max()!!
+                            }
+                        }
+                    }
+
+                }
+
+            }
+        )
     }
 
     /**
@@ -513,7 +473,8 @@ class SeguimientoActivity : AppCompatActivity(), OnMapReadyCallback,GoogleMap.On
         actionStrId: Int = 0,
         listener: View.OnClickListener? = null
     ) {
-        val snackbar = Snackbar.make(findViewById(android.R.id.content), snackStrId,
+        val snackbar = Snackbar.make(
+            findViewById(android.R.id.content), snackStrId,
             Snackbar.LENGTH_INDEFINITE
         )
         if (actionStrId != 0 && listener != null) {
@@ -529,28 +490,40 @@ class SeguimientoActivity : AppCompatActivity(), OnMapReadyCallback,GoogleMap.On
         /*ActivityCompat.checkSelfPermission(this,
             Manifest.permission.ACCESS_COARSE_LOCATION
         ) == PackageManager.PERMISSION_GRANTED*/
-        ActivityCompat.checkSelfPermission(this,
+        ActivityCompat.checkSelfPermission(
+            this,
             Manifest.permission.ACCESS_BACKGROUND_LOCATION
         ) == PackageManager.PERMISSION_GRANTED
 
     private fun startLocationPermissionRequest() {
         /*ActivityCompat.requestPermissions(this, arrayOf(Manifest.permission.ACCESS_COARSE_LOCATION),
             REQUEST_PERMISSIONS_REQUEST_CODE)*/
-        ActivityCompat.requestPermissions(this, arrayOf(Manifest.permission.ACCESS_BACKGROUND_LOCATION,Manifest.permission.ACCESS_FINE_LOCATION),
-            REQUEST_BACKGROUND_LOCATION_PERMISSIONS_REQUEST_CODE)
+        ActivityCompat.requestPermissions(
+            this,
+            arrayOf(
+                Manifest.permission.ACCESS_BACKGROUND_LOCATION,
+                Manifest.permission.ACCESS_FINE_LOCATION
+            ),
+            REQUEST_BACKGROUND_LOCATION_PERMISSIONS_REQUEST_CODE
+        )
     }
 
     private fun requestPermissions() {
-        if (ActivityCompat.shouldShowRequestPermissionRationale(this,
+        if (ActivityCompat.shouldShowRequestPermissionRationale(
+                this,
                 Manifest.permission.ACCESS_BACKGROUND_LOCATION
-            )) {
+            )
+        ) {
             // Provide an additional rationale to the user. This would happen if the user denied the
             // request previously, but didn't check the "Don't ask again" checkbox.
             Log.i(TAG, "Displaying permission rationale to provide additional context.")
-            showSnackbar("Se necesitan permisos GPS para la funcionalidad principal", android.R.string.ok, View.OnClickListener {
-                // Request permission
-                startLocationPermissionRequest()
-            })
+            showSnackbar(
+                "Se necesitan permisos GPS para la funcionalidad principal",
+                android.R.string.ok,
+                View.OnClickListener {
+                    // Request permission
+                    startLocationPermissionRequest()
+                })
 
         } else {
             // Request permission. It's possible this can be auto answered if device policy
@@ -570,41 +543,52 @@ class SeguimientoActivity : AppCompatActivity(), OnMapReadyCallback,GoogleMap.On
         grantResults: IntArray
     ) {
         Log.i(TAG, "onRequestPermissionResult")
-        if (requestCode == REQUEST_BACKGROUND_LOCATION_PERMISSIONS_REQUEST_CODE) {
-            when {
-                // If user interaction was interrupted, the permission request is cancelled and you
-                // receive empty arrays.
-                grantResults.isEmpty() -> Log.i(TAG, "User interaction was cancelled.")
+        when (requestCode) {
+            REQUEST_FINE_LOCATION_PERMISSIONS_REQUEST_CODE,
+            REQUEST_BACKGROUND_LOCATION_PERMISSIONS_REQUEST_CODE ->
+                when  {
+                    // If user interaction was interrupted, the permission request is cancelled and you
+                    // receive empty arrays.
+                    grantResults.isEmpty() -> Log.i(TAG, "User interaction was cancelled.")
 
-                // Permission granted.
-                (grantResults[0] == PackageManager.PERMISSION_GRANTED) -> getLastLocation()
+                    // Permission granted.
+                    (grantResults[0] == PackageManager.PERMISSION_GRANTED) -> {
 
-                // Permission denied.
+                        textoBoton?.setText("FINALIZAR RUTA")
+                        permisosConcedidos = true
+                        obtenerLocalizaciones()
+                    }
 
-                // Notify the user via a SnackBar that they have rejected a core permission for the
-                // app, which makes the Activity useless. In a real app, core permissions would
-                // typically be best requested during a welcome-screen flow.
+                    // Permission denied.
 
-                // Additionally, it is important to remember that a permission might have been
-                // rejected without asking the user for permission (device policy or "Never ask
-                // again" prompts). Therefore, a user interface affordance is typically implemented
-                // when permissions are denied. Otherwise, your app could appear unresponsive to
-                // touches or interactions which have required permissions.
-                else -> {
-                    showSnackbar("Permisos denegados", R.string.settings,
-                        View.OnClickListener {
-                            // Build intent that displays the App settings screen.
-                            val intent = Intent().apply {
-                                action = Settings.ACTION_APPLICATION_DETAILS_SETTINGS
-                                data = Uri.fromParts("package", BuildConfig.APPLICATION_ID, null)
-                                flags = Intent.FLAG_ACTIVITY_NEW_TASK
-                            }
-                            startActivity(intent)
-                        })
+                    // Notify the user via a SnackBar that they have rejected a core permission for the
+                    // app, which makes the Activity useless. In a real app, core permissions would
+                    // typically be best requested during a welcome-screen flow.
+
+                    // Additionally, it is important to remember that a permission might have been
+                    // rejected without asking the user for permission (device policy or "Never ask
+                    // again" prompts). Therefore, a user interface affordance is typically implemented
+                    // when permissions are denied. Otherwise, your app could appear unresponsive to
+                    // touches or interactions which have required permissions.
+                    else -> {
+                        textoBoton?.setText("Volver a Inicio")
+                        permisosConcedidos = false
+                        showSnackbar("Permisos denegados", R.string.settings,
+                            View.OnClickListener {
+                                // Build intent that displays the App settings screen.
+                                val intent = Intent().apply {
+                                    action = Settings.ACTION_APPLICATION_DETAILS_SETTINGS
+                                    data =
+                                        Uri.fromParts("package", BuildConfig.APPLICATION_ID, null)
+                                    flags = Intent.FLAG_ACTIVITY_NEW_TASK
+                                }
+                                startActivity(intent)
+                            })
+                    }
                 }
-            }
         }
     }
+
 
     private fun isPermissionsGranted() = ContextCompat.checkSelfPermission(
         this,
@@ -637,7 +621,7 @@ class SeguimientoActivity : AppCompatActivity(), OnMapReadyCallback,GoogleMap.On
     }
 
     override fun onMyLocationButtonClick(): Boolean {
-        Toast.makeText(this, "Centrando el mapa", Toast.LENGTH_SHORT).show()
+        //Toast.makeText(this, "Centrando el mapa", Toast.LENGTH_SHORT).show()
 
         return false
     }
@@ -666,7 +650,8 @@ class SeguimientoActivity : AppCompatActivity(), OnMapReadyCallback,GoogleMap.On
     }
 
     //==============================================================================================
-    // ASYNCTASK - TAREA ASÍNCRONA
+    // ASYNCTASK - Tarea asíncrona para cargar el kml y que se produzcan fallos cuando contiene
+    // muchos puntos
     //==============================================================================================
     private inner class ProcesarKML : AsyncTask<String?, Int?, Boolean>() {
         override fun doInBackground(vararg params: String?): Boolean? {

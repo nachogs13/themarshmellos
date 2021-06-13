@@ -38,6 +38,7 @@ class MiRutaFragment : Fragment() {
     private var puntuacion : Float = 0F
     private var dificultad : Float = 0F
     private var distancia : Int = 0
+    private var TAG = "MiRutaFragment"
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -60,28 +61,32 @@ class MiRutaFragment : Fragment() {
                     else -> GridLayoutManager(context, columnCount)
                 }
                 db.collection("rutas")
-                        .whereEqualTo("usuario",FirebaseAuth.getInstance().currentUser.email.toString())
-                        .get().addOnSuccessListener {
+                    .whereEqualTo("usuario",FirebaseAuth.getInstance().currentUser.email.toString())
+                    .get().addOnSuccessListener {
 
-                    for (document in it) {
-                        direccionRuta = document.data.get("direccion").toString()
-                        nombreRuta = document.data.get("nombre").toString()
-                        rating = document.data.get("rating") as Number
-                        coordenadasFin = document.data.get("coordenadas_fin") as GeoPoint
-                        coordenadasInicio = document.data.get("coordenadas_inicio") as GeoPoint
-                        val public = document.data.get("public") as Boolean
-                        file = document.data.get("kml") as String
-                        val dist = document.data.get("distancia") as Number
-                        val desnivel = document.data.get("desnivel") as Number
-                        var img = document.data.get("imgInicio") as DocumentReference
-                        val id = document.id as String
+                        for (document in it) {
+                            try {
+                                direccionRuta = document.data.get("direccion").toString()
+                                nombreRuta = document.data.get("nombre").toString()
+                                rating = document.data.get("rating") as Number
+                                coordenadasFin = document.data.get("coordenadas_fin") as GeoPoint
+                                coordenadasInicio = document.data.get("coordenadas_inicio") as GeoPoint
+                                val public = document.data.get("public") as Boolean
+                                file = document.data.get("kml") as String
+                                val dist = document.data.get("distancia") as Number
+                                val desnivel = document.data.get("desnivel") as Number
+                                var img = document.data.get("imgInicio") as DocumentReference
+                                val id = document.id as String
 
-                        listItem.add(ItemRuta(nombreRuta,direccionRuta,coordenadasInicio,
-                                coordenadasFin,rating,file,img, dist, desnivel, public,id))
-                    }
+                                listItem.add(ItemRuta(nombreRuta,direccionRuta,coordenadasInicio,
+                                    coordenadasFin,rating,file,img, dist, desnivel, public,id))
+                            } catch (e : Exception) {
+                                Log.d(TAG, "Fallo al obtener la información de una ruta privada")
+                            }
+
+                        }
                         adapter = MyMiRutaRecyclerViewAdapter(listItem)
-
-                }
+                    }
             }
         }
         return view
