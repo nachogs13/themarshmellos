@@ -1,17 +1,17 @@
 package com.muei.apm.fasterwho
 
-import androidx.appcompat.app.AppCompatActivity
+import android.content.Intent
 import android.os.Bundle
 import android.view.View
 import android.widget.AdapterView
 import android.widget.ListView
-import android.widget.TextView
 import android.widget.Toast
 
 class RankingActivity : Toolbar(), AdapterView.OnItemClickListener{
     private var listView : ListView ? = null
     private var itemAdapters: ItemRankingAdapter ? = null
     private var arrayList : ArrayList<ItemRankingList> ? = null
+    private var blocked : ArrayList<String> ? = ArrayList()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -28,42 +28,71 @@ class RankingActivity : Toolbar(), AdapterView.OnItemClickListener{
         listView?.onItemClickListener = this
 
         Toast.makeText(this, "Listado de Rankings", Toast.LENGTH_SHORT).show()
-
-       /*
-        val btnRanking1 : TextView = findViewById(R.id.ranking1)
-        btnRanking1.setOnClickListener {
-            Toast.makeText(this, "Ranking1 BLOQUEADO", Toast.LENGTH_SHORT).show()
-        }
-
-        val btnRanking2 : TextView = findViewById(R.id.ranking2)
-        btnRanking2.setOnClickListener {
-            Toast.makeText(this, "Ranking2 BLOQUEADO", Toast.LENGTH_SHORT).show()
-        }
-
-        val btnRanking3 : TextView = findViewById(R.id.ranking3)
-        btnRanking3.setOnClickListener {
-            Toast.makeText(this, "Viendo el Ranking3", Toast.LENGTH_SHORT).show()
-        }*/
     }
     override fun onResume() {
         super.onResume()
         navView.menu.getItem(2).setChecked(true)
     }
 
-    private fun setDataItem() : ArrayList<ItemRankingList> {
-        var listItem : ArrayList<ItemRankingList> = ArrayList()
+    private fun isBlocked(rank: String, userPts: Int) : String {
+        lateinit var message : String
 
-        listItem.add(ItemRankingList(R.drawable.leyenda, "Leyenda", "Puntuaciones", "BLOQUEADO"))
-        listItem.add(ItemRankingList(R.drawable.diamante, "Diamante", "Puntuaciones", "BLOQUEADO"))
-        listItem.add(ItemRankingList(R.drawable.oro, "Oro", "Puntuaciones", "BLOQUEADO"))
-        listItem.add(ItemRankingList(R.drawable.plata, "Plata", "Puntuaciones", "DESBLOQUEADO"))
-        listItem.add(ItemRankingList(R.drawable.bronce, "Bronce", "Puntuaciones", "DESBLOQUEADO"))
+        when (rank) {
+            "Leyenda" -> if (userPts < 20000) {
+                message = "BLOQUEADO - Faltan ${20000-userPts} puntos más"
+                blocked?.add("Leyenda")
+            } else {
+                message = "DESBLOQUEADO"
+            }
+            "Diamante" -> if (userPts < 15000) {
+                message = "BLOQUEADO - Faltan ${15000-userPts} puntos más"
+                blocked?.add("Diamante")
+            } else {
+                message = "DESBLOQUEADO"
+            }
+            "Oro" -> if (userPts < 10000) {
+                message = "BLOQUEADO - Faltan ${10000-userPts} puntos más"
+                blocked?.add("Oro")
+            } else {
+                message = "DESBLOQUEADO"
+            }
+            "Plata" -> if (userPts < 5000) {
+                message = "BLOQUEADO - Faltan ${5000-userPts} puntos más"
+                blocked?.add("Plata")
+            } else {
+                message = "DESBLOQUEADO"
+            }
+            else -> message = "DESBLOQUEADO"
+        }
+
+        return message
+    }
+
+    private fun setDataItem() : ArrayList<ItemRankingList> {
+        val listItem : ArrayList<ItemRankingList> = ArrayList()
+
+        //Obtener los puntos del usuario para saber los puntos restantes para cada rango bloqueado
+        var userPts: Int = 7500 //esto debe salir de la info del usuario en firebase
+
+        listItem.add(ItemRankingList(R.drawable.leyenda, "Leyenda", "20.000+ pts.", isBlocked("Leyenda", userPts)))
+        listItem.add(ItemRankingList(R.drawable.diamante, "Diamante", "15.000 - 19.999 pts.", isBlocked("Diamante", userPts)))
+        listItem.add(ItemRankingList(R.drawable.oro, "Oro", "10.000 - 14.999 pts.", isBlocked("Oro", userPts)))
+        listItem.add(ItemRankingList(R.drawable.plata, "Plata", "5.000 - 9.999 pts.", isBlocked("Plata", userPts)))
+        listItem.add(ItemRankingList(R.drawable.bronce, "Bronce", "0 - 4.999 pts.", isBlocked("Bronce", userPts)))
+
         return listItem
     }
 
     override fun onItemClick(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
-        var items:ItemRankingList = arrayList?.get(position)!!
+        val items:ItemRankingList = arrayList?.get(position)!!
 
-        Toast.makeText(applicationContext, items.title, Toast.LENGTH_SHORT).show()
+        if (!blocked.isNullOrEmpty() && blocked?.contains(items.title)!!) {
+            Toast.makeText(applicationContext, "Desbloquee este rango para ver más", Toast.LENGTH_SHORT).show()
+        } else {
+            val intent = Intent(this, RankingListActivity::class.java)
+            intent.putExtra("Rank",items.title)
+
+            startActivity(intent)
+        }
     }
 }

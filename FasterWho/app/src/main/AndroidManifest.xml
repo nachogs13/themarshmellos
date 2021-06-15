@@ -64,6 +64,7 @@
         <activity android:name=".EstadisticasActivity"
             android:screenOrientation="portrait"/>
         <activity android:name=".RankingActivity" />
+        <activity android:name=".RankingListActivity" />
         <activity android:name=".ProfileActivity" />
         <activity android:name=".FiltersActivity" />
         <activity android:name=".RegisterActivity" />
