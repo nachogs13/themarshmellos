@@ -6,9 +6,10 @@ En nuestro grupo vamos a desarrollar la aplicación **FasterWho**. El equipo de 
     - Menú de usuario
     - Recomendaciones iniciales al registrarse
   - **Christian Manuel Varela Álvarez (CTO)**
-    - QR y otras posibles integraciones
-    - Geolocalización
-    - Integración con redes sociales
+    - Geolocalización en foreground y background
+    - Obtención de las estadísticas de la ruta y mostrarlas al usuario
+    - Almacenamiento y recuperación de los archivos KML
+    - Acceso y uso básico de sensores
   - **Miriam Breijo Fachal (COO)**
     - Estadísticas finales y posición ranking
     - Estadísticas y recorrido hecho en live
