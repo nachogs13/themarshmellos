@@ -2,10 +2,9 @@
 
 En nuestro grupo vamos a desarrollar la aplicación **FasterWho**. El equipo de desarrollo está formado por los siguientes miembros, con sus respectivos roles y funciones dentro de la aplicación:
   - **Ignacio García Sánchez (CEO)**
-    - Autenticación
-    - Realidad Aumentada
+    - Sistema de Ranking
     - Menú de usuario
-    - Recomendaciones iniciales al registrarse  
+    - Recomendaciones iniciales al registrarse
   - **Christian Manuel Varela Álvarez (CTO)**
     - QR y otras posibles integraciones
     - Geolocalización
