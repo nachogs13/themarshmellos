@@ -1,14 +1,11 @@
 package com.muei.apm.fasterwho
 
-import android.content.DialogInterface
-import android.content.Intent
 import android.content.pm.PackageManager
 import android.net.Uri
 import android.os.Bundle
 import android.util.Log
 import android.widget.Button
 import android.widget.Toast
-import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.camera.core.CameraSelector
 import androidx.camera.core.ImageCapture
@@ -22,12 +19,9 @@ import java.io.File
 import java.util.*
 import java.util.concurrent.ExecutorService
 import java.util.concurrent.Executors
-import java.util.jar.Manifest
 
-import java.nio.ByteBuffer
 import java.text.SimpleDateFormat
-import java.util.*
-typealias LumaListenr = (lume: Double) -> Unit
+
 class CameraActivity : AppCompatActivity() {
     private var imageCapture: ImageCapture? = null
 
@@ -72,14 +66,14 @@ class CameraActivity : AppCompatActivity() {
         imageCapture.takePicture(
             outputOptions, ContextCompat.getMainExecutor(this), object : ImageCapture.OnImageSavedCallback {
                 override fun onError(exc: ImageCaptureException) {
-                    Log.e(TAG, "Erro na captura: ${exc.message}", exc)
+                    Log.e(tag, "Erro na captura: ${exc.message}", exc)
                 }
 
                 override fun onImageSaved(output: ImageCapture.OutputFileResults) {
                     val savedUri = Uri.fromFile(photoFile)
                     val msg = "Tomada foto: $savedUri"
                     Toast.makeText(baseContext, msg, Toast.LENGTH_SHORT).show()
-                    Log.d(TAG, msg)
+                    Log.d(tag, msg)
                 }
             })
 
@@ -114,7 +108,7 @@ class CameraActivity : AppCompatActivity() {
                     this, cameraSelector, preview, imageCapture)
 
             } catch(exc: Exception) {
-                Log.e(TAG, "Use case binding failed", exc)
+                Log.e(tag, "Use case binding failed", exc)
             }
 
         }, ContextCompat.getMainExecutor(this))
@@ -153,7 +147,7 @@ class CameraActivity : AppCompatActivity() {
     }
 
     companion object {
-        private const val TAG = "CameraXBasic"
+        private const val tag = "CameraXBasic"
         private const val FILENAME_FORMAT = "yyyy-MM-dd-HH-mm-ss-SSS"
         private const val REQUEST_CODE_PERMISSIONS = 10
         private val REQUIRED_PERMISSIONS = arrayOf(android.Manifest.permission.CAMERA)

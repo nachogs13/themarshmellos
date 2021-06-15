@@ -16,35 +16,37 @@
         android:drawableStart="@drawable/ic_baseline_person_24"
         android:ems="10"
         android:gravity="center"
-        android:hint="Email"
-        android:inputType="textPersonName"
+        android:hint="@string/email"
+        android:inputType="textEmailAddress"
         app:layout_constraintHorizontal_bias="0.498"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent"
+        android:importantForAutofill="no" />
 
     <EditText
         android:id="@+id/EditTextContraseña"
         android:layout_width="321dp"
         android:layout_height="48dp"
         android:layout_marginTop="84dp"
-        android:drawableLeft="@drawable/ic_baseline_lock_24"
+        android:drawableStart="@drawable/ic_baseline_lock_24"
         android:ems="10"
         android:gravity="center"
-        android:hint="Contraseña"
+        android:hint="@string/contrasena"
         android:inputType="textPassword"
         app:layout_constraintHorizontal_bias="0.498"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toTopOf="@+id/editTextUserName" />
+        app:layout_constraintTop_toTopOf="@+id/editTextUserName"
+        android:importantForAutofill="no" />
 
     <Button
         android:id="@+id/buttonEntrar"
         android:layout_width="145dp"
         android:layout_height="50dp"
         android:layout_marginTop="456dp"
-        android:layout_marginRight="48dp"
-        android:backgroundTint="@color/blue_800"
+        android:layout_marginEnd="48dp"
+        app:backgroundTint="@color/blue_800"
         android:text="@string/entrar_label"
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
@@ -53,9 +55,9 @@
         android:id="@+id/buttonRegistrarse"
         android:layout_width="145dp"
         android:layout_height="50dp"
-        android:layout_marginLeft="48dp"
+        android:layout_marginStart="48dp"
         android:layout_marginTop="456dp"
-        android:backgroundTint="@color/blue_800"
+        app:backgroundTint="@color/blue_800"
         android:text="@string/registrarse_label"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
@@ -65,14 +67,15 @@
         android:layout_width="315dp"
         android:layout_height="53dp"
         android:layout_marginTop="108dp"
-        android:backgroundTint="@color/blue_800"
+        app:backgroundTint="@color/blue_800"
         android:text="@string/entrar_con_google"
         android:drawableLeft="@drawable/ic_icons8_logo_de_google"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.731" />
+        app:layout_constraintVertical_bias="0.731"
+        tools:ignore="RtlHardcoded" />
 
     <TextView
         android:id="@+id/textView2"
@@ -97,7 +100,8 @@
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintBottom_toBottomOf="@id/editTextUserName"
         tools:layout_editor_absoluteX="138dp"
-        tools:layout_editor_absoluteY="81dp" />
+        tools:layout_editor_absoluteY="81dp"
+        android:contentDescription="@string/logo" />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

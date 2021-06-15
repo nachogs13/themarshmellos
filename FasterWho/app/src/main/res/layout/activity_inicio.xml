@@ -6,25 +6,18 @@
     android:layout_height="match_parent"
     tools:context=".InicioActivity">
 
-    <!--<include
-        android:id="@+id/toolbar_include"
-        layout="@layout/toolbar"
-        tools:layout_editor_absoluteX="0dp"
-        tools:layout_editor_absoluteY="27dp" />-->
-    <!--<ImageButton
-        android:id="@+id/imageButton4"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="80dp"
-        android:layout_marginLeft="80dp"
-        android:layout_marginTop="16dp"
-        android:background="#FFFFFF"
-        android:contentDescription="@string/filter"
-        android:tint="#020202"
-        app:layout_constraintStart_toEndOf="@+id/editTextTextPersonName"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:srcCompat="@drawable/ic_baseline_filter_alt_24" />-->
+    <RelativeLayout
+        android:id="@+id/loadingPanel2"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:gravity="center" >
+
+        <ProgressBar
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:indeterminate="true" />
+
+    </RelativeLayout>
 
     <androidx.fragment.app.FragmentContainerView
         android:id="@+id/home_list"
@@ -69,12 +62,36 @@
         android:layout_marginStart="16dp"
         android:layout_marginTop="68dp"
         android:drawableRight="@drawable/ic_baseline_filter_alt_24"
-        android:drawableTint="@color/black"
+        app:drawableTint="@color/black"
         android:ems="10"
         android:text="@string/filter"
         android:textColor="#000000"
         android:textSize="18sp"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent"
+        tools:ignore="RtlHardcoded,UseCompatTextViewDrawableXml" />
+
+    <RelativeLayout
+        android:id="@+id/sinRes"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+
+        <TextView
+            android:id="@+id/textViewSinResultados"
+            android:layout_width="133dp"
+            android:layout_height="26dp"
+            android:layout_alignParentStart="true"
+            android:layout_marginStart="20dp"
+            android:layout_marginTop="124dp"
+            android:ems="10"
+            android:text="@string/sin_resultados"
+            android:textColor="#000000"
+            android:textSize="18sp"
+            app:drawableTint="@color/black"
+            android:visibility="gone"
+            tools:ignore="RtlHardcoded,UseCompatTextViewDrawableXml" />
+    </RelativeLayout>
+
 
 </androidx.constraintlayout.widget.ConstraintLayout>

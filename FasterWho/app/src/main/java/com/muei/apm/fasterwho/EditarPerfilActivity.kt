@@ -7,9 +7,9 @@ import android.util.Log
 import android.view.View
 import android.widget.*
 import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.firestore.DocumentReference
 import com.google.firebase.firestore.FirebaseFirestore
-import com.google.firebase.storage.FirebaseStorage
+import java.text.SimpleDateFormat
+import java.util.*
 
 class EditarPerfilActivity : AppCompatActivity() {
     private val db = FirebaseFirestore.getInstance()
@@ -22,43 +22,34 @@ class EditarPerfilActivity : AppCompatActivity() {
         getInfoUsuario()
 
         val btnCancelar : Button = findViewById(R.id.buttonCancelarEditPerfilar)
-        btnCancelar.setOnClickListener({
+        btnCancelar.setOnClickListener {
             startActivity(Intent(this, ProfileActivity::class.java))
-        })
+        }
 
         val btnAceptar : Button = findViewById(R.id.buttonGuardar)
-        btnAceptar.setOnClickListener({
+        btnAceptar.setOnClickListener {
             guardarDatosPerfil()
-            startActivity(Intent(this,ProfileActivity::class.java))
-        })
+            startActivity(Intent(this, ProfileActivity::class.java))
+        }
     }
 
     private fun getInfoUsuario(){
-        val storage = FirebaseStorage.getInstance()
-       // var textViewSexo : TextView = findViewById(R.id.editarPerfilNombreUsr)
-        var textViewFechNac : TextView = findViewById(R.id.editarPerfilFechNacUsr)
-        var textViewEstatura : TextView = findViewById(R.id.editarPerfilEstaturaUsr)
-        var textViewPeso : TextView = findViewById(R.id.editarPerfilPesoUsr)
-        var textView : TextView = findViewById(R.id.editarPerfilNombreUsr)
+        val textViewFechNac : TextView = findViewById(R.id.editarPerfilFechNacUsr)
+        val textViewEstatura : TextView = findViewById(R.id.editarPerfilEstaturaUsr)
+        val textViewPeso : TextView = findViewById(R.id.editarPerfilPesoUsr)
+        val textView : TextView = findViewById(R.id.editarPerfilNombreUsr)
 
-        db.collection("usuarios").document(firebaseAuth.currentUser.email).get()
+        db.collection("usuarios").document(firebaseAuth.currentUser!!.email!!.toString()).get()
                 .addOnSuccessListener {
                     val username = it.get("username").toString()
                     if(it.get("estatura")!=null){
                         val estatura = it.get("estatura") as Number
                         textViewEstatura.text = estatura.toInt().toString()
                     }
-                    /*if(it.get("imgPerfil")!=null){
-
-                        val img = it.get("imgPerfil") as DocumentReference
-                        GlideApp.with(this).load(storage.getReference(img.path.toString()))
-                                .into(this.findViewById(R.id.imageButton3))
-                    }*/
                     if(it.get("sexo")!=null){
-                        val sexo = it.get("sexo").toString()
-                        when(sexo){
+                        when(val sexo = it.get("sexo").toString()){
                             "M" -> {findViewById<RadioButton>(R.id.radioButtonM).isChecked = true
-                            Log.d("SEXO M",sexo.equals("M").toString())}
+                            Log.d("SEXO M", (sexo == "M").toString())}
                             "H" -> findViewById<RadioButton>(R.id.radioButtonH).isChecked = true
                         }
                     }
@@ -78,31 +69,37 @@ class EditarPerfilActivity : AppCompatActivity() {
 
     private fun guardarDatosPerfil(){
 
-        var textViewFechNac : EditText = findViewById(R.id.editarPerfilFechNacUsr)
-        var textViewEstatura : EditText = findViewById(R.id.editarPerfilEstaturaUsr)
-        var textViewPeso : EditText = findViewById(R.id.editarPerfilPesoUsr)
-        var textView : EditText = findViewById(R.id.editarPerfilNombreUsr)
+        val textViewFechNac : EditText = findViewById(R.id.editarPerfilFechNacUsr)
+        val textViewEstatura : EditText = findViewById(R.id.editarPerfilEstaturaUsr)
+        val textViewPeso : EditText = findViewById(R.id.editarPerfilPesoUsr)
+        val textView : EditText = findViewById(R.id.editarPerfilNombreUsr)
 
         onRadioButtonSelected(findViewById(R.id.radioButtonM))
         Log.d("fecha",textViewFechNac.text.toString())
 
-        if(!textViewEstatura.text.isEmpty()){
+        if(textViewEstatura.text.isNotEmpty()){
             db.collection("usuarios")
-                    .document(firebaseAuth.currentUser.email)
+                    .document(firebaseAuth.currentUser!!.email!!.toString())
                     .update("estatura",textViewEstatura.text.toString().toInt())
         }
-        if(!textViewPeso.text.isEmpty()){
+        if(textViewPeso.text.isNotEmpty()){
             db.collection("usuarios")
-                    .document(firebaseAuth.currentUser.email)
+                    .document(firebaseAuth.currentUser!!.email!!.toString())
                     .update("peso", textViewPeso.text.toString().toDouble())
         }
         db.collection("usuarios")
-                .document(firebaseAuth.currentUser.email)
+                .document(firebaseAuth.currentUser!!.email!!.toString())
                 .update("username",textView.text.toString())
-        if(!textViewFechNac.text.isEmpty()){
-            db.collection("usuarios")
-                    .document(firebaseAuth.currentUser.email)
+        if(textViewFechNac.text.isNotEmpty()){
+            try {
+                val formatter = SimpleDateFormat("dd/MM/yyyy", Locale.getDefault())
+                formatter.parse(textViewFechNac.text.toString())
+                db.collection("usuarios")
+                    .document(firebaseAuth.currentUser!!.email!!.toString())
                     .update("fecha_nacimiento",textViewFechNac.text.toString())
+            } catch (e : Exception) {
+                Toast.makeText(this, "Formato de fecha incorrecto", Toast.LENGTH_SHORT).show()
+            }
         }
     }
 
@@ -116,13 +113,13 @@ class EditarPerfilActivity : AppCompatActivity() {
                 R.id.radioButtonH ->
                     if (checked) {
                         db.collection("usuarios")
-                                .document(firebaseAuth.currentUser.email)
+                                .document(firebaseAuth.currentUser!!.email!!.toString())
                                 .update("sexo","H")
                     }
                 R.id.radioButtonM ->
                     if (checked) {
                         db.collection("usuarios")
-                                .document(firebaseAuth.currentUser.email)
+                                .document(firebaseAuth.currentUser!!.email!!.toString())
                                 .update("sexo","M")
                     }
             }

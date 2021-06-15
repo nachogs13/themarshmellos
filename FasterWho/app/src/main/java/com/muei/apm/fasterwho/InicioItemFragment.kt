@@ -1,7 +1,6 @@
 package com.muei.apm.fasterwho
 
 import android.content.Context
-import android.content.SharedPreferences
 import android.location.Address
 import android.location.Geocoder
 import android.os.Bundle
@@ -13,17 +12,7 @@ import androidx.recyclerview.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.cardview.widget.CardView
-import androidx.core.content.edit
-import androidx.core.view.isVisible
-import androidx.navigation.fragment.findNavController
-import com.google.android.gms.tasks.Task
 import com.google.firebase.firestore.*
-import com.google.firebase.ktx.Firebase
-import com.google.firebase.storage.FirebaseStorage
-import com.google.firebase.storage.StorageReference
-import kotlinx.coroutines.*
-import java.lang.ref.Reference
 import java.util.*
 import kotlin.collections.ArrayList
 
@@ -47,7 +36,7 @@ class InicioItemFragment : Fragment() {
     private var distancia : Int = 0
     private var latitudBuscada = 0F
     private var longitudBuscada = 0F
-    private var TAG = "InicioItemFragment"
+    private var tagIni = "InicioItemFragment"
 
     override fun onCreate(savedInstanceState: Bundle?) {
 
@@ -68,7 +57,7 @@ class InicioItemFragment : Fragment() {
                               savedInstanceState: Bundle?): View? {
 
         val view = inflater.inflate(R.layout.fragment_inicio_item_list, container, false)
-        var filteredList = ArrayList<ItemRuta>()
+        var filteredList: ArrayList<ItemRuta>
 
         // Set the adapter
         if (view is RecyclerView) {
@@ -81,32 +70,34 @@ class InicioItemFragment : Fragment() {
 
                     for (document in it) {
                         try {
-                            direccionRuta = document.data.get("direccion").toString()
-                            nombreRuta = document.data.get("nombre") as String
-                            rating = document.data.get("rating") as Number
-                            coordenadasFin = document.data.get("coordenadas_fin") as GeoPoint
-                            coordenadasInicio = document.data.get("coordenadas_inicio") as GeoPoint
-                            file = document.data.get("kml") as String
-                            val dist = document.data.get("distancia") as Number
-                            val public = document.data.get("public") as Boolean
-                            val desnivel = document.data.get("desnivel") as Number
-                            var img = document.data.get("imgInicio") as DocumentReference
+                            direccionRuta = document.data["direccion"].toString()
+                            nombreRuta = document.data["nombre"] as String
+                            rating = document.data["rating"] as Number
+                            coordenadasFin = document.data["coordenadas_fin"] as GeoPoint
+                            coordenadasInicio = document.data["coordenadas_inicio"] as GeoPoint
+                            file = document.data["kml"] as String
+                            val dist = document.data["distancia"] as Number
+                            val public = document.data["public"] as Boolean
+                            val desnivel = document.data["desnivel"] as Number
+                            val img = document.data["imgInicio"] as DocumentReference
 
                             listItem.add(ItemRuta(nombreRuta,direccionRuta,coordenadasInicio,
                                 coordenadasFin,rating,file,img, dist, desnivel,public))
                         } catch (e: Exception) {
-                            Log.d(TAG, "Fallo al obtener la información de una ruta pública")
+                            Log.d(tagIni, "Fallo al obtener la información de una ruta pública")
                         }
                     }
                     if (puntuacion!=0F || distancia!=0 || dificultad!=0F || longitudBuscada != 0F){
                         filteredList = filtrarLista()
 
-                        if (!filteredList.isEmpty()){
-
+                        if (filteredList.isNotEmpty()){
+                            (activity as InicioActivity).sinResultados(isEmp = false)
                             adapter = MyInicioItemRecyclerViewAdapter(filteredList)
+                        } else {
+                            (activity as InicioActivity).sinResultados(isEmp = true)
                         }
 
-                    }else {
+                    } else {
                         adapter = MyInicioItemRecyclerViewAdapter(listItem)
                     }
 
@@ -135,14 +126,14 @@ class InicioItemFragment : Fragment() {
 
     private fun filtrarLista(): ArrayList<ItemRuta> {
         if (puntuacion!=0F){
-            val (match, noMatch) = listItem.partition {
-                it.rating?.toFloat()  == puntuacion.toFloat()
+            val (match, _) = listItem.partition {
+                it.rating?.toFloat()  == puntuacion
             }
             filteredList = match as ArrayList<ItemRuta>
         }
         if(distancia!=0){
-            if (!filteredList.isEmpty()) listItem = filteredList
-            val (match, noMatch) = listItem.partition {
+            if (filteredList.isNotEmpty()) listItem = filteredList
+            val (match, _) = listItem.partition {
                 it.distancia?.toFloat()!! >= distancia.toFloat() &&
                         it.distancia?.toFloat()!! < distancia.toFloat() + 1F
             }
@@ -150,14 +141,14 @@ class InicioItemFragment : Fragment() {
             filteredList = match as ArrayList<ItemRuta>
         }
         if (dificultad!=0F){
-            var nivelDificultad: String =""
+            var nivelDificultad =""
             when(dificultad){
                 1F -> nivelDificultad="Baja"
                 2F -> nivelDificultad="Media"
                 3F -> nivelDificultad="Alta"
             }
-            if (!filteredList.isEmpty()) listItem = filteredList
-            val (match, noMatch) = listItem.partition {
+            if (filteredList.isNotEmpty()) listItem = filteredList
+            val (match, _) = listItem.partition {
                 val nivelDif = calcularDificultad(it.distancia!!.toFloat(),it.desnivel!!.toInt())
                 nivelDif == nivelDificultad
             }
@@ -166,18 +157,17 @@ class InicioItemFragment : Fragment() {
 
         // filtramos por localidad
         if (latitudBuscada != 0F && longitudBuscada != 0F){
-            var addresses: List<Address>? = null;
+            val addresses: List<Address>?
             val geocoder = Geocoder(activity, Locale.getDefault())
-            var direccionRuta: String? = null
             addresses = geocoder.getFromLocation(latitudBuscada.toDouble(), longitudBuscada.toDouble(),1)
-            Log.i(TAG, "Localidad a filtrar " + addresses.get(0).locality)
-            direccionRuta = addresses.get(0).locality
+            Log.i(tag, "Localidad a filtrar " + addresses[0].locality)
+            val direccionRuta: String? = addresses[0].locality
 
             if (direccionRuta != null) {
-                if (!filteredList.isEmpty()) listItem = filteredList
-                val (match, noMatch) = listItem.partition {
+                if (filteredList.isNotEmpty()) listItem = filteredList
+                val (match, _) = listItem.partition {
                     it.coordenadasInicioRuta!!.latitude
-                    direccionRuta == geocoder.getFromLocation(it.coordenadasInicioRuta!!.latitude, it.coordenadasInicioRuta!!.longitude,1).get(0).locality
+                    direccionRuta == geocoder.getFromLocation(it.coordenadasInicioRuta!!.latitude, it.coordenadasInicioRuta!!.longitude,1)[0].locality
                 }
                 filteredList = match as ArrayList<ItemRuta>
             }
@@ -185,25 +175,25 @@ class InicioItemFragment : Fragment() {
         return filteredList
     }
 
-    fun calcularDificultad(dist: Float, desnivel: Int): String {
-        var dificultad: String =""
+    private fun calcularDificultad(dist: Float, desnivel: Int): String {
+        val dificultad: String
         if (dist < 25F){
-            when(desnivel){
-                in 1..599 -> dificultad="Baja"
-                in 600..999 -> dificultad="Media"
-                else ->dificultad="Alta"
+            dificultad = when(desnivel){
+                in 1..599 -> "Baja"
+                in 600..999 -> "Media"
+                else -> "Alta"
             }
         }else if (dist >= 25F && dist < 40F){
-            when(desnivel){
-                in 1..999 -> dificultad="Baja"
-                in 1000..1499 -> dificultad="Media"
-                else ->dificultad="Alta"
+            dificultad = when(desnivel){
+                in 1..999 -> "Baja"
+                in 1000..1499 -> "Media"
+                else -> "Alta"
             }
         }else{
-            when(desnivel){
-                in 1..1499 -> dificultad="Baja"
-                in 1500..2499 -> dificultad="Media"
-                else ->dificultad="Alta"
+            dificultad = when(desnivel){
+                in 1..1499 -> "Baja"
+                in 1500..2499 -> "Media"
+                else -> "Alta"
             }
         }
         return dificultad

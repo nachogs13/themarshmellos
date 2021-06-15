@@ -11,8 +11,8 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginBottom="56dp"
-        android:backgroundTint="@color/blue_800"
-        android:text="Guardar"
+        app:backgroundTint="@color/blue_800"
+        android:text="@string/guardar"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintHorizontal_bias="0.804"
         app:layout_constraintLeft_toLeftOf="parent"
@@ -23,8 +23,8 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginBottom="56dp"
-        android:backgroundTint="@color/blue_800"
-        android:text="Cancelar"
+        app:backgroundTint="@color/blue_800"
+        android:text="@string/cancel_button"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintHorizontal_bias="0.522"
         app:layout_constraintLeft_toLeftOf="parent"
@@ -35,8 +35,8 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginBottom="32dp"
-        android:text="Nombre"
-        android:textSize="12dp"
+        android:text="@string/nombre"
+        android:textSize="12sp"
         app:layout_constraintBottom_toTopOf="@id/editarPerfilNombreUsr"
         app:layout_constraintHorizontal_bias="0.13"
         app:layout_constraintLeft_toLeftOf="parent"
@@ -48,42 +48,44 @@
         android:layout_height="wrap_content"
         android:layout_marginBottom="188dp"
         android:ems="15"
-        android:hint="DD/MM/AAAA"
+        android:hint="@string/dd_mm_aaaa"
         android:inputType="date"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintHorizontal_bias="0.494"
         app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent" />
+        app:layout_constraintRight_toRightOf="parent"
+        android:autofillHints="" />
 
     <TextView
         android:id="@+id/textViewFNacimiento"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginBottom="12dp"
-        android:text="Fecha de Nacimiento"
+        android:text="@string/fecha_de_nacimiento2"
         app:layout_constraintBottom_toTopOf="@id/editarPerfilFechNacUsr"
         app:layout_constraintHorizontal_bias="0.172"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent" />
 
-    <TextView
+    <EditText
         android:id="@+id/textViewPeso"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginBottom="4dp"
         android:inputType="numberDecimal"
-        android:text="Peso (kg)"
+        android:text="@string/peso_kg"
+        android:hint="@string/peso_kg"
         app:layout_constraintBottom_toTopOf="@id/editarPerfilPesoUsr"
         app:layout_constraintHorizontal_bias="0.136"
         app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent" />
+        app:layout_constraintRight_toRightOf="parent"
+        android:autofillHints="" />
 
     <TextView
         android:id="@+id/textViewSexo"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="12dp"
-        android:text="Sexo"
+        android:layout="@string/sexo2"
         app:layout_constraintBottom_toTopOf="@id/radioGroup"
         app:layout_constraintHorizontal_bias="0.126"
         app:layout_constraintLeft_toLeftOf="parent"
@@ -108,7 +110,7 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center_horizontal"
             android:checked="false"
-            android:text="Hombre" />
+            android:text="@string/hombre" />
 
         <RadioButton
             android:id="@+id/radioButtonM"
@@ -116,7 +118,7 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center_horizontal"
             android:checked="false"
-            android:text="Mujer" />
+            android:text="@string/mujer" />
     </RadioGroup>
 
     <TextView
@@ -124,7 +126,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginBottom="12dp"
-        android:text="Estatura (cm)"
+        android:text="@string/estatura_cm"
         app:layout_constraintBottom_toTopOf="@id/editarPerfilEstaturaUsr"
         app:layout_constraintHorizontal_bias="0.147"
         app:layout_constraintLeft_toLeftOf="parent"
@@ -137,11 +139,13 @@
         android:layout_marginBottom="16dp"
         android:ems="15"
         android:inputType="textPersonName"
-        android:text="Nombre"
+        android:text="@string/nombre"
+        android:hint="@string/nombre"
         app:layout_constraintBottom_toTopOf="@id/textViewSexo"
         app:layout_constraintHorizontal_bias="0.494"
         app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent" />
+        app:layout_constraintRight_toRightOf="parent"
+        android:autofillHints="" />
 
     <EditText
         android:id="@+id/editarPerfilEstaturaUsr"
@@ -150,10 +154,12 @@
         android:layout_marginBottom="8dp"
         android:ems="15"
         android:inputType="number"
+        android:hint="@string/estatura2"
         app:layout_constraintBottom_toTopOf="@id/textViewFNacimiento"
         app:layout_constraintHorizontal_bias="0.494"
         app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent" />
+        app:layout_constraintRight_toRightOf="parent"
+        android:autofillHints="" />
 
     <EditText
         android:id="@+id/editarPerfilPesoUsr"
@@ -162,10 +168,12 @@
         android:layout_marginBottom="8dp"
         android:ems="15"
         android:inputType="numberDecimal"
+        android:hint="@string/peso2"
         app:layout_constraintBottom_toTopOf="@id/textViewEstatura"
         app:layout_constraintHorizontal_bias="0.494"
         app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent" />
+        app:layout_constraintRight_toRightOf="parent"
+        android:autofillHints="" />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

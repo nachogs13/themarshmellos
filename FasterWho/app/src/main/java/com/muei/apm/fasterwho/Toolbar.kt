@@ -1,20 +1,15 @@
 package com.muei.apm.fasterwho
 
-import android.app.Notification
 import android.content.Context
 import android.content.Intent
 import android.content.SharedPreferences
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
-import android.view.Menu
-import android.view.MenuInflater
 import android.view.MenuItem
-import android.view.View
 import android.widget.FrameLayout
+import android.widget.TextView
 import android.widget.Toast
-import androidx.appcompat.app.ActionBar
-import androidx.appcompat.app.ActionBarDrawerToggle
 import androidx.appcompat.widget.Toolbar
 import androidx.core.content.edit
 import androidx.core.view.GravityCompat
@@ -24,11 +19,15 @@ import com.google.android.gms.auth.api.signin.GoogleSignInClient
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import com.google.android.material.navigation.NavigationView
 import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.ktx.Firebase
+import com.google.firebase.firestore.DocumentReference
+import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.storage.FirebaseStorage
 
 open class Toolbar : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListener  {
+    private val db = FirebaseFirestore.getInstance()
+    private val firebaseAuth = FirebaseAuth.getInstance()
     private lateinit var drawerLayout: DrawerLayout
-    lateinit var mGoogleSignInClient: GoogleSignInClient
+    private lateinit var mGoogleSignInClient: GoogleSignInClient
     lateinit var navView : NavigationView
     lateinit var frameLayout: FrameLayout
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -40,10 +39,24 @@ open class Toolbar : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
 
         drawerLayout = findViewById(R.id.drawer_layout)
         navView = findViewById(R.id.nav_view)
+        val header = navView.getHeaderView(0)
+        val text : TextView = header.findViewById(R.id.userNameTool)
         navView.setNavigationItemSelectedListener(this)
+
+        db.collection("usuarios").document(firebaseAuth.currentUser!!.email!!.toString()).get()
+            .addOnSuccessListener {
+                Log.d("usuario", it.toString())
+                val username = it.get("username").toString()
+                text.text = username
+                if(it.get("imgPerfil")!=null){
+                    val storage = FirebaseStorage.getInstance()
+                    val img = it.get("imgPerfil") as DocumentReference
+                    GlideApp.with(this).load(storage.getReference(img.path)).into(header.findViewById(R.id.imageViewTool))
+                }
+            }
     }
 
-    fun configureToolbar(){
+    private fun configureToolbar(){
         val toolbar: Toolbar = findViewById(R.id.toolbar2)
         setSupportActionBar(toolbar)
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
@@ -58,7 +71,7 @@ open class Toolbar : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
             android.R.id.home -> {
-                drawerLayout.openDrawer(GravityCompat.START);
+                drawerLayout.openDrawer(GravityCompat.START)
                 return true
             }
         }

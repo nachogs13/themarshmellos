@@ -69,5 +69,33 @@
     <string name="puntuacion">Puntuación</string>
     <string name="distancia">Distancia</string>
     <string name="preference_filtersActivity_key">FiltersActivity</string>
+    <string name="imagen_de_usuario">Imagen de usuario</string>
+    <string name="nombre_de_usuario">Nombre de usuario</string>
+    <string name="informacion_del_usuario">Información del usuario</string>
+    <string name="sexo">Sexo:</string>
+    <string name="peso">Peso:</string>
+    <string name="estatura">Estatura:</string>
+    <string name="fecha_de_nacimiento">Fecha de nacimiento:</string>
+    <string name="ultimas_estadisticas">Últimas estadísticas</string>
+    <string name="editar_perfil">Editar perfil</string>
+    <string name="activo">Activo</string>
+    <string name="nivel_de_actividad">Nivel de actividad</string>
+    <string name="_12_5_km">12,5 km</string>
+    <string name="peso2">Peso</string>
+    <string name="estatura2">Estatura</string>
+    <string name="sexo2">Sexo</string>
+    <string name="nombre">Nombre</string>
+    <string name="estatura_cm">Estatura (cm)</string>
+    <string name="mujer">Mujer</string>
+    <string name="hombre">Hombre</string>
+    <string name="peso_kg">Peso (kg)</string>
+    <string name="fecha_de_nacimiento2">Fecha de nacimiento</string>
+    <string name="dd_mm_aaaa">DD/MM/AAAA</string>
+    <string name="guardar">Guardar</string>
+    <string name="logo">Logo</string>
+    <string name="contrasena">Contraseña</string>
+    <string name="email">Email</string>
+    <string name="sin_resultados">Sin resultados.</string>
+
     <!--<string name="default_web_client_id">246650974592-4qiuqa1hn9nrqs38u0n9opgid0rf9ngj.apps.googleusercontent.com</string>-->
 </resources>
