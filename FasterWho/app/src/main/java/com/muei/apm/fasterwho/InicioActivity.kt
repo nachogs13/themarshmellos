@@ -5,7 +5,6 @@ import android.os.Build
 import android.os.Bundle
 import android.util.Log
 import android.view.View
-import android.widget.Button
 import android.widget.RelativeLayout
 import android.widget.TextView
 import android.widget.Toast
@@ -36,18 +35,13 @@ class InicioActivity : com.muei.apm.fasterwho.Toolbar(), NavigationView.OnNaviga
         val btnFiltros : TextView = findViewById(R.id.textViewFiltros)
         btnFiltros.setOnClickListener{
             val intent = Intent(this, FiltersActivity::class.java)
+            intent.putExtra("parent", "InicioActivity")
             startActivity(intent)
-        }
-
-        val btnScan : Button = findViewById(R.id.buttonScanQr)
-        btnScan.setOnClickListener{
-            Toast.makeText(this, "Se busca ruta mediante código QR", Toast.LENGTH_SHORT).show()
         }
 
         val btnAnadirRuta : com.google.android.material.floatingactionbutton.FloatingActionButton = findViewById(R.id.floatingActionButton)
         btnAnadirRuta.setOnClickListener {
             Toast.makeText(this, "Iniciar Ruta", Toast.LENGTH_SHORT).show()
-            //val intent = Intent(this, IniciarRutaActivity::class.java)
             val intent = Intent(this, SeguimientoActivity::class.java)
             startActivity(intent)
         }
@@ -156,6 +150,7 @@ class InicioActivity : com.muei.apm.fasterwho.Toolbar(), NavigationView.OnNaviga
         super.onResume()
         navView.menu.getItem(0).isChecked = true
     }
+
 
     fun sinResultados(isEmp: Boolean) {
         val sinRes : TextView = findViewById(R.id.textViewSinResultados)

@@ -96,6 +96,18 @@
     <string name="contrasena">Contraseña</string>
     <string name="email">Email</string>
     <string name="sin_resultados">Sin resultados.</string>
+    <string name="limpiar">Limpiar</string>
+    <string name="_0km">0km</string>
+    <string name="_30km">30km</string>
+    <string name="_60km">60km</string>
+    <string name="info_dificultad">Info dificultad</string>
+    <string name="localizacion">Localización</string>
+    <string name="aplicar">Aplicar</string>
+    <string name="estadisticas_ultimos_usuarios">Estadísticas últimos usuarios</string>
+    <string name="empezar_ruta">Empezar Ruta</string>
+    <string name="compartir">Compartir</string>
+    <string name="privada">PRIVADA</string>
+    <string name="publica">PUBLICA</string>
 
     <!--<string name="default_web_client_id">246650974592-4qiuqa1hn9nrqs38u0n9opgid0rf9ngj.apps.googleusercontent.com</string>-->
 </resources>

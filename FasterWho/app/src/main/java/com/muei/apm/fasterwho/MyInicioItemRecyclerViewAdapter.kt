@@ -7,17 +7,8 @@ import android.view.ViewGroup
 import android.widget.*
 import androidx.recyclerview.widget.RecyclerView
 import com.google.firebase.storage.FirebaseStorage
-import com.muei.apm.fasterwho.dummy.DummyContent.DummyItem
 
 
-/**
- * [RecyclerView.Adapter] that can display a [DummyItem].
- * TODO: Replace the implementation with code for your data type.
- */
-/**
- * [RecyclerView.Adapter] that can display a [DummyItem].
- * TODO: Replace the implementation with code for your data type.
- */
 class MyInicioItemRecyclerViewAdapter(
     private val values: List<ItemRuta>)
     : RecyclerView.Adapter<MyInicioItemRecyclerViewAdapter.ViewHolder>() {
@@ -36,7 +27,7 @@ class MyInicioItemRecyclerViewAdapter(
         holder.mainNombreView.text = item.nombreRuta
         holder.mainDirView.text = item.direccionRuta
         holder.mainRatingView.rating = item.rating!!.toFloat()
-        var img = storage.getReference(item.img?.path.toString())
+        val img = storage.getReference(item.img?.path.toString())
         GlideApp.with(holder.itemView.context).load(img).into(holder.mainImgRuta)
 
     }
@@ -56,22 +47,24 @@ class MyInicioItemRecyclerViewAdapter(
         override fun onClick(v: View) {
             val pos = adapterPosition
             val intent = Intent(v.context, RutaActivity::class.java)
-            val coords_fin_latitud = values[pos].coordenadasFinRuta?.latitude
-            val coords_fin_longitud = values[pos].coordenadasFinRuta?.longitude
-            val coords_ini_latitud = values[pos].coordenadasInicioRuta?.latitude
-            val coords_ini_longitud = values[pos].coordenadasInicioRuta?.longitude
+            val coordsFinLatitud = values[pos].coordenadasFinRuta?.latitude
+            val coordsFinLongitud = values[pos].coordenadasFinRuta?.longitude
+            val coordsIniLatitud = values[pos].coordenadasInicioRuta?.latitude
+            val coordsIniLongitud = values[pos].coordenadasInicioRuta?.longitude
             val distancia = values[pos].distancia
             val desnivel = values[pos].desnivel
             val file = values[pos].file
+            val rating = values[pos].rating
 
             intent.putExtra("distancia", distancia)
             intent.putExtra("desnivel", desnivel)
-            intent.putExtra("latitud_fin", coords_fin_latitud)
-            intent.putExtra("longitud_fin", coords_fin_longitud)
-            intent.putExtra("latitud_ini", coords_ini_latitud)
-            intent.putExtra("longitud_ini", coords_ini_longitud)
+            intent.putExtra("latitud_fin", coordsFinLatitud)
+            intent.putExtra("longitud_fin", coordsFinLongitud)
+            intent.putExtra("latitud_ini", coordsIniLatitud)
+            intent.putExtra("longitud_ini", coordsIniLongitud)
             intent.putExtra("file", file)
             intent.putExtra("nombre", values[pos].nombreRuta)
+            intent.putExtra("rating", rating)
             v.context.startActivity(intent)
         }
     }

@@ -48,9 +48,9 @@ class EditarPerfilActivity : AppCompatActivity() {
                     }
                     if(it.get("sexo")!=null){
                         when(val sexo = it.get("sexo").toString()){
-                            "M" -> {findViewById<RadioButton>(R.id.radioButtonM).isChecked = true
+                            "Mujer" -> {findViewById<RadioButton>(R.id.radioButtonM).isChecked = true
                             Log.d("SEXO M", (sexo == "M").toString())}
-                            "H" -> findViewById<RadioButton>(R.id.radioButtonH).isChecked = true
+                            "Hombre" -> findViewById<RadioButton>(R.id.radioButtonH).isChecked = true
                         }
                     }
                     if(it.get("peso")!=null){
@@ -75,6 +75,7 @@ class EditarPerfilActivity : AppCompatActivity() {
         val textView : EditText = findViewById(R.id.editarPerfilNombreUsr)
 
         onRadioButtonSelected(findViewById(R.id.radioButtonM))
+        onRadioButtonSelected(findViewById(R.id.radioButtonH))
         Log.d("fecha",textViewFechNac.text.toString())
 
         if(textViewEstatura.text.isNotEmpty()){
@@ -112,15 +113,16 @@ class EditarPerfilActivity : AppCompatActivity() {
             when (view.getId()) {
                 R.id.radioButtonH ->
                     if (checked) {
+                        Log.d("SEXOOO", checked.toString())
                         db.collection("usuarios")
                                 .document(firebaseAuth.currentUser!!.email!!.toString())
-                                .update("sexo","H")
+                                .update("sexo","Hombre")
                     }
                 R.id.radioButtonM ->
                     if (checked) {
                         db.collection("usuarios")
                                 .document(firebaseAuth.currentUser!!.email!!.toString())
-                                .update("sexo","M")
+                                .update("sexo","Mujer")
                     }
             }
         }

@@ -1,29 +1,27 @@
 package com.muei.apm.fasterwho
 
+import android.annotation.SuppressLint
 import android.content.Intent
-import android.graphics.Camera
 import android.os.AsyncTask
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
-import android.widget.*
+import android.widget.Button
+import android.widget.ImageView
+import android.widget.RatingBar
+import android.widget.TextView
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.OnMapReadyCallback
 import com.google.android.gms.maps.SupportMapFragment
-import com.google.android.gms.maps.model.*
-import com.google.firebase.firestore.FirebaseFirestore
-import com.google.firebase.ktx.Firebase
-import com.google.maps.android.data.kml.KmlContainer
-import com.google.maps.android.data.kml.KmlLayer
-import com.google.maps.android.data.kml.KmlPlacemark
-import com.google.maps.android.data.kml.KmlPolygon
-import com.google.maps.android.geometry.Point
-import com.google.maps.android.ktx.utils.kml.kmlLayer
-import org.w3c.dom.Text
+import com.google.android.gms.maps.model.BitmapDescriptorFactory
+import com.google.android.gms.maps.model.CameraPosition
+import com.google.android.gms.maps.model.LatLng
+import com.google.android.gms.maps.model.MarkerOptions
 import org.xml.sax.SAXException
-import java.io.*
-import java.lang.Exception
+import java.io.File
+import java.io.FileInputStream
+import java.io.FileNotFoundException
+import java.io.IOException
 import javax.xml.parsers.ParserConfigurationException
 import javax.xml.parsers.SAXParser
 import javax.xml.parsers.SAXParserFactory
@@ -31,22 +29,22 @@ import javax.xml.parsers.SAXParserFactory
 class RutaActivity : Toolbar(), OnMapReadyCallback {
 
     private lateinit var mMap: GoogleMap
-    private val db = FirebaseFirestore.getInstance()
-    private lateinit var item : String
     private var parser: SAXParser? = null
     private var handler: SaxHandler? = null
-    private var file: String? = null
+    private var file: String = ""
+    @SuppressLint("SetTextI18n")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        //setContentView(R.layout.activity_ruta)
         layoutInflater.inflate(R.layout.activity_ruta,frameLayout)
         val toolbar: androidx.appcompat.widget.Toolbar = findViewById(R.id.toolbar2)
-        toolbar.setTitle("Ruta concreta")
+        toolbar.title = "Ruta concreta"
+
+        val btnRating : RatingBar = findViewById(R.id.ratingBar2)
+        btnRating.rating = this.intent.getLongExtra("rating", 0L).toFloat()
 
         val btnEmpezar : Button = findViewById(R.id.buttonEmpezar)
         btnEmpezar.setOnClickListener {
             val intent = Intent(this, SeguimientoActivity::class.java)
-            //val intent = Intent(this, IniciarRutaActivity::class.java)
             // Le pasamos a SeguimientoActivity el fichero KML para que muestre la ruta
             intent.putExtra("file", this.intent.getStringExtra("file"))
             intent.putExtra("latitud_fin", this.intent.getDoubleExtra("latitud_fin", 0.0))
@@ -63,26 +61,41 @@ class RutaActivity : Toolbar(), OnMapReadyCallback {
         mapFragment.getMapAsync(this)
 
         val textView: TextView = findViewById(R.id.distanciaTotal)
-        textView.text = "Distancia total ${intent.getDoubleExtra("distancia",0.0)} km"
+        textView.text = "Distancia total: ${intent.getDoubleExtra("distancia",0.0)} km"
         val textViewNombreRuta: TextView = findViewById(R.id.textNombreRuta)
         textViewNombreRuta.text = "${intent.getStringExtra("nombre")}"
 
-        val btnRating : RatingBar = findViewById(R.id.ratingBar2)
-        btnRating.setOnClickListener {
-            Toast.makeText(this, "Poniendo estrellas dificultad", Toast.LENGTH_SHORT).show()
+        val compartir : ImageView = findViewById(R.id.compartir)
+        compartir.setOnClickListener {
+            try {
+                val shareIntent = Intent(Intent.ACTION_SEND)
+                shareIntent.type = "text/plain"
+                shareIntent.putExtra(Intent.EXTRA_SUBJECT, "My application name")
+                var shareMessage = "\n¿Conseguirás hacer la ruta ${intent.getStringExtra("nombre")} más rapido que yo?\n\n"
+                shareMessage =
+                    """
+                    ${shareMessage}https://play.google.com/store/apps/details?id=${BuildConfig.APPLICATION_ID}
+                    
+                    
+                    """.trimIndent()
+                shareIntent.putExtra(Intent.EXTRA_TEXT, shareMessage)
+                startActivity(Intent.createChooser(shareIntent, "Seleccione aplicación"))
+            } catch (e: Exception) {
+                Log.e("Exception", e.toString())
+            }
         }
     }
 
     override fun onMapReady(googleMap: GoogleMap) {
-        val latitud_fin = intent.getDoubleExtra("latitud_fin",0.0)
-        val longitud_fin = intent.getDoubleExtra("longitud_fin", 0.0)
-        val longitud_ini = intent.getDoubleExtra("longitud_ini",0.0)
-        val latitud_ini = intent.getDoubleExtra("latitud_ini",0.0)
-        file = intent.getStringExtra("file")
+        val latitudFin = intent.getDoubleExtra("latitud_fin",0.0)
+        val longitudFin = intent.getDoubleExtra("longitud_fin", 0.0)
+        val longitudIni = intent.getDoubleExtra("longitud_ini",0.0)
+        val latitudIni = intent.getDoubleExtra("latitud_ini",0.0)
+        file = intent.getStringExtra("file")!!
 
         mMap = googleMap
         val cameraPosition: CameraPosition = CameraPosition.Builder().
-        target(LatLng(latitud_ini, longitud_ini))
+        target(LatLng(latitudIni, longitudIni))
                 .zoom(13.5f)
                 .bearing(0f)
                 .tilt(25f)
@@ -109,10 +122,10 @@ class RutaActivity : Toolbar(), OnMapReadyCallback {
             Log.d("ErrorParser", e.toString())
         }
 
-        mMap.addMarker(MarkerOptions().position(LatLng(latitud_ini,longitud_ini))
+        mMap.addMarker(MarkerOptions().position(LatLng(latitudIni,longitudIni))
                 .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.
                 HUE_GREEN)).title("Inicio"))
-        mMap.addMarker(MarkerOptions().position(LatLng(latitud_fin,longitud_fin))
+        mMap.addMarker(MarkerOptions().position(LatLng(latitudFin,longitudFin))
                 .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.
                 HUE_ORANGE)).title("Fin"))
     }
@@ -121,7 +134,7 @@ class RutaActivity : Toolbar(), OnMapReadyCallback {
     // ASYNCTASK - TAREA ASÍNCRONA
     //==============================================================================================
     private inner class ProcesarKML : AsyncTask<String?, Int?, Boolean>() {
-        override fun doInBackground(vararg params: String?): Boolean? {
+        override fun doInBackground(vararg params: String?): Boolean {
             try {
                 parser!!.parse(
                     FileInputStream(File(params[0],file)),

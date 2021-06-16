@@ -5,17 +5,25 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".MisRutas">
-    <!--<include
-        android:id="@+id/toolbar_include"
-        layout="@layout/toolbar"
-        tools:layout_editor_absoluteX="0dp"
-        tools:layout_editor_absoluteY="27dp" />-->
+
+    <RelativeLayout
+        android:id="@+id/loadingPanel3"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:gravity="center" >
+
+        <ProgressBar
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:indeterminate="true" />
+
+    </RelativeLayout>
+
     <ImageButton
         android:id="@+id/imageButton4"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="80dp"
-        android:layout_marginLeft="80dp"
         android:layout_marginTop="65dp"
         android:background="#FFFFFF"
         android:contentDescription="@string/filter"
@@ -30,7 +38,6 @@
         android:layout_width="60dp"
         android:layout_height="27dp"
         android:layout_marginStart="20dp"
-        android:layout_marginLeft="20dp"
         android:layout_marginTop="65dp"
         android:ems="10"
         android:text="@string/filter"
@@ -54,14 +61,36 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginEnd="28dp"
-        android:layout_marginRight="28dp"
         android:layout_marginBottom="32dp"
         android:clickable="true"
         android:contentDescription="@string/add"
         android:focusable="true"
-        app:backgroundTint="#0156C0"
+        app:tint="@color/white"
+        app:backgroundTint="@color/blue_800"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:srcCompat="@android:drawable/ic_input_add" />-->
+        app:srcCompat="@android:drawable/ic_input_add" />
+
+    <RelativeLayout
+        android:id="@+id/sinRes"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+
+        <TextView
+            android:id="@+id/textViewSinResultados2"
+            android:layout_width="133dp"
+            android:layout_height="26dp"
+            android:layout_alignParentStart="true"
+            android:layout_marginStart="20dp"
+            android:layout_marginTop="124dp"
+            android:ems="10"
+            android:text="@string/sin_resultados"
+            android:textColor="#000000"
+            android:textSize="18sp"
+            app:drawableTint="@color/black"
+            android:visibility="gone"
+            tools:ignore="RtlHardcoded,UseCompatTextViewDrawableXml" />
+    </RelativeLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

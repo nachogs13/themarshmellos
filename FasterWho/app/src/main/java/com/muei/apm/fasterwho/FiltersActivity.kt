@@ -1,6 +1,6 @@
 package com.muei.apm.fasterwho
 
-import android.app.Application
+import android.annotation.SuppressLint
 import android.content.Context
 import android.content.Intent
 import android.content.SharedPreferences
@@ -16,14 +16,10 @@ import com.google.android.gms.common.api.ApiException
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.libraries.places.api.Places
 import com.google.android.libraries.places.api.model.AutocompleteSessionToken
-import com.google.android.libraries.places.api.model.Place
 import com.google.android.libraries.places.api.model.RectangularBounds
 import com.google.android.libraries.places.api.model.TypeFilter
-import com.google.android.libraries.places.api.net.FetchPlaceRequest
 import com.google.android.libraries.places.api.net.FindAutocompletePredictionsRequest
 import com.google.android.libraries.places.api.net.FindAutocompletePredictionsResponse
-import com.google.maps.android.ktx.utils.toLatLngList
-import org.w3c.dom.Text
 
 class FiltersActivity : AppCompatActivity() {
     private var progressSeekBar : Int = 0
@@ -37,12 +33,16 @@ class FiltersActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_filters)
-        listView = findViewById<ListView>(R.id.listviewSearch)
+        listView = findViewById(R.id.listviewSearch)
         seekBarDist = findViewById(R.id.seekBar)
         rating = findViewById(R.id.ratingBarFiltros)
         nivelDificultad  = findViewById(R.id.ratingBarNivelDificultad)
         getDistancia()
         obtenerFiltros()
+
+        val intent = intent
+        val parentName = intent.getStringExtra("parent")
+        val btnCancelar : Button = findViewById(R.id.buttonCancelar)
 
         val button : Button = findViewById(R.id.limpiarFiltros)
         button.visibility = View.VISIBLE
@@ -53,18 +53,15 @@ class FiltersActivity : AppCompatActivity() {
             Toast.makeText(this, "Información de los niveles de dificultad", Toast.LENGTH_SHORT).show()
         }
 
-        val btnCancelar : Button = findViewById(R.id.buttonCancelar)
         btnCancelar.setOnClickListener {
-            val intent = Intent(this, InicioActivity::class.java)
-            startActivity(intent)
+            backToParent(parentName)
         }
 
         val btnAplicar : Button = findViewById(R.id.buttonAplicar)
         btnAplicar.setOnClickListener {
             aplicarFiltros()
             Toast.makeText(this, "Se aplican los filtros para las rutas", Toast.LENGTH_SHORT).show()
-            val intent = Intent(this, InicioActivity::class.java)
-            startActivity(intent)
+            backToParent(parentName)
         }
         Places.initialize(this, "AIzaSyCgbkk8WGUqputkPFycIpL3ycIIt7_5HPc")
 
@@ -75,20 +72,18 @@ class FiltersActivity : AppCompatActivity() {
 
         mSearchButton.setOnQueryTextListener(object : OnQueryTextListener{
             var adapter = ArrayAdapter(applicationContext, android.R.layout.simple_list_item_1,listOfPlaces)
-            override fun onQueryTextSubmit(query: kotlin.String?): Boolean {
+            override fun onQueryTextSubmit(query: String?): Boolean {
                 return false
             }
 
-            override fun onQueryTextChange(newText: kotlin.String?): Boolean {
+            override fun onQueryTextChange(newText: String?): Boolean {
                 if (newText.isNullOrEmpty() || newText.isNullOrBlank()) {
                     listView.visibility = View.GONE
-                    //button.visibility = View.VISIBLE
                     listOfPlaces.clear()
                 }
                 if(!newText.equals(textSelected)){
                     if (!newText.isNullOrEmpty() || !newText.isNullOrBlank()){
                         listView.visibility = View.VISIBLE
-                        //button.visibility = View.VISIBLE
                         listOfPlaces.clear()
                         val token = AutocompleteSessionToken.newInstance()
                         // Create a RectangularBounds object.
@@ -118,7 +113,6 @@ class FiltersActivity : AppCompatActivity() {
                         adapter.filter.filter(newText)
                     }else{
                         listView.visibility = View.GONE
-                        //button.visibility = View.GONE
                     }
                 }
 
@@ -126,11 +120,11 @@ class FiltersActivity : AppCompatActivity() {
             }
 
         })
-        listView.setOnItemClickListener { parent, view, position, id ->
+        listView.setOnItemClickListener { _, _, _, id ->
             listView.visibility = View.GONE
             val geocoder = Geocoder(applicationContext)
-            textSelected = listOfPlaces.get(id.toInt())
-            mSearchButton.setQuery(listOfPlaces.get(id.toInt()),true)
+            textSelected = listOfPlaces[id.toInt()]
+            mSearchButton.setQuery(listOfPlaces[id.toInt()],true)
             if(textSelected.isNotEmpty()){
                 val result = geocoder.getFromLocationName(textSelected, 1,
                         41.8074776, -9.3015156,
@@ -141,6 +135,20 @@ class FiltersActivity : AppCompatActivity() {
                 }
             }
         }
+    }
+
+    override fun onPause() {
+        super.onPause()
+        finish()
+    }
+
+
+    private fun backToParent(parentName: String?) {
+        var intent = Intent(this, InicioActivity::class.java)
+        if (parentName.equals("MisRutas")) {
+            intent = Intent(this, MisRutas::class.java)
+        }
+        startActivity(intent)
     }
 
     private fun aplicarFiltros(){
@@ -173,10 +181,6 @@ class FiltersActivity : AppCompatActivity() {
         if (sharedPreferences.contains(getString(R.string.nivel_de_dificultad))){
             nivelDificultad.rating = sharedPreferences.getFloat(getString(R.string.nivel_de_dificultad),0F)
         }
-
-        if (sharedPreferences.contains("LatitudBuscada")) {
-
-        }
     }
     private fun limpiarFiltros(){
         val sharedPreferences : SharedPreferences = this.getSharedPreferences(getString(R.string.preference_filtersActivity_key),Context.MODE_PRIVATE) ?: return
@@ -199,15 +203,14 @@ class FiltersActivity : AppCompatActivity() {
         val textSeekBar : TextView = findViewById(R.id.textSeekBar)
         val seekBar: SeekBar = findViewById(R.id.seekBar)
         seekBar.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener{
+            @SuppressLint("SetTextI18n")
             override fun onProgressChanged(seekBar: SeekBar?, progress: Int, fromUser: Boolean) {
                 progressSeekBar = progress
-                //seekBarDist.progress = progress
                 textSeekBar.text = "$progress km"
             }
 
             override fun onStartTrackingTouch(seekBar: SeekBar?) {
                 Toast.makeText(applicationContext,"start tracking", Toast.LENGTH_SHORT).show()
-                var textSeekBar : TextView = findViewById(R.id.textSeekBar)
                 textSeekBar.text
             }
 

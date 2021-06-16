@@ -12,12 +12,12 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="84dp"
-        android:layout_marginRight="24dp"
+        android:layout_marginEnd="24dp"
         android:backgroundTint="@color/white"
-        android:text="Limpiar"
+        android:text="@string/limpiar"
         android:visibility="gone"
         android:textColor="@color/blue_800"
-        android:textSize="10dp"
+        android:textSize="12sp"
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
@@ -25,7 +25,7 @@
         android:id="@+id/textFiltros"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Filtros"
+        android:text="@string/filter"
         app:layout_constraintBottom_toBottomOf="@id/textPuntuacion"
         app:layout_constraintHorizontal_bias="0.494"
         app:layout_constraintLeft_toLeftOf="parent"
@@ -39,7 +39,7 @@
         android:layout_marginTop="44dp"
         android:text="@string/puntuacion"
         android:textColor="@color/black"
-        android:textSize="20dp"
+        android:textSize="20sp"
         app:layout_constraintHorizontal_bias="0.138"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
@@ -64,7 +64,7 @@
         android:layout_marginTop="15dp"
         android:text="@string/distancia"
         android:textColor="@color/black"
-        android:textSize="20dp"
+        android:textSize="20sp"
         app:layout_constraintHorizontal_bias="0.131"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
@@ -74,7 +74,7 @@
         android:id="@+id/textSeekBar"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginLeft="40dp"
+        android:layout_marginStart="40dp"
         android:layout_marginBottom="6.5dp"
         app:layout_constraintBottom_toTopOf="@id/seekBar"
         app:layout_constraintHorizontal_bias="0.056"
@@ -98,9 +98,9 @@
         android:id="@+id/text0km"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginLeft="16dp"
+        android:layout_marginStart="16dp"
         android:layout_marginTop="44dp"
-        android:text="0km"
+        android:text="@string/_0km"
         app:layout_constraintHorizontal_bias="0.115"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toLeftOf="@id/text30km"
@@ -111,7 +111,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="44dp"
-        android:text="30km"
+        android:text="@string/_30km"
         app:layout_constraintLeft_toLeftOf="@id/text0km"
         app:layout_constraintRight_toRightOf="@id/text60km"
         app:layout_constraintTop_toTopOf="@id/seekBar" />
@@ -121,8 +121,8 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="44dp"
-        android:layout_marginRight="32dp"
-        android:text="60km"
+        android:layout_marginEnd="32dp"
+        android:text="@string/_60km"
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toTopOf="@id/seekBar" />
 
@@ -133,7 +133,7 @@
         android:layout_marginTop="28dp"
         android:text="@string/nivel_de_dificultad"
         android:textColor="@color/black"
-        android:textSize="20dp"
+        android:textSize="20sp"
         app:layout_constraintHorizontal_bias="0.171"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
@@ -162,47 +162,21 @@
         app:layout_constraintLeft_toRightOf="@id/textNivelDificultad"
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toBottomOf="@id/seekBar"
-        app:srcCompat="@drawable/ic_outline_info_24" />
+        app:srcCompat="@drawable/ic_outline_info_24"
+        android:contentDescription="@string/info_dificultad" />
 
     <TextView
         android:id="@+id/textLocalizacion"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="15dp"
-        android:text="Localización"
+        android:text="@string/localizacion"
         android:textColor="@color/black"
-        android:textSize="20dp"
+        android:textSize="20sp"
         app:layout_constraintHorizontal_bias="0.144"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toBottomOf="@id/ratingBarNivelDificultad" />
-
-
-    <!--<RadioButton
-        android:id="@+id/radioButtonSelectLoc"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="8dp"
-        android:drawableEnd="@drawable/ic_baseline_location_on_24"
-        android:drawableRight="@drawable/ic_baseline_location_on_24"
-        android:drawablePadding="20dp"
-        android:text="Seleccionar ubicación"
-        android:textSize="15dp"
-        app:layout_constraintHorizontal_bias="0.225"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/textLocalizacion" />
-
-    <RadioButton
-        android:id="@+id/radioButtonNearLoc"
-        android:layout_width="72dp"
-        android:layout_height="42dp"
-        android:layout_marginTop="4dp"
-        android:textSize="15dp"
-        app:layout_constraintHorizontal_bias="0.126"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/radioButtonSelectLoc" />-->
 
 
     <Button
@@ -211,7 +185,7 @@
         android:layout_height="wrap_content"
         android:layout_marginBottom="88dp"
         android:backgroundTint="@color/blue_800"
-        android:text="Aplicar"
+        android:text="@string/aplicar"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintHorizontal_bias="0.801"
         app:layout_constraintLeft_toLeftOf="parent"
@@ -226,7 +200,8 @@
         android:queryHint="Busca rutas"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/textLocalizacion">
+        app:layout_constraintTop_toBottomOf="@id/textLocalizacion"
+        android:focusable="true">
 
     </SearchView>
 
@@ -244,21 +219,6 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         />
-    <!-- android:layout_above="@+id/btn_New"
-    <Button
-        android:id="@+id/btn_New"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_centerHorizontal="true"
-        android:layout_centerVertical="true"
-        android:layout_marginBottom="20dp"
-        android:text="New button"
-        android:width="170dp"
-        android:visibility="gone"
-        app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/textLocalizacion"
-        android:layout_alignParentBottom="true" />-->
 
     <Button
         android:id="@+id/buttonCancelar"
@@ -266,35 +226,12 @@
         android:layout_height="wrap_content"
         android:layout_marginBottom="88dp"
         android:backgroundTint="@color/blue_800"
-        android:text="Cancelar"
+        android:text="@string/cancel_button"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintHorizontal_bias="0.384"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toLeftOf="@id/buttonAplicar" />
 
-
-    <!--<androidx.fragment.app.FragmentContainerView
-        android:id="@+id/autocomplete_destination"
-        android:name="com.google.android.libraries.places.widget.AutocompleteSupportFragment"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintStart_toStartOf="parent" />-->
-
-
-
-
-    <!--<Spinner
-        android:id="@+id/spinner1"
-        android:layout_width="276dp"
-        android:layout_height="35dp"
-        android:layout_marginTop="8dp"
-        android:entries="@array/filter_near_loc"
-        android:prompt="@string/near_loc_prompt"
-        app:layout_constraintHorizontal_bias="0.503"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/radioButtonSelectLoc" />-->
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

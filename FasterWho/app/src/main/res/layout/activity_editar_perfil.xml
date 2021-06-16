@@ -67,14 +67,12 @@
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent" />
 
-    <EditText
+    <TextView
         android:id="@+id/textViewPeso"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginBottom="4dp"
-        android:inputType="numberDecimal"
         android:text="@string/peso_kg"
-        android:hint="@string/peso_kg"
         app:layout_constraintBottom_toTopOf="@id/editarPerfilPesoUsr"
         app:layout_constraintHorizontal_bias="0.136"
         app:layout_constraintLeft_toLeftOf="parent"

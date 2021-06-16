@@ -21,11 +21,11 @@
     <androidx.cardview.widget.CardView
         android:id="@+id/cardView2"
         android:layout_width="match_parent"
-        android:layout_height="50dp"
+        android:layout_height="150dp"
         android:layout_gravity="top"
-        android:layout_margin="6dp"
-        tools:ignore="MissingConstraints"
-        app:layout_constraintTop_toBottomOf="@+id/mapRutaConcreta" >
+        android:layout_marginTop="8dp"
+        app:layout_constraintTop_toBottomOf="@+id/mapRutaConcreta"
+        tools:ignore="MissingConstraints">
 
         <TextView
             android:id="@+id/textNombreRuta"
@@ -34,78 +34,72 @@
             android:layout_gravity="start"
             android:textColor="#4d5656"
             android:textSize="20sp"
+            android:textStyle="bold"
+            android:paddingStart="6dp"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+            app:layout_constraintTop_toTopOf="parent"
+            tools:ignore="RtlSymmetry" />
 
         <TextView
             android:id="@+id/distanciaTotal"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_gravity="start|bottom"
-            android:textColor="#4d5656 "
+            android:layout_gravity="start|center_vertical"
+            android:textColor="#4d5656"
             android:textSize="20sp"
+            android:paddingStart="6dp"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+            app:layout_constraintTop_toTopOf="parent"
+            tools:ignore="RtlSymmetry" />
 
         <RatingBar
             android:id="@+id/ratingBar2"
+            style="?android:attr/ratingBarStyleSmall"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="end"
-            style="?android:attr/ratingBarStyleSmall"
+            android:paddingTop="6dp"
+            android:progressTint="@color/ambar_500"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            tools:ignore="RtlSymmetry" />
+
+        <Button
+            android:id="@+id/buttonEmpezar"
+            android:layout_width="222dp"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal|bottom"
+            android:padding="10dp"
+            android:paddingTop="12dp"
+            android:paddingBottom="12dp"
+            android:text="@string/empezar_ruta"
+            app:backgroundTint="@color/blue_800"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
     </androidx.cardview.widget.CardView>
 
     <androidx.cardview.widget.CardView
-        android:id="@+id/cardView"
-        android:layout_width="match_parent"
-        android:layout_height="100dp"
-        android:layout_margin="6dp"
-        tools:ignore="MissingConstraints"
-        app:layout_constraintTop_toBottomOf="@+id/cardView2" >
-
-        <ImageView
-            android:id="@+id/qR"
-            android:layout_width="100dp"
-            android:layout_height="100dp"
-            android:layout_gravity="start|center_horizontal"
-            android:scaleType="centerCrop"
-            android:src="@drawable/qr"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            tools:src="@drawable/qr" />
-
-        <Button
-            android:id="@+id/buttonEmpezar"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="end"
-            android:padding="10dp"
-            android:text="Empezar Ruta"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
-    </androidx.cardview.widget.CardView>
-
-  <androidx.cardview.widget.CardView
-       android:id="@+id/cardViewEstadisticas"
-        android:layout_width="match_parent"
-        android:layout_height="50dp"
+        android:id="@+id/cardViewEstadisticas"
+        android:layout_width="398dp"
+        android:layout_height="51dp"
         android:layout_gravity="top"
-      tools:ignore="MissingConstraints"
-      app:layout_constraintTop_toBottomOf="@+id/cardView" >
+        android:layout_marginTop="4dp"
+        app:layout_constraintTop_toBottomOf="@+id/cardView2"
+        tools:ignore="MissingConstraints"
+        tools:layout_editor_absoluteX="6dp">
+
         <TextView
             android:id="@+id/estadisticas"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_gravity="center_horizontal|top"
-            android:textSize="20sp"
-            android:text="Estadísticas últimos usuarios"
-            android:textStyle="bold"
+            android:layout_gravity="center"
+            android:text="@string/estadisticas_ultimos_usuarios"
             android:textColor="#4d5656"
+            android:textSize="20sp"
+            android:textStyle="bold"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
-   </androidx.cardview.widget.CardView>
+    </androidx.cardview.widget.CardView>
 
     <androidx.fragment.app.FragmentContainerView
         android:id="@+id/fragmentUsuarios"
@@ -118,5 +112,22 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constrainedHeight="true"
         tools:ignore="MissingConstraints" />
+
+    <ImageView
+        android:id="@+id/compartir"
+        android:layout_width="32dp"
+        android:layout_height="32dp"
+        android:layout_gravity="end|bottom"
+        android:layout_marginTop="16dp"
+        android:contentDescription="@string/compartir"
+        android:paddingBottom="6dp"
+        android:scaleType="centerCrop"
+        android:src="@drawable/ic_baseline_share_24"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.958"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:tint="@color/white"
+        tools:src="@drawable/ic_baseline_share_24" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

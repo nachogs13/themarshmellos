@@ -80,13 +80,13 @@ class ProfileActivity : Toolbar() {
             btnImagen.setImageURI(selectedImage)
 
             if (selectedImage != null) {
-                storageRef.child("ImgPerfil/${firebaseAuth.currentUser!!.email}.jpg").putFile(selectedImage)
+                storageRef.child("ImgPerfil/${firebaseAuth.currentUser!!.email!!}.jpg").putFile(selectedImage)
 
 
-                db.collection("usuarios").document(firebaseAuth.currentUser!!.email!!.toString()).get()
+                db.collection("usuarios").document(firebaseAuth.currentUser!!.email!!).get()
                         .addOnSuccessListener {
                             db.collection("usuarios")
-                                    .document(firebaseAuth.currentUser!!.email!!.toString())
+                                    .document(firebaseAuth.currentUser!!.email!!)
                                     .update("imgPerfil",storageRef.child("ImgPerfil/${firebaseAuth.currentUser!!.email!!}.jpg"))
                             if(it.get("imgPerfil")!=null) {
                                 storageRef.child("ImgPerfil/${firebaseAuth.currentUser!!.email!!}.jpg").delete()
@@ -141,6 +141,12 @@ class ProfileActivity : Toolbar() {
         if (it.get(ifStr) != null && (it.get(ifStr).toString()).isNotBlank()) {
                 val str = it.get(ifStr).toString()
                 text = "$label: $str"
+            if (ifStr == "peso") {
+                text = "$text kg"
+            }
+            if (ifStr == "estatura") {
+                text = "$text cm"
+            }
         }
         textView.text = text
     }

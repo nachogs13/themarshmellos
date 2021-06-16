@@ -64,12 +64,12 @@
 
     <Button
         android:id="@+id/buttonEntrarGoogle"
-        android:layout_width="315dp"
-        android:layout_height="53dp"
+        android:layout_width="295dp"
+        android:layout_height="50dp"
         android:layout_marginTop="108dp"
-        app:backgroundTint="@color/blue_800"
-        android:text="@string/entrar_con_google"
         android:drawableLeft="@drawable/ic_icons8_logo_de_google"
+        android:text="@string/entrar_con_google"
+        app:backgroundTint="@color/blue_800"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"

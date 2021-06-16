@@ -16,12 +16,7 @@
             android:layout_height="match_parent" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
-    <!--<androidx.constraintlayout.widget.ConstraintLayout
-        android:layout_width="match_parent"
-        android:layout_height="match_parent">
-        <include
-            layout="@layout/activity_mis_amigos"/>
-    </androidx.constraintlayout.widget.ConstraintLayout>-->
+
     <FrameLayout
         android:id="@+id/main_content"
         android:layout_width="match_parent"
@@ -33,7 +28,11 @@
         android:layout_height="match_parent"
         android:layout_gravity="start"
         android:fitsSystemWindows="true"
+        app:itemBackground="@drawable/drawer_selected_item"
+        app:itemTextColor="@drawable/text_selected_item"
+        app:itemIconTint="@drawable/text_selected_item"
         app:headerLayout="@layout/nav_header_main"
         app:menu="@menu/activity_main_drawer" />
+
 
 </androidx.drawerlayout.widget.DrawerLayout>
