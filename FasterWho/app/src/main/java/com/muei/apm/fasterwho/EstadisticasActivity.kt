@@ -37,7 +37,7 @@ import javax.xml.parsers.SAXParser
 import javax.xml.parsers.SAXParserFactory
 import kotlin.math.roundToInt
 
-@Suppress("RECEIVER_NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS")
+@Suppress("RECEIVER_NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS", "NAME_SHADOWING")
 class EstadisticasActivity : AppCompatActivity(),OnMapReadyCallback {
 
     private lateinit var mapa: GoogleMap
@@ -193,105 +193,107 @@ class EstadisticasActivity : AppCompatActivity(),OnMapReadyCallback {
             ItemEstadistica(R.drawable.ic_elevation_24dp, "Elev. Máxima", df.format(altitudMaxima!!))
         ))
 
-        //update ptosRanking attribute of the user
-        lateinit var name : String
-        var ptosRuta = 0
-        val base = 500 //base value
-        var ptosRanking: Long
-        var ptos = 0
-        var repeated = 1.0F
-        var top = 1 //we start on 1 because we would have to add 1 anyway to get users' position in the ranking
-        val difficulty : Float
-        var totalDistance = 0.0
-        lateinit var ruta : String
+        //don't calculate any points if the current route is not saved or not a previously existing one
+        val cancelled = intent.getBooleanExtra("cancelled", false)
+        if (!cancelled) {
+            //update ptosRanking attribute of the user
+            var ptosRuta = 0
+            val base = 500 //base value
+            var ptosRanking: Long
+            var ptos = 0
+            var repeated = 1.0F
+            var top = 1 //we start on 1 because we would have to add 1 anyway to get users' position in the ranking
+            val difficulty: Float
+            var totalDistance = 0.0
+            lateinit var ruta: String
 
-        //calculate the difficulty of the route
-        if (distancia!! < 25F) {
-            difficulty = when (altitudMaxima){
-                in 1F..599F -> 1.0F
-                in 600F..999F -> 1.5F
-                else -> 2.0F
+            //calculate the difficulty of the route
+            if (distancia!! < 25F) {
+                difficulty = when (altitudMaxima) {
+                    in 1F..599F -> 1.0F
+                    in 600F..999F -> 1.5F
+                    else -> 2.0F
+                }
+            } else if (distancia!! >= 25F && distancia!! < 40F) {
+                difficulty = when (altitudMaxima) {
+                    in 1F..999F -> 1.0F
+                    in 1000F..1499F -> 1.5F
+                    else -> 2.0F
+                }
+            } else {
+                difficulty = when (altitudMaxima) {
+                    in 1F..1499F -> 1.0F
+                    in 1500F..2499F -> 1.5F
+                    else -> 2.0F
+                }
             }
-        } else if (distancia!! >= 25F && distancia!! < 40F) {
-            difficulty = when (altitudMaxima){
-                in 1F..999F -> 1.0F
-                in 1000F..1499F -> 1.5F
-                else -> 2.0F
+            //obtain current route id
+            val name: String = if (guardarRuta) {
+                nombreRuta.toString()
+            } else {
+                rutaRealizada.toString()
             }
-        } else {
-            difficulty = when (altitudMaxima) {
-                in 1F..1499F -> 1.0F
-                in 1500F..2499F -> 1.5F
-                else -> 2.0F
-            }
-        }
-        //obtain current route id
-        name = if (guardarRuta) {
-            nombreRuta.toString()
-        } else {
-            rutaRealizada.toString()
-        }
-        db.collection("rutas")
-                .whereEqualTo("nombre",name)
-                .get().addOnSuccessListener { it ->
-                    for (document in it) {
+            db.collection("rutas")
+                    .whereEqualTo("nombre", name)
+                    .get().addOnSuccessListener { it ->
+                        for (document in it) {
                             ruta = document.id
                             totalDistance = document.data["distancia"] as Double
                             Log.i(TAG, "Identificador de la ruta: $ruta")
                         }
-                    //check if route is repeated by the user
-                    db.collection("rutasUsuarios")
-                        .whereEqualTo("idUsuario",firebaseAuth.currentUser!!.email!!)
-                        .get().addOnSuccessListener {
-                            for (document in it) {
-                                val rutaItem : String = document.data["idRuta"] as String
-                                if (rutaItem == ruta) {
-                                    repeated = 0.5F //this value halves the points if the route is repeated
-                                }
-                            }
-                        }
-                    //check the users' position in ranking within the users who completed the route
-                    db.collection("rutasUsuarios")
-                        .whereEqualTo("idRuta",ruta)
-                        .get().addOnSuccessListener { it ->
-                            for (document in it) {
-                                if (document.data["idUsuario"] != firebaseAuth.currentUser!!.email!!) {
-                                    val hours = document.data["horas"] as Int
-                                    val mins = document.data["minutos"] as Int
-                                    val secs = document.data["segundos"] as Int
-                                    val time = hours*3600 + mins*60 + secs
-                                    if (time < duracion!!) {
-                                        top++
+                        //check if route is repeated by the user
+                        db.collection("rutasUsuarios")
+                                .whereEqualTo("idUsuario", firebaseAuth.currentUser!!.email!!)
+                                .get().addOnSuccessListener {
+                                    for (document in it) {
+                                        val rutaItem: String = document.data["idRuta"] as String
+                                        if (rutaItem == ruta) {
+                                            repeated = 0.5F //this value halves the points if the route is repeated
+                                        }
                                     }
                                 }
-                            }
-                            //if the user is not in the top 100, doesnt receive top points, otherwise gets points from 5-500 (top 100-1) with step 5
-                            top = if (top > 100) {
-                                0
-                            } else {
-                                val i = 500 - ((top - 1) * 5)
-                                i
-                            }
-                            //perform route points calculation
-                            if (distancia!! >= totalDistance) {
-                                ptosRuta = ((top + (base * difficulty)) * repeated).roundToInt()
-                            }
-                            if (distancia!! < 2000.0) {
-                                ptosRuta = (distancia!! / 100).roundToInt()
-                            }
-                            //get current ranking points for the user
-                            db.collection("usuarios").document(firebaseAuth.currentUser!!.email!!.toString()).get()
-                                .addOnSuccessListener {
-                                    ptosRanking = it.get("ptosRanking") as Long
-                                    ptos = ptosRanking.toInt()
+                        //check the users' position in ranking within the users who completed the route
+                        db.collection("rutasUsuarios")
+                                .whereEqualTo("idRuta", ruta)
+                                .get().addOnSuccessListener { it ->
+                                    for (document in it) {
+                                        if (document.data["idUsuario"] != firebaseAuth.currentUser!!.email!!) {
+                                            val hours = document.data["horas"] as Int
+                                            val mins = document.data["minutos"] as Int
+                                            val secs = document.data["segundos"] as Int
+                                            val time = hours * 3600 + mins * 60 + secs
+                                            if (time < duracion!!) {
+                                                top++
+                                            }
+                                        }
+                                    }
+                                    //if the user is not in the top 100, doesnt receive top points, otherwise gets points from 5-500 (top 100-1) with step 5
+                                    top = if (top > 100) {
+                                        0
+                                    } else {
+                                        val i = 500 - ((top - 1) * 5)
+                                        i
+                                    }
+                                    //perform route points calculation
+                                    if (distancia!! >= totalDistance) {
+                                        ptosRuta = ((top + (base * difficulty)) * repeated).roundToInt()
+                                    }
+                                    if (distancia!! < 2000.0) {
+                                        ptosRuta = (distancia!! / 100).roundToInt()
+                                    }
+                                    //get current ranking points for the user
+                                    db.collection("usuarios").document(firebaseAuth.currentUser!!.email!!.toString()).get()
+                                            .addOnSuccessListener {
+                                                ptosRanking = it.get("ptosRanking") as Long
+                                                ptos = ptosRanking.toInt()
+                                            }
+                                    //update ranking points value
+                                    db.collection("usuarios")
+                                            .document(firebaseAuth.currentUser!!.email!!.toString())
+                                            .update("ptosRanking", ptos + ptosRuta)
                                 }
-                            //update ranking points value
-                            db.collection("usuarios")
-                                .document(firebaseAuth.currentUser!!.email!!.toString())
-                                .update("ptosRanking", ptos + ptosRuta)
-                        }
-                }
-
+                    }
+        }
         // Obtain the SupportMapFragment and get notified when the map is ready to be used.
         val mapFragment = supportFragmentManager
             .findFragmentById(R.id.map2) as SupportMapFragment?

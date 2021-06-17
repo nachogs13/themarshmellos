@@ -60,6 +60,7 @@ class SaveRouteDialogFragment : DialogFragment() {
                     Toast.makeText(activity, "No se guarda la ruta", Toast.LENGTH_SHORT).show()
                     val intent = Intent(activity, EstadisticasActivity::class.java)
                     intent.putExtra("guardarRuta", false)
+                    intent.putExtra("cancelled", true)
                     if (distancia != null) {
                         intent.putExtra("distancia", distancia)
                     }
