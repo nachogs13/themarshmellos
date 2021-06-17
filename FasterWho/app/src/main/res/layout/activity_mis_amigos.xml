@@ -6,46 +6,26 @@
     android:layout_height="match_parent"
     tools:context=".MisAmigos">
 
-    <!--<include
-        android:id="@+id/toolbar_include"
-        layout="@layout/toolbar"
-        tools:layout_editor_absoluteX="0dp"
-        tools:layout_editor_absoluteY="27dp" />-->
-
     <androidx.fragment.app.FragmentContainerView
         android:id="@+id/fragment"
         android:name="com.muei.apm.fasterwho.MisAmigosFragment"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_width="391dp"
+        android:layout_height="737dp"
         android:layout_marginTop="65dp"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         tools:layout="@layout/fragment_mis_amigos_list" />
 
-    <!--<TextView
-        android:id="@+id/amigosTitle"
-        android:layout_width="151dp"
-        android:layout_height="35dp"
-        android:layout_marginStart="144dp"
-        android:layout_marginLeft="144dp"
-        android:layout_marginTop="65dp"
-        android:ems="14"
-        android:text="@string/friends"
-        android:textColor="@color/blue_800"
-        android:textSize="24sp"
-        android:textStyle="bold"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />-->
 
     <Button
         android:id="@+id/button"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginEnd="16dp"
-        android:layout_marginRight="16dp"
         android:layout_marginBottom="16dp"
         android:text="@string/add_friend"
-        app:backgroundTint="#03A9F4"
+        app:backgroundTint="@color/blue_800"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent" />
 

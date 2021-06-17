@@ -9,7 +9,9 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.muei.apm.fasterwho.dummy.DummyContent
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.firestore.DocumentReference
+import com.google.firebase.firestore.FirebaseFirestore
 
 /**
  * A fragment representing a list of Items.
@@ -17,6 +19,8 @@ import com.muei.apm.fasterwho.dummy.DummyContent
 class MisAmigosFragment : Fragment() {
 
     private var columnCount = 1
+    private val db = FirebaseFirestore.getInstance()
+    private val firebaseAuth = FirebaseAuth.getInstance()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -39,7 +43,21 @@ class MisAmigosFragment : Fragment() {
                     columnCount <= 1 -> LinearLayoutManager(context)
                     else -> GridLayoutManager(context, columnCount)
                 }
-                adapter = MyMisAmigosRecyclerViewAdapter(DummyContent.ITEMS)
+                db.collection("usuarios").document(firebaseAuth.currentUser!!.email!!.toString()).get().addOnSuccessListener {
+
+                    val amigos = it.get("amigos") as List<String>
+                    val items: MutableList<ItemAmigo> = ArrayList()
+                    for (a in amigos) {
+                        db.collection("usuarios").document(a).get().addOnSuccessListener { it2->
+                            var img : DocumentReference? = null
+                            if (it2.get("imgPerfil") != null) {
+                              img = it2.get("imgPerfil") as DocumentReference
+                            }
+                            items.add(ItemAmigo(it2.id, it2.get("username").toString(), img))
+                            adapter = MyMisAmigosRecyclerViewAdapter(items)
+                        }
+                    }
+                }
             }
         }
         return view
