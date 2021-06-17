@@ -1,6 +1,7 @@
 package com.muei.apm.fasterwho
 
 import android.os.Bundle
+import android.view.View
 import android.widget.*
 
 class MisAmigos : Toolbar() {
@@ -23,5 +24,15 @@ class MisAmigos : Toolbar() {
         navView.menu.getItem(4).isChecked = true
     }
 
+    fun sinResultados(isEmp: Boolean) {
+        val sinRes : TextView = findViewById(R.id.textViewSinResultados4)
+        val rel : RelativeLayout = findViewById(R.id.loadingPanel4)
+        rel.visibility = View.GONE
+        if (isEmp) {
+            sinRes.visibility = View.VISIBLE
+        } else {
+            sinRes.visibility = View.GONE
+        }
+    }
 
 }

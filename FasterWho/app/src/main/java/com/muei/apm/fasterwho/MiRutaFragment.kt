@@ -105,8 +105,12 @@ class MiRutaFragment : Fragment() {
                             }
 
                         } else {
-                            (activity as MisRutas).sinResultados(isEmp = false)
-                            adapter = MyMiRutaRecyclerViewAdapter(listItem)
+                            if (listItem.isNotEmpty()){
+                                (activity as MisRutas).sinResultados(isEmp = false)
+                                adapter = MyMiRutaRecyclerViewAdapter(listItem)
+                            } else {
+                                (activity as MisRutas).sinResultados(isEmp = true)
+                            }
                         }
                     }
             }

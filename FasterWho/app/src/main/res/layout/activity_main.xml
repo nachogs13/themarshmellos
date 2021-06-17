@@ -12,17 +12,17 @@
         android:id="@+id/editTextUserName"
         android:layout_width="323dp"
         android:layout_height="48dp"
-        android:layout_marginTop="264dp"
+        android:layout_marginTop="300dp"
         android:drawableStart="@drawable/ic_baseline_person_24"
         android:ems="10"
         android:gravity="center"
         android:hint="@string/email"
+        android:importantForAutofill="no"
         android:inputType="textEmailAddress"
-        app:layout_constraintHorizontal_bias="0.498"
+        app:layout_constraintHorizontal_bias="0.514"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        android:importantForAutofill="no" />
+        app:layout_constraintTop_toTopOf="parent" />
 
     <EditText
         android:id="@+id/EditTextContraseña"
@@ -44,23 +44,25 @@
         android:id="@+id/buttonEntrar"
         android:layout_width="145dp"
         android:layout_height="50dp"
-        android:layout_marginTop="456dp"
+        android:layout_marginTop="484dp"
         android:layout_marginEnd="48dp"
-        app:backgroundTint="@color/blue_800"
         android:text="@string/entrar_label"
+        app:backgroundTint="@color/blue_800"
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
-    <Button
-        android:id="@+id/buttonRegistrarse"
-        android:layout_width="145dp"
-        android:layout_height="50dp"
-        android:layout_marginStart="48dp"
-        android:layout_marginTop="456dp"
-        app:backgroundTint="@color/blue_800"
-        android:text="@string/registrarse_label"
+    <TextView
+        android:id="@+id/textView2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/password_label"
+        android:textColor="@color/blue_800"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintHorizontal_bias="0.492"
         app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toTopOf="@id/buttonEntrarGoogle"
+        app:layout_constraintVertical_bias="0.444" />
 
     <Button
         android:id="@+id/buttonEntrarGoogle"
@@ -71,37 +73,49 @@
         android:text="@string/entrar_con_google"
         app:backgroundTint="@color/blue_800"
         app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintHorizontal_bias="0.489"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.731"
+        app:layout_constraintVertical_bias="0.776"
         tools:ignore="RtlHardcoded" />
 
-    <TextView
-        android:id="@+id/textView2"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="@string/password_label"
-        android:textColor="@color/blue_800"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintHorizontal_bias="0.498"
+    <Button
+        android:id="@+id/buttonRegistrarse"
+        android:layout_width="145dp"
+        android:layout_height="50dp"
+        android:layout_marginStart="44dp"
+        android:layout_marginTop="484dp"
+        android:text="@string/registrarse_label"
+        app:backgroundTint="@color/blue_800"
         app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toTopOf="@id/buttonEntrarGoogle"
-        app:layout_constraintVertical_bias="0.385" />
+        app:layout_constraintTop_toTopOf="parent" />
 
     <ImageView
         android:id="@+id/imageView"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        app:srcCompat="@drawable/faster"
+        android:layout_width="226dp"
+        android:layout_height="243dp"
+        android:contentDescription="@string/logo"
+        app:layout_constraintBottom_toBottomOf="@id/editTextUserName"
+        app:layout_constraintHorizontal_bias="0.497"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintBottom_toBottomOf="@id/editTextUserName"
-        tools:layout_editor_absoluteX="138dp"
-        tools:layout_editor_absoluteY="81dp"
-        android:contentDescription="@string/logo" />
+        app:layout_constraintVertical_bias="0.304"
+        app:srcCompat="@drawable/logo" />
+
+    <TextView
+        android:id="@+id/textViewLogo"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="508dp"
+        android:text="@string/faster_who"
+        android:textColor="@color/dark_blue"
+        android:textSize="30sp"
+        android:textStyle="bold"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent" />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

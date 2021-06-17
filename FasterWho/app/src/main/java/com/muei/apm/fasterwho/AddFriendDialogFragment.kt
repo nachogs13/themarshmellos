@@ -44,7 +44,6 @@ class AddFriendDialogFragment : DialogFragment() {
                                 }
                             }
                     }
-                    dismiss()
                 }
                 .setNegativeButton(R.string.cancel_button
                 ) { _, _ ->
@@ -67,7 +66,12 @@ class AddFriendDialogFragment : DialogFragment() {
                 }
                 amigos.add(inputName)
                 db.collection("usuarios").document(firebaseAuth.currentUser!!.email!!.toString())
-                    .update("amigos", amigos)
+                    .update("amigos", amigos).addOnSuccessListener {
+                        val amigos2 : MutableList<ItemAmigo> = ArrayList()
+                        val adapter = MyMisAmigosRecyclerViewAdapter(amigos2)
+                        adapter.setAmigosList()
+                        dismiss()
+                    }
             }
     }
 

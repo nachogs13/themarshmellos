@@ -7,7 +7,7 @@
     tools:context=".ProfileActivity">
 
     <RelativeLayout
-        android:id="@+id/loadingPanel"
+        android:id="@+id/loadingPanelProfile"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:gravity="center" >
@@ -130,7 +130,7 @@
         app:drawableTint="@color/blue_800"
         android:ems="10"
         android:gravity="bottom|end"
-        android:text="@string/distancia"
+        android:text="@string/distancia_media"
         android:textSize="18sp"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"

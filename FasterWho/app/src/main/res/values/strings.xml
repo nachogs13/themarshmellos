@@ -68,6 +68,7 @@
     <string name="settings">Settings</string>
     <string name="puntuacion">Puntuación</string>
     <string name="distancia">Distancia</string>
+    <string name="distancia_media">Distancia media</string>
     <string name="preference_filtersActivity_key">FiltersActivity</string>
     <string name="imagen_de_usuario">Imagen de usuario</string>
     <string name="nombre_de_usuario">Nombre de usuario</string>
@@ -108,6 +109,8 @@
     <string name="compartir">Compartir</string>
     <string name="privada">PRIVADA</string>
     <string name="publica">PUBLICA</string>
+    <string name="faster_who">Faster Who?</string>
+    <string name="duracion">Duración</string>
 
     <!--<string name="default_web_client_id">246650974592-4qiuqa1hn9nrqs38u0n9opgid0rf9ngj.apps.googleusercontent.com</string>-->
 </resources>

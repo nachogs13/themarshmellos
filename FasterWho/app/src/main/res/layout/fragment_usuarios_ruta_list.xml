@@ -7,5 +7,5 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     app:layoutManager="LinearLayoutManager"
-    tools:context=".InicioItemFragment"
+    tools:context=".UsuariosRutaFragment"
     tools:listitem="@layout/fragment_usuarios_ruta_item" />

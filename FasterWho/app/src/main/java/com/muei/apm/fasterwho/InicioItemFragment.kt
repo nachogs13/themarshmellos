@@ -82,7 +82,7 @@ class InicioItemFragment : Fragment() {
                             val img = document.data["imgInicio"] as DocumentReference
 
                             listItem.add(ItemRuta(nombreRuta,direccionRuta,coordenadasInicio,
-                                coordenadasFin,rating,file,img, dist, desnivel,public))
+                                coordenadasFin,rating,file,img, dist, desnivel,public, document.id))
                         } catch (e: Exception) {
                             Log.d(tagIni, "Fallo al obtener la información de una ruta pública")
                         }
@@ -98,7 +98,12 @@ class InicioItemFragment : Fragment() {
                         }
 
                     } else {
-                        adapter = MyInicioItemRecyclerViewAdapter(listItem)
+                        if (listItem.isNotEmpty()){
+                            (activity as InicioActivity).sinResultados(isEmp = false)
+                            adapter = MyInicioItemRecyclerViewAdapter(listItem)
+                        } else {
+                            (activity as InicioActivity).sinResultados(isEmp = true)
+                        }
                     }
 
                 }

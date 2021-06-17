@@ -8,13 +8,15 @@ import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.muei.apm.fasterwho.dummy.DummyContent
+import com.google.firebase.firestore.DocumentReference
+import com.google.firebase.firestore.FirebaseFirestore
 
 /**
  * A fragment representing a list of Users
  */
 class UsuariosRutaFragment: Fragment() {
     private var columnCount = 1
+    private val db = FirebaseFirestore.getInstance()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -37,7 +39,32 @@ class UsuariosRutaFragment: Fragment() {
                     columnCount <= 1 -> LinearLayoutManager(context)
                     else -> GridLayoutManager(context, columnCount)
                 }
-                adapter = UsuariosRutaRecyclerViewAdapter(setDataItem())
+                val items : MutableList<ItemUsuarioRuta> = ArrayList()
+                db.collection("rutasUsuarios").whereEqualTo("idRuta", arguments?.get("ruta").toString())
+                    .get().addOnSuccessListener {
+                        if (it.documents.isNotEmpty()) {
+                            for (document in it) {
+                                db.collection("usuarios").document(document.get("idUsuario").toString())
+                                    .get().addOnSuccessListener { it2 ->
+                                        var img: DocumentReference? = null
+                                        if (it2.get("imgPerfil") != null) {
+                                            img = it2.get("imgPerfil") as DocumentReference
+                                        }
+                                        items.add(
+                                            ItemUsuarioRuta(
+                                                img,
+                                                it2.get("username").toString(),
+                                                document.get("horas").toString().split(".")[0] + ":" +
+                                                        document.get("minutos").toString().split(".")[0] + ":"
+                                                        + document.get("segundos").toString().split(".")[0] + ":" +
+                                                        document.get("milis").toString().split(".")[0]
+                                            )
+                                        )
+                                        adapter = UsuariosRutaRecyclerViewAdapter(items)
+                                }
+                            }
+                        }
+                }
             }
         }
         return view
@@ -50,26 +77,11 @@ class UsuariosRutaFragment: Fragment() {
 
         // TODO: Customize parameter initialization
         @JvmStatic
-        fun newInstance(columnCount: Int) =
+        fun newInstance(rutaConcreta: String) =
                 UsuariosRutaFragment().apply {
                     arguments = Bundle().apply {
-                        putInt(ARG_COLUMN_COUNT, columnCount)
+                        putString("ruta", rutaConcreta)
                     }
                 }
-    }
-
-    /*
-     * Función para crear un array con información de usuarios
-     */
-    private fun setDataItem() : ArrayList<ItemUsuarioRuta> {
-        var listItem : ArrayList<ItemUsuarioRuta> = ArrayList()
-
-        listItem.add(ItemUsuarioRuta(R.drawable.avatar,"María","00:40"))
-        listItem.add(ItemUsuarioRuta(R.drawable.avatar,"Elena","00:53"))
-        listItem.add(ItemUsuarioRuta(R.drawable.fotoperfil2,"Pablo","01:03"))
-        listItem.add(ItemUsuarioRuta(R.drawable.fotoperfil,"Andrés","00:33"))
-        listItem.add(ItemUsuarioRuta(R.drawable.fotoperfil2,"Jaime","01:48"))
-
-        return listItem
     }
 }

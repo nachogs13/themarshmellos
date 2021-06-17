@@ -7,6 +7,7 @@ import android.widget.ImageView
 import android.widget.TextView
 import android.widget.Toast
 import androidx.recyclerview.widget.RecyclerView
+import com.google.firebase.storage.FirebaseStorage
 
 class UsuariosRutaRecyclerViewAdapter(private val values: List<ItemUsuarioRuta>
 ) :RecyclerView.Adapter<UsuariosRutaRecyclerViewAdapter.ViewHolder>() {
@@ -18,10 +19,13 @@ class UsuariosRutaRecyclerViewAdapter(private val values: List<ItemUsuarioRuta>
     }
 
     override fun onBindViewHolder(holder: UsuariosRutaRecyclerViewAdapter.ViewHolder, position: Int) {
+        val storage = FirebaseStorage.getInstance()
+
         val item = values[position]
         holder.userName.text = item.userName
-        holder.userDuration.text = "Duración " + item.stadistic
-        item.icon?.let { holder.icon.setImageResource(it) }
+        holder.userDuration.text = item.stadistic
+        val img = storage.getReference(item.icon?.path.toString())
+        GlideApp.with(holder.itemView.context).load(img).into(holder.icon)
     }
 
     override fun getItemCount(): Int = values.size

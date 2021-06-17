@@ -251,7 +251,8 @@ class EstadisticasActivity : AppCompatActivity(),OnMapReadyCallback {
                                 "horas" to horas,
                                 "minutos" to minutos,
                                 "segundos" to segundos,
-                                "milis" to milis
+                                "milis" to milis,
+                                "kms" to distancia
                         )
                         // añadimos el documento a la base de datos
                         db.collection("rutasUsuarios").document()

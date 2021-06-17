@@ -104,14 +104,16 @@
     <androidx.fragment.app.FragmentContainerView
         android:id="@+id/fragmentUsuarios"
         android:name="com.muei.apm.fasterwho.UsuariosRutaFragment"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_width="403dp"
+        android:layout_height="248dp"
         android:layout_margin="6dp"
-        tools:layout="@layout/fragment_usuarios_ruta_list"
-        app:layout_constraintTop_toBottomOf="@+id/cardViewEstadisticas"
-        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constrainedHeight="true"
-        tools:ignore="MissingConstraints" />
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/cardViewEstadisticas"
+        app:layout_constraintVertical_bias="0.901"
+        tools:ignore="MissingConstraints"
+        tools:layout="@layout/fragment_usuarios_ruta_list"
+        tools:layout_editor_absoluteX="6dp" />
 
     <ImageView
         android:id="@+id/compartir"
@@ -129,5 +131,31 @@
         app:layout_constraintTop_toTopOf="parent"
         app:tint="@color/white"
         tools:src="@drawable/ic_baseline_share_24" />
+
+    <TextView
+        android:id="@+id/duracion"
+        android:layout_width="90dp"
+        android:layout_height="33dp"
+        android:layout_marginStart="270dp"
+        android:layout_marginTop="494dp"
+        android:text="@string/duracion"
+        android:textColor="#4d5656"
+        android:textSize="18sp"
+        android:textStyle="bold"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/nombre"
+        android:layout_width="90dp"
+        android:layout_height="33dp"
+        android:layout_marginStart="140dp"
+        android:layout_marginTop="494dp"
+        android:text="@string/nombre"
+        android:textColor="#4d5656"
+        android:textSize="18sp"
+        android:textStyle="bold"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

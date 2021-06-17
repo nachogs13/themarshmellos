@@ -1,16 +1,19 @@
 package com.muei.apm.fasterwho
 
+import android.annotation.SuppressLint
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import android.view.View
 import android.widget.*
 import androidx.appcompat.app.AlertDialog
+import com.google.firebase.Timestamp
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.DocumentReference
 import com.google.firebase.firestore.DocumentSnapshot
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.storage.FirebaseStorage
+import java.util.*
 
 class ProfileActivity : Toolbar() {
     private val db = FirebaseFirestore.getInstance()
@@ -99,6 +102,7 @@ class ProfileActivity : Toolbar() {
 
     }
 
+    @SuppressLint("SetTextI18n")
     private fun getInfoUsuario(){
         val storage = FirebaseStorage.getInstance()
         Log.d("currentUser", firebaseAuth.currentUser!!.email!!.toString())
@@ -108,6 +112,8 @@ class ProfileActivity : Toolbar() {
         val textViewEstatura : TextView = findViewById(R.id.userInformationHeight)
         val textViewPeso : TextView = findViewById(R.id.userInformationWeight)
         val textView : TextView = findViewById(R.id.userName)
+        val textViewDistancia : TextView = findViewById(R.id.userStatisticsDistanceData)
+        val textViewActivo : TextView = findViewById(R.id.userStatisticsActivityLevelData)
 
         db.collection("usuarios").document(firebaseAuth.currentUser!!.email!!.toString()).get()
                 .addOnSuccessListener {
@@ -122,10 +128,31 @@ class ProfileActivity : Toolbar() {
                         val img = it.get("imgPerfil") as DocumentReference
                         GlideApp.with(this).load(storage.getReference(img.path)).into(this.findViewById(R.id.imageButton3))
                     }
-
-                    textView.text = username
-                    val rel : RelativeLayout = findViewById(R.id.loadingPanel)
-                    rel.visibility = View.GONE
+                    textViewActivo.text = "Inactivo"
+                    textViewDistancia.text = "0 km"
+                    Log.d("aveeeeer", firebaseAuth.currentUser!!.email!!.toString())
+                    db.collection("rutasUsuarios")
+                        .whereEqualTo("idUsuario", firebaseAuth.currentUser!!.email!!)
+                        .get()
+                        .addOnSuccessListener { it2 ->
+                            Log.d("aveeeeer", it2.toString())
+                            var kmMedia = 0.0
+                            val date = Calendar.getInstance()   // 19-01-2018
+                            date.add(Calendar.DATE, -7)
+                            for (document in it2) {
+                                Log.d("aveeeeer", document.toString())
+                               if (document.get("fecha") != null && (document.get("fecha") as Timestamp).toDate() > date.time) {
+                                    textViewActivo.text = "Activo"
+                               }
+                                if (document.get("kms") != null) {
+                                    kmMedia += document.get("kms").toString().toDouble()
+                                }
+                            }
+                            textViewDistancia.text = (kmMedia / 7).toString() + " km"
+                            textView.text = username
+                            val rel : RelativeLayout = findViewById(R.id.loadingPanelProfile)
+                            rel.visibility = View.GONE
+                        }
 
                 }
 

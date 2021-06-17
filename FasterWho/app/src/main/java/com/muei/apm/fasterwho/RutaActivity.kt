@@ -60,6 +60,12 @@ class RutaActivity : Toolbar(), OnMapReadyCallback {
             .findFragmentById(R.id.mapRutaConcreta) as SupportMapFragment
         mapFragment.getMapAsync(this)
 
+        val usuariosFragment = supportFragmentManager
+            .findFragmentById(R.id.fragmentUsuarios) as UsuariosRutaFragment
+        val args = Bundle()
+        args.putString("ruta", this.intent.getStringExtra("id").toString())
+        usuariosFragment.arguments = args
+
         val textView: TextView = findViewById(R.id.distanciaTotal)
         textView.text = "Distancia total: ${intent.getDoubleExtra("distancia",0.0)} km"
         val textViewNombreRuta: TextView = findViewById(R.id.textNombreRuta)

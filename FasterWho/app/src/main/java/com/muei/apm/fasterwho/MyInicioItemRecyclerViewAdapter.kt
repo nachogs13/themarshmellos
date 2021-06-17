@@ -65,6 +65,8 @@ class MyInicioItemRecyclerViewAdapter(
             intent.putExtra("file", file)
             intent.putExtra("nombre", values[pos].nombreRuta)
             intent.putExtra("rating", rating)
+            intent.putExtra("id", values[pos].id)
+
             v.context.startActivity(intent)
         }
     }

@@ -1,5 +1,6 @@
 package com.muei.apm.fasterwho
 
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -7,16 +8,17 @@ import android.widget.ImageView
 import android.widget.TextView
 import android.widget.Toast
 import androidx.recyclerview.widget.RecyclerView
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.firestore.DocumentReference
+import com.google.firebase.firestore.FieldPath
+import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.storage.FirebaseStorage
-import com.muei.apm.fasterwho.dummy.DummyContent.DummyItem
 
-/**
- * [RecyclerView.Adapter] that can display a [DummyItem].
- * TODO: Replace the implementation with code for your data type.
- */
 class MyMisAmigosRecyclerViewAdapter(
-    private val values: List<ItemAmigo>
+    private var values: MutableList<ItemAmigo>
 ) : RecyclerView.Adapter<MyMisAmigosRecyclerViewAdapter.ViewHolder>() {
+    private val db = FirebaseFirestore.getInstance()
+    private val firebaseAuth = FirebaseAuth.getInstance()
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         val view = LayoutInflater.from(parent.context)
@@ -49,6 +51,36 @@ class MyMisAmigosRecyclerViewAdapter(
 
         override fun onClick(v: View) {
             Toast.makeText(v.context, "Viendo el perfil del usuario"+v.id.toString(), Toast.LENGTH_SHORT).show()
+        }
+    }
+
+    fun setAmigosList() {
+        db.collection("usuarios").document(firebaseAuth.currentUser!!.email!!.toString()).get().addOnSuccessListener {
+
+            if (it.get("amigos") != null) {
+                val amigos = it.get("amigos") as List<String>
+                val items: MutableList<ItemAmigo> = ArrayList()
+                db.collection("usuarios").whereIn(FieldPath.documentId(), amigos).get()
+                    .addOnSuccessListener { it2->
+                        for (document in it2) {
+                            var img: DocumentReference? = null
+                            if (document.get("imgPerfil") != null) {
+                                img = document.get("imgPerfil") as DocumentReference
+                            }
+                            items.add(
+                                ItemAmigo(
+                                    document.id,
+                                    document.get("username").toString(),
+                                    img
+                                )
+                            )
+                        }
+                        values.clear()
+                        values.addAll(items)
+                        notifyDataSetChanged()
+                        Log.d("amiguiiiis", this.values.toString())
+                    }
+            }
         }
     }
 }
