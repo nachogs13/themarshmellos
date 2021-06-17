@@ -1,6 +1,8 @@
 package com.muei.apm.fasterwho
 
+import android.annotation.SuppressLint
 import android.content.Context
+import android.graphics.Color
 import android.view.View
 import android.view.ViewGroup
 import android.widget.BaseAdapter
@@ -17,25 +19,31 @@ class ItemRankingAdapter(var context: Context, var arrayList: ArrayList<ItemRank
         return position.toLong()
     }
 
+    @SuppressLint("ViewHolder")
     override fun getView(position: Int, convertView: View?, parent: ViewGroup?): View {
         val view:View = View.inflate(context, R.layout.cardview_ranking_item_fragment, null)
 
-        var icons: ImageView = view.findViewById(R.id.icon_list)
-        var title: TextView = view.findViewById(R.id.title_text_view)
-        var detail : TextView = view.findViewById(R.id.detail_text_view)
-        var detail2 : TextView = view.findViewById(R.id.detail1_text_view)
+        val icons: ImageView = view.findViewById(R.id.icon_list)
+        val title: TextView = view.findViewById(R.id.title_text_view)
+        val detail : TextView = view.findViewById(R.id.detail_text_view)
+        val detail2 : TextView = view.findViewById(R.id.detail1_text_view)
 
-        var items : ItemRankingList = arrayList.get(position)
+        val items : ItemRankingList = arrayList[position]
 
         icons.setImageResource(items.icons!!)
         title.text = items.title
         detail.text = items.detail
         detail2.text = items.detail2
+        if (items.detail2!!.contains("DESBLOQUEADO")) {
+            detail2.setTextColor(Color.parseColor("#00a135"))
+        } else if (items.detail2!!.contains("BLOQUEADO")) {
+            detail2.setTextColor(Color.parseColor("#ff0000"))
+        }
 
-        return view!!
+        return view
     }
 
     override fun getItem(position: Int): Any {
-        return arrayList.get(position)
+        return arrayList[position]
     }
 }
