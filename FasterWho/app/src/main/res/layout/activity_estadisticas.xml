@@ -71,6 +71,7 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center_horizontal|top"
             android:padding="10dp"
+            android:backgroundTint="@color/blue_800"
             android:text="Finalizar" />
     </androidx.cardview.widget.CardView>
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -15,6 +15,7 @@ import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.OnMapReadyCallback
 import com.google.android.gms.maps.SupportMapFragment
+import com.google.firebase.Timestamp
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.GeoPoint
@@ -24,10 +25,7 @@ import java.io.File
 import java.io.FileInputStream
 import java.io.FileNotFoundException
 import java.io.IOException
-import java.lang.Exception
 import java.math.RoundingMode
-import java.nio.file.Files
-import java.nio.file.Paths
 import java.text.DecimalFormat
 import java.text.DecimalFormatSymbols
 import java.text.SimpleDateFormat
@@ -35,9 +33,9 @@ import java.util.*
 import javax.xml.parsers.ParserConfigurationException
 import javax.xml.parsers.SAXParser
 import javax.xml.parsers.SAXParserFactory
+import kotlin.math.floor
 import kotlin.math.roundToInt
 
-@Suppress("RECEIVER_NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS", "NAME_SHADOWING")
 class EstadisticasActivity : AppCompatActivity(),OnMapReadyCallback {
 
     private lateinit var mapa: GoogleMap
@@ -68,7 +66,6 @@ class EstadisticasActivity : AppCompatActivity(),OnMapReadyCallback {
     private val firebaseAuth = FirebaseAuth.getInstance()
     private val db = FirebaseFirestore.getInstance()
 
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_estadisticas)
@@ -78,6 +75,7 @@ class EstadisticasActivity : AppCompatActivity(),OnMapReadyCallback {
         velocidadMaxima = intent.getDoubleExtra("velocidad", 0.0)
         horaInicio = intent.getStringExtra("horaInicio")
         duracion = intent.getLongExtra("duracion", 0L)
+        Log.i(TAG,"La ruta ha durado: $duracion ms")
         altitudGanada = intent.getDoubleExtra("altitudGanada", 0.0)
         altitudPerdida = intent.getDoubleExtra("altitudPerdida", 0.0)
         altitudMaxima = intent.getDoubleExtra("altitudMaxima", 0.0)
@@ -112,10 +110,10 @@ class EstadisticasActivity : AppCompatActivity(),OnMapReadyCallback {
             storage = FirebaseStorage.getInstance()
 
             // Creamos una referencia al storage desde nuestra app
-            var storageRef = storage.reference
+            val storageRef = storage.reference
 
             // Obtenemos la ruta del fichero a subir
-            var file = Uri.fromFile(File(this.filesDir.absolutePath, nombreArchivoRuta))
+            val file = Uri.fromFile(File(this.filesDir.absolutePath, nombreArchivoRuta))
 
             val rutaRef = storageRef.child("kmlsRutas/${file.lastPathSegment}")
             val uploadTask = rutaRef.putFile(file)
@@ -241,6 +239,25 @@ class EstadisticasActivity : AppCompatActivity(),OnMapReadyCallback {
                             totalDistance = document.data["distancia"] as Double
                             Log.i(TAG, "Identificador de la ruta: $ruta")
                         }
+                        //register route completion to Firebase
+                        val horas : Double = floor(((duracion!!/3600000L).toDouble()))
+                        val minutos : Double = floor(((duracion!!-horas*3600000L)/60000L))
+                        val segundos : Double = floor((duracion!!-(horas*3600000L)-(minutos*60000L))/1000L)
+                        val milis : Double = duracion!!-(horas*3600000L)-(minutos*60000L)-(segundos*1000L)
+                        val registroRuta = hashMapOf(
+                                "idUsuario" to firebaseAuth.currentUser!!.email!!,
+                                "idRuta" to ruta,
+                                "fecha" to Timestamp.now(), //mostrar con un formato rapido
+                                "horas" to horas,
+                                "minutos" to minutos,
+                                "segundos" to segundos,
+                                "milis" to milis
+                        )
+                        // añadimos el documento a la base de datos
+                        db.collection("rutasUsuarios").document()
+                                .set(registroRuta)
+                                .addOnSuccessListener { Log.i(TAG, "Registro de ruta guardado en Firebase") }
+                                .addOnFailureListener { Log.i(TAG, "Error al guardar el registro de ruta en Firebase")}
                         //check if route is repeated by the user
                         db.collection("rutasUsuarios")
                                 .whereEqualTo("idUsuario", firebaseAuth.currentUser!!.email!!)
