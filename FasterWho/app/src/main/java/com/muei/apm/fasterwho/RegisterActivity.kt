@@ -93,8 +93,11 @@ class RegisterActivity : AppCompatActivity() {
                                     }
                             showSuccesAlert()
                             db.collection("usuarios").document(FirebaseAuth.getInstance().currentUser!!.email!!.toString())
-                                    .set(hashMapOf("username" to nombreUsuario))
-                        }else {
+                                    .set(hashMapOf(
+                                            "username" to nombreUsuario,
+                                            "ptosRanking" to 0
+                                    ))
+                        } else {
                             when(val exception = it.exception.toString()){
                                 "ERROR_EMAIL_ALREADY_IN_USE" -> showAlert("ERROR_EMAIL_ALREADY_IN_USE")
                                 else -> {

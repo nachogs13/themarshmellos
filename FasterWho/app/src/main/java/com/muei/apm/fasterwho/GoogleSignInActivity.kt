@@ -91,9 +91,12 @@ class GoogleSignInActivity : AppCompatActivity() {
                     db.collection("usuarios").document(user.email).get().addOnSuccessListener {
                         if(it.get("username")==null){
                             db.collection("usuarios").document(FirebaseAuth.getInstance().currentUser.email)
-                                    .set(hashMapOf("username" to user.email.toString().substringBeforeLast("@")))
-                                    .addOnCompleteListener { updateUI(user)  }
-                        }else{
+                                    .set(hashMapOf(
+                                            "username" to user.email.toString().substringBeforeLast("@"),
+                                            "ptosRanking" to 0
+                                    ))
+                                    .addOnCompleteListener { updateUI(user) }
+                        } else {
                             updateUI(user)
                         }
                     }
