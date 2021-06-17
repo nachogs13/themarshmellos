@@ -302,11 +302,13 @@ class EstadisticasActivity : AppCompatActivity(),OnMapReadyCallback {
                                             .addOnSuccessListener {
                                                 ptosRanking = it.get("ptosRanking") as Long
                                                 ptos = ptosRanking.toInt()
+                                                Log.i(TAG,"The user currently has $ptos points.")
+
+                                                //update ranking points value
+                                                db.collection("usuarios")
+                                                        .document(firebaseAuth.currentUser!!.email!!.toString())
+                                                        .update("ptosRanking", ptos + ptosRuta)
                                             }
-                                    //update ranking points value
-                                    db.collection("usuarios")
-                                            .document(firebaseAuth.currentUser!!.email!!.toString())
-                                            .update("ptosRanking", ptos + ptosRuta)
                                 }
                     }
         }
