@@ -4,18 +4,18 @@ En nuestro grupo vamos a desarrollar la aplicación **FasterWho**. El equipo de 
   - **Ignacio García Sánchez (CEO)**
     - Sistema de Ranking
     - Menú de usuario
-    - Recomendaciones iniciales al registrarse
   - **Christian Manuel Varela Álvarez (CTO)**
     - Geolocalización en foreground y background
     - Obtención de las estadísticas de la ruta y mostrarlas al usuario
     - Almacenamiento y recuperación de los archivos KML
     - Acceso y uso básico de sensores
   - **Miriam Breijo Fachal (COO)**
-    - Estadísticas finales y posición ranking
-    - Estadísticas y recorrido hecho en live
-    - Comunicación con backend para distintas funcionalidades
+    - Mejorar experiencia de usuario (spinners, colores, tamaños, validaciones...).
+    - Compartir con redes sociales.
+    - Actividad, estadísticas de usuario y de ruta concreta.
+    - Listas y añadir amigos.
   - **María Ocampo Quintáns (CXO)**
-    - Pantalla de ruta concreta
+    - Registro y login en aplicación (usando Firebase)
     - Creación de rutas
     - Listado y filtrado de rutas
 
