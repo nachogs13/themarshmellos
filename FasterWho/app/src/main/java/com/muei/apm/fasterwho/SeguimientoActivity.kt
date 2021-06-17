@@ -10,6 +10,7 @@ import android.hardware.SensorEvent
 import android.hardware.SensorEventListener
 import android.hardware.SensorManager
 import android.location.Location
+import android.location.LocationManager
 import android.net.Uri
 import android.os.*
 import android.provider.Settings
@@ -285,6 +286,17 @@ class SeguimientoActivity : AppCompatActivity(), OnMapReadyCallback,GoogleMap.On
             }
             // Tenemos permisos para la geolcalización, llamamos al método que obitene las actualizaciones
             permisosConcedidos = true
+
+            // comprobamos si la ubicación está activada, y en caso contrario mostramos un Toast
+            val lm = getSystemService(LOCATION_SERVICE) as LocationManager
+            try {
+                var gps_enabled = lm.isProviderEnabled(LocationManager.GPS_PROVIDER)
+                if (!gps_enabled) {
+                    Toast.makeText(this, "Debes activar la ubicación", Toast.LENGTH_LONG). show()
+                }
+            } catch (ex: Exception) {
+                Log.d(TAG, "Error al comprobar si está activada la ubicación")
+            }
             obtenerLocalizaciones()
 
         }
