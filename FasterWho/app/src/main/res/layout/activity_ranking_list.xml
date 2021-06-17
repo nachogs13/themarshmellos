@@ -13,7 +13,7 @@
         tools:layout_editor_absoluteY="27dp" />-->
 
     <androidx.fragment.app.FragmentContainerView
-        android:id="@+id/fragment"
+        android:id="@+id/fragmentRankingList"
         android:name="com.muei.apm.fasterwho.RankingListFragment"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
