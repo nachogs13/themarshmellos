@@ -13,8 +13,8 @@ android {
         applicationId "com.muei.apm.fasterwho"
         minSdkVersion 21
         targetSdkVersion 30
-        versionCode 4
-        versionName "4"
+        versionCode 7
+        versionName "7"
         vectorDrawables.useSupportLibrary = true
         multiDexEnabled true
 
