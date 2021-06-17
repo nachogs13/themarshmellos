@@ -517,7 +517,7 @@ class SeguimientoActivity : AppCompatActivity(), OnMapReadyCallback,GoogleMap.On
         ) == PackageManager.PERMISSION_GRANTED*/
         ActivityCompat.checkSelfPermission(
             this,
-            Manifest.permission.ACCESS_BACKGROUND_LOCATION
+            Manifest.permission.ACCESS_FINE_LOCATION
         ) == PackageManager.PERMISSION_GRANTED
 
     private fun startLocationPermissionRequest() {
@@ -529,14 +529,14 @@ class SeguimientoActivity : AppCompatActivity(), OnMapReadyCallback,GoogleMap.On
                 Manifest.permission.ACCESS_BACKGROUND_LOCATION,
                 Manifest.permission.ACCESS_FINE_LOCATION
             ),
-            REQUEST_BACKGROUND_LOCATION_PERMISSIONS_REQUEST_CODE
+            REQUEST_FINE_LOCATION_PERMISSIONS_REQUEST_CODE
         )
     }
 
     private fun requestPermissions() {
         if (ActivityCompat.shouldShowRequestPermissionRationale(
                 this,
-                Manifest.permission.ACCESS_BACKGROUND_LOCATION
+                Manifest.permission.ACCESS_FINE_LOCATION
             )
         ) {
             // Provide an additional rationale to the user. This would happen if the user denied the
@@ -617,7 +617,7 @@ class SeguimientoActivity : AppCompatActivity(), OnMapReadyCallback,GoogleMap.On
 
     private fun isPermissionsGranted() = ContextCompat.checkSelfPermission(
         this,
-        Manifest.permission.ACCESS_BACKGROUND_LOCATION
+        Manifest.permission.ACCESS_FINE_LOCATION
     ) == PackageManager.PERMISSION_GRANTED
 
 
@@ -636,12 +636,12 @@ class SeguimientoActivity : AppCompatActivity(), OnMapReadyCallback,GoogleMap.On
 
     private fun requestLocationPermission() {
         if (ActivityCompat.shouldShowRequestPermissionRationale(this,
-                Manifest.permission.ACCESS_BACKGROUND_LOCATION)) {
+                Manifest.permission.ACCESS_FINE_LOCATION)) {
             Toast.makeText(this, "Ve a ajustes y acepta los permisos", Toast.LENGTH_SHORT).show()
         } else {
             ActivityCompat.requestPermissions(this,
                 arrayOf(Manifest.permission.ACCESS_FINE_LOCATION,Manifest.permission.ACCESS_BACKGROUND_LOCATION),
-                REQUEST_BACKGROUND_LOCATION_PERMISSIONS_REQUEST_CODE)
+                REQUEST_FINE_LOCATION_PERMISSIONS_REQUEST_CODE)
         }
     }
 
