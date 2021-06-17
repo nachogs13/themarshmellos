@@ -24,7 +24,7 @@
     <string name="scan_qr">Escanear QR</string>
     <string name="filter">Filtros</string>
     <string name="friends">Mis Amigos</string>
-    <string name="add_friend">Añadir amigo</string>
+    <string name="add_friend">Añadir amig@</string>
     <string name="title_activity_mis_rutas">mis_rutas</string>
     <!-- Strings used for fragments for navigation -->
     <string name="first_fragment_label">First Fragment</string>
@@ -111,6 +111,7 @@
     <string name="publica">PUBLICA</string>
     <string name="faster_who">Faster Who?</string>
     <string name="duracion">Duración</string>
+    <string name="title_activity_new_friend">NewFriendActivity</string>
 
     <!--<string name="default_web_client_id">246650974592-4qiuqa1hn9nrqs38u0n9opgid0rf9ngj.apps.googleusercontent.com</string>-->
 </resources>

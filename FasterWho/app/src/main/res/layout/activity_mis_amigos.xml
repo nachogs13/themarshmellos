@@ -7,7 +7,7 @@
     tools:context=".MisAmigos">
 
     <androidx.fragment.app.FragmentContainerView
-        android:id="@+id/fragment"
+        android:id="@+id/fragmentMisAmigos"
         android:name="com.muei.apm.fasterwho.MisAmigosFragment"
         android:layout_width="391dp"
         android:layout_height="737dp"

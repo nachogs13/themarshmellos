@@ -1,5 +1,6 @@
 package com.muei.apm.fasterwho
 
+import android.content.Intent
 import android.os.Bundle
 import android.view.View
 import android.widget.*
@@ -13,8 +14,8 @@ class MisAmigos : Toolbar() {
 
         val btnAmigos : Button = findViewById(R.id.button)
         btnAmigos.setOnClickListener {
-            val popUpFragment = AddFriendDialogFragment()
-            popUpFragment.show(supportFragmentManager, "Save Route")
+            val intent = Intent(this, AddFriendActivity::class.java)
+            startActivity(intent)
             Toast.makeText(this, "Se añade un nuevo amigo", Toast.LENGTH_SHORT).show()
         }
     }

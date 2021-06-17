@@ -55,6 +55,7 @@ class AddFriendDialogFragment : DialogFragment() {
         } ?: throw IllegalStateException("Activity cannot be null")
     }
 
+
     private fun amigos(
         inputName: String
     ) {

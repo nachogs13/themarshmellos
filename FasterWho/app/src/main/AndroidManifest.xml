@@ -16,13 +16,14 @@
  Se añaden los permisos para el servicio de foreground que permite recibir actualizaciones
         de geolocalización
     -->
-    <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
-    <!--Permisos de la cámara-->
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE" /> <!-- Permisos de la cámara -->
     <uses-feature android:name="android.hardware.camera.any" />
+
     <uses-permission android:name="android.permission.CAMERA" />
 
-    <uses-feature android:name="android.hardware.camera"
-    android:required="true"/>
+    <uses-feature
+        android:name="android.hardware.camera"
+        android:required="true" />
 
     <application
         android:name="androidx.multidex.MultiDexApplication"
@@ -32,7 +33,8 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.FasterWho">
-        <activity android:name=".EditarPerfilActivity"></activity>
+        <activity android:name=".AddFriendActivity"></activity>
+        <activity android:name=".EditarPerfilActivity" />
 
         <service
             android:name=".ForegroundLocationService"
@@ -55,14 +57,16 @@
             android:name="com.google.android.gms.ads.AD_MANAGER_APP"
             android:value="true" />
 
-        <activity android:name=".IniciarRutaActivity"
-            android:screenOrientation="portrait"/>
+        <activity
+            android:name=".IniciarRutaActivity"
+            android:screenOrientation="portrait" />
         <activity android:name=".MisRutas" />
         <activity android:name=".MisAmigos" />
         <activity android:name=".InicioActivity" />
         <activity android:name=".RutaActivity" />
-        <activity android:name=".EstadisticasActivity"
-            android:screenOrientation="portrait"/>
+        <activity
+            android:name=".EstadisticasActivity"
+            android:screenOrientation="portrait" />
         <activity android:name=".RankingActivity" />
         <activity android:name=".RankingListActivity" />
         <activity android:name=".ProfileActivity" />
