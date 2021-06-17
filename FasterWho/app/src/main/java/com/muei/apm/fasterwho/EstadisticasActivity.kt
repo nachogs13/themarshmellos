@@ -273,15 +273,14 @@ class EstadisticasActivity : AppCompatActivity(),OnMapReadyCallback {
                         db.collection("rutasUsuarios")
                                 .whereEqualTo("idRuta", ruta)
                                 .get().addOnSuccessListener { it ->
-                                    for (document in it) {
-                                        if (document.data["idUsuario"] != firebaseAuth.currentUser!!.email!!) {
-                                            val hours = document.data["horas"] as Int
-                                            val mins = document.data["minutos"] as Int
-                                            val secs = document.data["segundos"] as Int
-                                            val time = hours * 3600 + mins * 60 + secs
-                                            if (time < duracion!!) {
-                                                top++
-                                            }
+                                    for (document in it) if (document.data["idUsuario"] != firebaseAuth.currentUser!!.email!!) {
+                                        val hours = document.data["horas"] as Double
+                                        val mins = document.data["minutos"] as Double
+                                        val secs = document.data["segundos"] as Double
+                                        val mils = document.data["milis"] as Double
+                                        val time = hours * 3600000 + mins * 60000 + secs * 1000 + mils
+                                        if (time < duracion!!) {
+                                            top++
                                         }
                                     }
                                     //if the user is not in the top 100, doesnt receive top points, otherwise gets points from 5-500 (top 100-1) with step 5

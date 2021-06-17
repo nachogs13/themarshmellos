@@ -18,7 +18,7 @@ class RankingActivity : Toolbar(), AdapterView.OnItemClickListener{
         //setContentView(R.layout.activity_ranking)
         layoutInflater.inflate(R.layout.activity_ranking,frameLayout)
         val toolbar: androidx.appcompat.widget.Toolbar = findViewById(R.id.toolbar2)
-        toolbar.setTitle("Ranking")
+        toolbar.title = "Ranking"
 
         listView = findViewById(R.id.cardview_list_view)
         arrayList = ArrayList()
@@ -72,7 +72,7 @@ class RankingActivity : Toolbar(), AdapterView.OnItemClickListener{
         val listItem : ArrayList<ItemRankingList> = ArrayList()
 
         //Obtener los puntos del usuario para saber los puntos restantes para cada rango bloqueado
-        var userPts: Int = 7500 //esto debe salir de la info del usuario en firebase
+        val userPts: Int = 7500 //esto debe salir de la info del usuario en firebase
 
         listItem.add(ItemRankingList(R.drawable.leyenda, "Leyenda", "20.000+ pts.", isBlocked("Leyenda", userPts)))
         listItem.add(ItemRankingList(R.drawable.diamante, "Diamante", "15.000 - 19.999 pts.", isBlocked("Diamante", userPts)))
